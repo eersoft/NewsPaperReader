@@ -1,4 +1,6 @@
 # NewsPaperReader
+## 安装包下载/Setup.exe Download
+http://www.eersoft.com/myapp/NewsPaperReader/publish.htm
 ## 功能说明
 1. 在线报纸阅读器，已经添加了多份报纸；
 2. 鼠标指向屏幕左侧可以显示报纸及版面浏览栏，其中可以选择想看的报纸；
