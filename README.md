@@ -24,6 +24,6 @@ http://www.eersoft.com/myapp/NewsPaperReader/publish.htm
 2. 报纸就要看最新的。
 
 ## 运行截图
-![screenshot](https://github.com/eersoft/NewsPaperReader/raw/master/screenshot%20(0).png)
-![screenshot](https://github.com/eersoft/NewsPaperReader/raw/master/screenshot%20(1).png)
-![screenshot](https://github.com/eersoft/NewsPaperReader/raw/master/screenshot%20(2).png)
+[1](http://www.eersoft.com/myapp/NewsPaperReader/scerrnshot/screenshot%20(0).png)
+[2](http://www.eersoft.com/myapp/NewsPaperReader/scerrnshot/screenshot%20(1).png)
+[3](http://www.eersoft.com/myapp/NewsPaperReader/scerrnshot/screenshot%20(2).png)
