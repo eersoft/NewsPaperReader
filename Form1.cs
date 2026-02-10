@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,10 +12,10 @@ using PdfiumViewer;
 using System.Net.Http;
 using HtmlAgilityPack;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
-using static System.Uri;
+
 using System.IO;
 using System.Runtime.InteropServices;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
+using System.Windows.Forms.VisualStyles;
 
 namespace NewsPaperReader
 {
@@ -35,6 +35,7 @@ namespace NewsPaperReader
         private const int GWL_STYLE = -16;
         private const int WS_POPUP = 0x800000;
 
+        private const int HOT_AREA_SIZE = 20; //自动显示工具栏的热区大小
 
         private HttpClient client=new HttpClient();
         private string mainHtml = "";
@@ -47,6 +48,12 @@ namespace NewsPaperReader
         private int window_w,window_h,window_left,window_top; //窗口尺寸及位置
         private bool isLoading = false;
         private bool isReading = false;
+
+        //工厂模式新代码
+        private INewsPaper newsPaper;
+
+
+        //工厂模式代码结束
 
         public Form1()
         {
@@ -232,7 +239,7 @@ namespace NewsPaperReader
 
                     foreach (var title in titles)
                     {
-                        urlPage = title.Attributes["href"]?.Value;
+                        urlPage = title.Attributes["href"] != null ? title.Attributes["href"].Value : null;
                         if (urlPage != null)
                         {
                             Uri absUri = new Uri(xbaseUri, urlPage);
@@ -255,13 +262,13 @@ namespace NewsPaperReader
                             {                                
                                 foreach (var pdf in pdfUrl)
                                 {
-                                    urlPdf = pdf.Attributes["href"]?.Value;
+                                    urlPdf = pdf.Attributes["href"] != null ? pdf.Attributes["href"].Value : null;
                                     if (urlPdf != null)
                                     {
                                         Uri absUri = new Uri(xbaseUri, urlPdf);
                                         urlPdf = absUri.AbsoluteUri;
                                         urlsPdfs.Add(page.Key, urlPdf);
-                                        lstPage.Items.Add($"{page.Key}");
+                                        lstPage.Items.Add(string.Format("{0}", page.Key));
                                         if (isFirst)
                                         {
                                             lstPage.SelectedIndex = 0;
@@ -310,7 +317,7 @@ namespace NewsPaperReader
 
                     foreach (var title in titles)
                     {
-                        urlPage = title.Attributes["href"]?.Value;
+                        urlPage = title.Attributes["href"] != null ? title.Attributes["href"].Value : null;
                         if (urlPage != null)
                         {
                             Uri absUri = new Uri(xbaseUri, urlPage);
@@ -333,13 +340,13 @@ namespace NewsPaperReader
                             {
                                 foreach (var pdf in pdfUrl)
                                 {
-                                    urlPdf = pdf.Attributes["href"]?.Value;
+                                    urlPdf = pdf.Attributes["href"] != null ? pdf.Attributes["href"].Value : null;
                                     if (urlPdf != null)
                                     {
                                         Uri absUri = new Uri(xbaseUri, urlPdf);
                                         urlPdf = absUri.AbsoluteUri;
                                         urlsPdfs.Add(page.Key, urlPdf);
-                                        lstPage.Items.Add($"{page.Key}");
+                                        lstPage.Items.Add(string.Format("{0}", page.Key));
                                         if (isFirst)
                                         {
                                             lstPage.SelectedIndex = 0;
@@ -392,7 +399,7 @@ namespace NewsPaperReader
 
                     foreach (var title in titles)
                     {
-                        urlPage = title.Attributes["href"]?.Value;
+                        urlPage = title.Attributes["href"] != null ? title.Attributes["href"].Value : null;
                         if (urlPage != null)
                         {
                             Uri absUri = new Uri(xbaseUri, urlPage);
@@ -415,13 +422,13 @@ namespace NewsPaperReader
                             {
                                 foreach (var pdf in pdfUrl)
                                 {
-                                    urlPdf = pdf.Attributes["href"]?.Value;
+                                    urlPdf = pdf.Attributes["href"] != null ? pdf.Attributes["href"].Value : null;
                                     if (urlPdf != null)
                                     {
                                         Uri absUri = new Uri(xbaseUri, urlPdf);
                                         urlPdf = absUri.AbsoluteUri;
                                         urlsPdfs.Add(page.Key, urlPdf);
-                                        lstPage.Items.Add($"{page.Key}");
+                                        lstPage.Items.Add(string.Format("{0}", page.Key));
                                         if (isFirst)
                                         {
                                             lstPage.SelectedIndex = 0;
@@ -477,7 +484,7 @@ namespace NewsPaperReader
                         for (int i = 0; i < titles.Count; i++)
                         {
                             string key = titles[i].InnerText;
-                            urlPage = titles_url[i].Attributes["href"]?.Value;
+                            urlPage = titles_url[i].Attributes["href"] != null ? titles_url[i].Attributes["href"].Value : null;
                             if (urlPage != null)
                             {
                                 Uri absUri = new Uri(xbaseUri,urlPage);
@@ -501,13 +508,13 @@ namespace NewsPaperReader
                                 {
                                     foreach (var pdf in pdfUrl)
                                     {
-                                        urlPdf = pdf.Attributes["href"]?.Value;
+                                        urlPdf = pdf.Attributes["href"] != null ? pdf.Attributes["href"].Value : null;
                                         if (urlPdf != null)
                                         {
                                             Uri absUri = new Uri(xbaseUri, urlPdf);
                                             urlPdf = absUri.AbsoluteUri;
                                             urlsPdfs.Add(page.Key, urlPdf);
-                                            lstPage.Items.Add($"{page.Key}");
+                                            lstPage.Items.Add(string.Format("{0}", page.Key));
                                             if (isFirst)
                                             {
                                                 lstPage.SelectedIndex = 0;
@@ -569,7 +576,7 @@ namespace NewsPaperReader
                         for (int i = 0; i < titles.Count(); ++i)
                         {
                             string key = titles[i].InnerText;
-                            string pdfurl = pdfs[i].Attributes["href"]?.Value;
+                            string pdfurl = pdfs[i].Attributes["href"] != null ? pdfs[i].Attributes["href"].Value : null;
                             if (pdfurl != null)
                             {
                                 urlsPages.Add(key,"");
@@ -621,7 +628,7 @@ namespace NewsPaperReader
                         for (int i = 0; i < titles.Count(); ++i)
                         {
                             string key = titles[i].InnerText;
-                            string pdfurl = pdfs[i].Attributes["href"]?.Value;
+                            string pdfurl = pdfs[i].Attributes["href"] != null ? pdfs[i].Attributes["href"].Value : null;
                             if (pdfurl != null)
                             {
                                 Uri absUri = new Uri(xbaseUri, pdfurl);
@@ -675,7 +682,7 @@ namespace NewsPaperReader
                         for (int i = 0; i < titles.Count(); ++i)
                         {
                             string key = titles[i].InnerText;
-                            string pdfurl = pdfs[i].Attributes["href"]?.Value;
+                            string pdfurl = pdfs[i].Attributes["href"] != null ? pdfs[i].Attributes["href"].Value : null;
                             if (pdfurl != null)
                             {
                                 Uri absUri = new Uri(xbaseUri, pdfurl);
@@ -729,7 +736,7 @@ namespace NewsPaperReader
                         for (int i = 0; i < titles.Count(); ++i)
                         {
                             string key = titles[i].InnerText;
-                            string pdfurl = pdfs[i].Attributes["href"]?.Value;
+                            string pdfurl = pdfs[i].Attributes["href"] != null ? pdfs[i].Attributes["href"].Value : null;
                             if (pdfurl != null)
                             {
                                 Uri absUri = new Uri(xbaseUri, pdfurl);
@@ -783,7 +790,7 @@ namespace NewsPaperReader
                         for (int i = 0; i < titles.Count(); ++i)
                         {
                             string key = titles[i].InnerText;
-                            string pdfurl = pdfs[i].Attributes["value"]?.Value;
+                            string pdfurl = pdfs[i].Attributes["value"] != null ? pdfs[i].Attributes["value"].Value : null;
                             if (pdfurl != null)
                             {
                                 Uri absUri = new Uri(xbaseUri, pdfurl);
@@ -826,7 +833,7 @@ namespace NewsPaperReader
                 HtmlDocument doc = new HtmlDocument();
                 doc.LoadHtml(mainHtml);
                 HtmlNodeCollection titles = doc.DocumentNode.SelectNodes("//li[1]/a");
-                string main_url = titles[0].Attributes["href"]?.Value;
+                string main_url = titles[0].Attributes["href"] != null ? titles[0].Attributes["href"].Value : null;
                 if (main_url != null)
                 {
                     Uri absUri = new Uri(xbaseUri, main_url);
@@ -963,7 +970,7 @@ namespace NewsPaperReader
 
                     foreach (var title in titles)
                     {
-                        urlPage = title.Attributes["href"]?.Value;
+                        urlPage = title.Attributes["href"] != null ? title.Attributes["href"].Value : null;
                         if (urlPage != null)
                         {
                             Uri absUri = new Uri(xbaseUri, urlPage);
@@ -986,13 +993,13 @@ namespace NewsPaperReader
                             {
                                 foreach (var pdf in pdfUrl)
                                 {
-                                    urlPdf = pdf.Attributes["href"]?.Value;
+                                    urlPdf = pdf.Attributes["href"] != null ? pdf.Attributes["href"].Value : null;
                                     if (urlPdf != null)
                                     {
                                         Uri absUri = new Uri(xbaseUri, urlPdf);
                                         urlPdf = absUri.AbsoluteUri;
                                         urlsPdfs.Add(page.Key, urlPdf);
-                                        lstPage.Items.Add($"{page.Key}");
+                                        lstPage.Items.Add(string.Format("{0}", page.Key));
                                         if (isFirst)
                                         {
                                             lstPage.SelectedIndex = 0;
@@ -1045,7 +1052,7 @@ namespace NewsPaperReader
 
                     foreach (var title in titles)
                     {
-                        urlPage = title.Attributes["href"]?.Value;
+                        urlPage = title.Attributes["href"] != null ? title.Attributes["href"].Value : null;
                         if (urlPage != null)
                         {
                             Uri absUri = new Uri(xbaseUri, urlPage);
@@ -1068,13 +1075,13 @@ namespace NewsPaperReader
                             {
                                 foreach (var pdf in pdfUrl)
                                 {
-                                    urlPdf = pdf.Attributes["href"]?.Value;
+                                    urlPdf = pdf.Attributes["href"] != null ? pdf.Attributes["href"].Value : null;
                                     if (urlPdf != null)
                                     {
                                         Uri absUri = new Uri(xbaseUri, urlPdf);
                                         urlPdf = absUri.AbsoluteUri;
                                         urlsPdfs.Add(page.Key, urlPdf);
-                                        lstPage.Items.Add($"{page.Key}");
+                                        lstPage.Items.Add(string.Format("{0}", page.Key));
                                         if (isFirst)
                                         {
                                             lstPage.SelectedIndex = 0;
@@ -1154,7 +1161,7 @@ namespace NewsPaperReader
                         await GetPdf(urlsPdfs[caption], fn);
                     }
                     LoadPdfFile(fn);
-                    this.Text = $"Eersoft在线报纸阅读器-{newsPaperName}-{caption}";
+                    this.Text = string.Format("Eersoft在线报纸阅读器-{0}-{1}", newsPaperName, caption);
                 }
                 catch (Exception)
                 {
@@ -1211,11 +1218,21 @@ namespace NewsPaperReader
                 Point clientPoint = this.PointToClient(new Point(point.X, point.Y));
                 if (this.ClientRectangle.Contains(clientPoint))
                 {
-                    Rectangle panelBounds = new Rectangle(this.fPanel.Left, this.fPanel.Top, this.fPanel.Width, this.fPanel.Height);
-                    this.fPanel.Visible = panelBounds.Contains(clientPoint);
+                    Rectangle panelBounds = new Rectangle(this.fPanel.Left, this.fPanel.Top, HOT_AREA_SIZE, this.fPanel.Height);
+                    this.fPanel.Visible = panelBounds.Contains(clientPoint) || clientPoint.X<=this.fPanel.Width;
 
-                    panelBounds = new Rectangle(this.panel_Top.Left, this.panel_Top.Top, this.panel_Top.Width, this.panel_Top.Height);
-                    this.panel_Top.Visible = panelBounds.Contains(clientPoint);
+                    // 计算工具栏的完整边界
+                    Rectangle toolbarBounds = new Rectangle(this.panel_Top.Left, 
+                                                           this.panel_Top.Top, 
+                                                           this.panel_Top.Width, 
+                                                           this.panel_Top.Height);
+                    // 计算热区边界
+                    Rectangle hotAreaBounds = new Rectangle(this.panel_Top.Left + this.panel_Top.Width - HOT_AREA_SIZE, 
+                                                           this.panel_Top.Top, 
+                                                           HOT_AREA_SIZE, 
+                                                           HOT_AREA_SIZE);
+                    // 当鼠标位于热区或工具栏上时，显示工具栏
+                    this.panel_Top.Visible = hotAreaBounds.Contains(clientPoint) || toolbarBounds.Contains(clientPoint);
                 }
             }
             if (isReading)
@@ -1326,7 +1343,7 @@ namespace NewsPaperReader
             newsPaperName = "经济日报";
             string MM = DateTime.Today.ToString("yyyyMM");
             string DD = DateTime.Today.ToString("dd");
-            string url = $"http://paper.ce.cn/pc/layout/{MM}/{DD}/node_01.html";
+            string url = string.Format("http://paper.ce.cn/pc/layout/{0}/{1}/node_01.html", MM, DD);
             GetPageJJRB(url);
         }
 
@@ -1506,6 +1523,29 @@ namespace NewsPaperReader
         {
             panelCenter.Left = (this.ClientSize.Width - panelCenter.Width) / 2;
             panelCenter.Top = (this.ClientSize.Height - panelCenter.Height) / 2;
+        }
+
+        /// <summary>
+        /// 工厂模式测试按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void button1_Click(object sender, EventArgs e)
+        {
+            string url = @"http://paper.people.com.cn/rmrb/paperindex.htm";
+            newsPaper = NewsPaperFactory.CreateNewsPaper("人民日报");
+
+            HtmlReturn result;
+            result = await newsPaper.GetHtml(url);
+            urlsPdfs = newsPaper.ParsePage(result);
+
+            foreach (var item in urlsPdfs)
+            {
+                string filePath = Path.Combine(pathRoot, item.Key + ".pdf");
+                await newsPaper.DownloadPdf(item.Value, filePath);
+                // 显示PDF文件
+                LoadPdfFile(filePath);
+            }
         }
 
         /// <summary>
