@@ -30,6 +30,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
@@ -63,6 +64,10 @@
                         <ComboBoxItem Content="图片式列表" Tag="{x:Static models:NewspaperListDisplayMode.ImageList}"/>
                         <ComboBoxItem Content="图片平铺" Tag="{x:Static models:NewspaperListDisplayMode.ImageTile}"/>
                     </ComboBox>
+                    
+                    <!-- 显示PDF默认工具栏 -->
+                    <TextBlock Grid.Row="4" Grid.Column="0" Margin="0,10,10,0" VerticalAlignment="Center">显示PDF默认工具栏:</TextBlock>
+                    <CheckBox Grid.Row="4" Grid.Column="1" Margin="0,10,0,0" IsChecked="{Binding Settings.ShowPdfToolbar}"/>
                     
 
                 </Grid>

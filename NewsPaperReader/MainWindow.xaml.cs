@@ -75,8 +75,8 @@ namespace NewsPaperReader
                 // 将屏幕坐标转换为窗口坐标
                 var windowMousePosition = this.PointFromScreen(screenMousePosition);
                 
-                // 检查鼠标是否在窗口内，并且在左侧边缘附近（距离左侧边缘10像素以内）
-                if (windowMousePosition.X >= 0 && windowMousePosition.X < 10 &&
+                // 检查鼠标是否在窗口内，并且在左侧边缘附近（距离左侧边缘100像素以内）
+                if (windowMousePosition.X >= 0 && windowMousePosition.X < 100 &&
                     windowMousePosition.Y >= 0 && windowMousePosition.Y < this.ActualHeight)
                 {
                     // 显示左侧面板
@@ -274,79 +274,42 @@ namespace NewsPaperReader
                 string pdfPath = _viewModel.SelectedEdition.LocalFilePath;
                 if (!string.IsNullOrEmpty(pdfPath))
                 {
-                    // 使用file://协议加载本地PDF文件
-                    string pdfUrl = "file:///" + pdfPath.Replace('\\', '/');
-                    
                     // 加载应用设置
                     var settings = NewsPaperReader.Services.SettingsManager.LoadSettings();
                     
-                    // 添加新的事件处理程序
-                    WebView2PdfViewer.CoreWebView2.NavigationCompleted += (sender, args) => PdfNavigationCompleted(sender, args, settings);
+                    // 使用file://协议加载本地PDF文件
+                    string pdfUrl = "file:///" + pdfPath.Replace('\\', '/');
                     
-                    // 导航到PDF文件
-                    WebView2PdfViewer.Source = new Uri(pdfUrl);
+                    // 根据ContentDisplayMode设置项来设置PDF的显示模式
+                    string viewMode = "FitW";
+                    switch (settings.ContentDisplayMode)
+                    {
+                        case NewsPaperReader.Models.ContentDisplayMode.FitWidth:
+                            viewMode = "FitW";
+                            break;
+                        case NewsPaperReader.Models.ContentDisplayMode.FitHeight:
+                            viewMode = "FitH";
+                            break;
+                        case NewsPaperReader.Models.ContentDisplayMode.FitPage:
+                            viewMode = "Fit";
+                            break;
+                    }
+                    
+                    // 添加PDF显示参数
+                    // #view=FitW 默认适应宽度显示（FitH=适应高度，Fit=适应页面，100=100%缩放）
+                    // #pagemode=none 隐藏侧边栏
+                    // #toolbar=0 隐藏工具栏（根据设置决定）
+                    string toolbarParam = settings.ShowPdfToolbar ? "" : "&toolbar=0";
+                    string pdfUrlWithParams = $"{pdfUrl}#view={viewMode}&pagemode=none{toolbarParam}";
+                    
+                    // 加载带自定义参数的PDF
+                    WebView2PdfViewer.Source = new Uri(pdfUrlWithParams);
                 }
             }
             else
             {
                 // 如果尚未下载，显示加载状态
                 WebView2PdfViewer.Source = new Uri("about:blank");
-            }
-        }
-        
-        private void PdfNavigationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs args, NewsPaperReader.Models.AppSettings settings)
-        {
-            if (args.IsSuccess && WebView2PdfViewer != null && WebView2PdfViewer.CoreWebView2 != null)
-            {
-                // 尝试多次执行JavaScript，确保PDF.js完全加载并应用设置
-                for (int i = 0; i < 3; i++)
-                {
-                    int delay = 300 * (i + 1); // 300ms, 600ms, 900ms
-                    System.Threading.Tasks.Task.Delay(delay).ContinueWith(t =>
-                    {
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            if (WebView2PdfViewer != null && WebView2PdfViewer.CoreWebView2 != null)
-                            {
-                                // 根据ContentDisplayMode设置项来设置PDF的显示模式
-                                string zoomMode = "auto";
-                                switch (settings.ContentDisplayMode)
-                                {
-                                    case NewsPaperReader.Models.ContentDisplayMode.FitWidth:
-                                        zoomMode = "page-width";
-                                        break;
-                                    case NewsPaperReader.Models.ContentDisplayMode.FitHeight:
-                                        zoomMode = "page-height";
-                                        break;
-                                    case NewsPaperReader.Models.ContentDisplayMode.FitPage:
-                                        zoomMode = "page-fit";
-                                        break;
-                                }
-                                
-                                // 使用JavaScript设置PDF显示模式（尝试多种方法）
-                                WebView2PdfViewer.CoreWebView2.ExecuteScriptAsync(
-                                    "// 尝试多种方法设置PDF显示模式\n" +
-                                    "if (typeof PDFViewerApplication !== 'undefined') { \n" +
-                                    "    // 方法1：直接设置zoom属性\n" +
-                                    $"    PDFViewerApplication.zoom = '{zoomMode}'; \n" +
-                                    "    // 方法2：使用eventBus触发zoom事件\n" +
-                                    $"    PDFViewerApplication.eventBus.dispatch('zoom', {{ source: null, zoom: '{zoomMode}' }}); \n" +
-                                    "    // 方法3：直接调用zoom方法\n" +
-                                    "    if (PDFViewerApplication.zoomIn) { \n" +
-                                    $"        PDFViewerApplication.zoom = '{zoomMode}'; \n" +
-                                    "    } \n" +
-                                    $"    console.log('PDF显示模式设置为: ' + '{zoomMode}'); \n" +
-                                    "}} else if (typeof pdfViewer !== 'undefined') { \n" +
-                                    "    // 其他PDF查看器实现\n" +
-                                    $"    pdfViewer.zoomMode = '{zoomMode}'; \n" +
-                                    "}} else { \n" +
-                                    "    console.log('未找到PDF查看器实例'); \n" +
-                                    "}}"
-                                );
-                            }
-                        });
-                    });
-                }
             }
         }
 

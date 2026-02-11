@@ -16,7 +16,7 @@
         </Grid.ColumnDefinitions>
         
         <!-- 左侧边栏 -->
-        <Border x:Name="LeftSidebar" Grid.Column="0" BorderBrush="LightGray" BorderThickness="0,0,1,0" MouseLeave="LeftSidebar_MouseLeave" Width="250" Background="White">
+        <Border x:Name="LeftSidebar" Grid.Column="0" BorderBrush="LightGray" BorderThickness="0,0,1,0" MouseLeave="LeftSidebar_MouseLeave" Width="400" Background="White">
             <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
