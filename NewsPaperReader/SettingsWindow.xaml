@@ -63,6 +63,8 @@
                         <ComboBoxItem Content="图片式列表" Tag="{x:Static models:NewspaperListDisplayMode.ImageList}"/>
                         <ComboBoxItem Content="图片平铺" Tag="{x:Static models:NewspaperListDisplayMode.ImageTile}"/>
                     </ComboBox>
+                    
+
                 </Grid>
             </TabItem>
             

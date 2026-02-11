@@ -155,6 +155,18 @@ namespace NewsPaperReader.Models
             }
         }
 
+        // 是否显示PDF控制工具条
+        private bool _showPdfToolbar = true;
+        public bool ShowPdfToolbar
+        {
+            get => _showPdfToolbar;
+            set
+            {
+                _showPdfToolbar = value;
+                OnPropertyChanged();
+            }
+        }
+
         // 报纸库
         private List<NewspaperInfo> _newspaperLibrary = new List<NewspaperInfo>();
         public List<NewspaperInfo> NewspaperLibrary

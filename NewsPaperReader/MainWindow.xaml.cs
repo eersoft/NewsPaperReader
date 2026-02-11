@@ -276,27 +276,77 @@ namespace NewsPaperReader
                 {
                     // 使用file://协议加载本地PDF文件
                     string pdfUrl = "file:///" + pdfPath.Replace('\\', '/');
-                    WebView2PdfViewer.Source = new Uri(pdfUrl);
                     
-                    // 监听PDF加载完成事件，设置适合宽度显示模式
-                    WebView2PdfViewer.CoreWebView2.NavigationCompleted += (sender, args) =>
-                    {
-                        if (args.IsSuccess)
-                        {
-                            // 使用JavaScript设置PDF适合宽度显示
-                            WebView2PdfViewer.CoreWebView2.ExecuteScriptAsync(
-                                "if (typeof PDFViewerApplication !== 'undefined') { " +
-                                "PDFViewerApplication.zoom = 'page-width'; " +
-                                "}"
-                            );
-                        }
-                    };
+                    // 加载应用设置
+                    var settings = NewsPaperReader.Services.SettingsManager.LoadSettings();
+                    
+                    // 添加新的事件处理程序
+                    WebView2PdfViewer.CoreWebView2.NavigationCompleted += (sender, args) => PdfNavigationCompleted(sender, args, settings);
+                    
+                    // 导航到PDF文件
+                    WebView2PdfViewer.Source = new Uri(pdfUrl);
                 }
             }
             else
             {
                 // 如果尚未下载，显示加载状态
                 WebView2PdfViewer.Source = new Uri("about:blank");
+            }
+        }
+        
+        private void PdfNavigationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs args, NewsPaperReader.Models.AppSettings settings)
+        {
+            if (args.IsSuccess && WebView2PdfViewer != null && WebView2PdfViewer.CoreWebView2 != null)
+            {
+                // 尝试多次执行JavaScript，确保PDF.js完全加载并应用设置
+                for (int i = 0; i < 3; i++)
+                {
+                    int delay = 300 * (i + 1); // 300ms, 600ms, 900ms
+                    System.Threading.Tasks.Task.Delay(delay).ContinueWith(t =>
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            if (WebView2PdfViewer != null && WebView2PdfViewer.CoreWebView2 != null)
+                            {
+                                // 根据ContentDisplayMode设置项来设置PDF的显示模式
+                                string zoomMode = "auto";
+                                switch (settings.ContentDisplayMode)
+                                {
+                                    case NewsPaperReader.Models.ContentDisplayMode.FitWidth:
+                                        zoomMode = "page-width";
+                                        break;
+                                    case NewsPaperReader.Models.ContentDisplayMode.FitHeight:
+                                        zoomMode = "page-height";
+                                        break;
+                                    case NewsPaperReader.Models.ContentDisplayMode.FitPage:
+                                        zoomMode = "page-fit";
+                                        break;
+                                }
+                                
+                                // 使用JavaScript设置PDF显示模式（尝试多种方法）
+                                WebView2PdfViewer.CoreWebView2.ExecuteScriptAsync(
+                                    "// 尝试多种方法设置PDF显示模式\n" +
+                                    "if (typeof PDFViewerApplication !== 'undefined') { \n" +
+                                    "    // 方法1：直接设置zoom属性\n" +
+                                    $"    PDFViewerApplication.zoom = '{zoomMode}'; \n" +
+                                    "    // 方法2：使用eventBus触发zoom事件\n" +
+                                    $"    PDFViewerApplication.eventBus.dispatch('zoom', {{ source: null, zoom: '{zoomMode}' }}); \n" +
+                                    "    // 方法3：直接调用zoom方法\n" +
+                                    "    if (PDFViewerApplication.zoomIn) { \n" +
+                                    $"        PDFViewerApplication.zoom = '{zoomMode}'; \n" +
+                                    "    } \n" +
+                                    $"    console.log('PDF显示模式设置为: ' + '{zoomMode}'); \n" +
+                                    "}} else if (typeof pdfViewer !== 'undefined') { \n" +
+                                    "    // 其他PDF查看器实现\n" +
+                                    $"    pdfViewer.zoomMode = '{zoomMode}'; \n" +
+                                    "}} else { \n" +
+                                    "    console.log('未找到PDF查看器实例'); \n" +
+                                    "}}"
+                                );
+                            }
+                        });
+                    });
+                }
             }
         }
 
