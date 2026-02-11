@@ -1,13 +1,100 @@
-﻿<Window x:Class="NewsPaperReader.MainWindow"
+<Window x:Class="NewsPaperReader.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NewsPaperReader"
-        xmlns:moonPdf="clr-namespace:MoonPdfLib;assembly=MoonPdfLib"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         mc:Ignorable="d"
-        Title="在线报纸阅读器" Height="450" Width="800">
-    <Grid>
+        Title="在线报纸阅读器" Height="800" Width="1200"
+        WindowStartupLocation="CenterScreen">
+    <DockPanel>
+        <!-- 工具栏 -->
+        <ToolBarTray DockPanel.Dock="Top" IsLocked="True">
+            <ToolBar>
+                <Button Content="添加报纸" Command="{Binding AddNewspaperCommand}" Style="{StaticResource DefaultButton}"/>
+                <Button Content="刷新" Command="{Binding RefreshCommand}" Style="{StaticResource DefaultButton}"/>
+                <Button Content="全屏" Command="{Binding FullScreenCommand}" Style="{StaticResource DefaultButton}"/>
+                <Separator/>
+                <Button Content="关于" Command="{Binding AboutCommand}" Style="{StaticResource DefaultButton}"/>
+            </ToolBar>
+        </ToolBarTray>
         
-    </Grid>
+        <!-- 主内容区域 -->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="30"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="250"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <!-- 报纸列表 -->
+                <Border Grid.Column="0" BorderBrush="LightGray" BorderThickness="0,1,1,0">
+                    <DockPanel>
+                        <TextBlock Text="报纸列表" FontWeight="Bold" DockPanel.Dock="Top" Style="{StaticResource DefaultTextBlock}"/>
+                        <ListBox ItemsSource="{Binding Newspapers}" 
+                                 SelectedItem="{Binding SelectedNewspaper}"
+                                 DisplayMemberPath="Name"
+                                 BorderThickness="0">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Padding" Value="10"/>
+                                    <Setter Property="Cursor" Value="Hand"/>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                        </ListBox>
+                    </DockPanel>
+                </Border>
+                
+                <!-- 版面列表 -->
+                <Border Grid.Column="1" BorderBrush="LightGray" BorderThickness="0,1,1,0">
+                    <DockPanel>
+                        <TextBlock Text="版面列表" FontWeight="Bold" DockPanel.Dock="Top" Style="{StaticResource DefaultTextBlock}"/>
+                        <ListBox ItemsSource="{Binding Editions}" 
+                                 SelectedItem="{Binding SelectedEdition}"
+                                 DisplayMemberPath="Title"
+                                 BorderThickness="0">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Padding" Value="10"/>
+                                    <Setter Property="Cursor" Value="Hand"/>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                        </ListBox>
+                    </DockPanel>
+                </Border>
+                
+                <!-- PDF查看器 -->
+                <Border Grid.Column="2" BorderBrush="LightGray" BorderThickness="0,1,0,0">
+                    <DockPanel>
+                        <TextBlock Text="PDF查看器" FontWeight="Bold" DockPanel.Dock="Top" Style="{StaticResource DefaultTextBlock}"/>
+                        <Grid DockPanel.Dock="Bottom" Height="50" Background="LightGray">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Button Content="上一页" Command="{Binding PreviousPageCommand}" Style="{StaticResource DefaultButton}"/>
+                                <TextBlock VerticalAlignment="Center" Margin="10">
+                                    <Run Text="{Binding CurrentPage}"/>
+                                    <Run Text=" / "/>
+                                    <Run Text="{Binding TotalPages}"/>
+                                </TextBlock>
+                                <Button Content="下一页" Command="{Binding NextPageCommand}" Style="{StaticResource DefaultButton}"/>
+                                <Separator Width="20"/>
+                                <Button Content="放大" Command="{Binding ZoomInCommand}" Style="{StaticResource DefaultButton}"/>
+                                <Button Content="缩小" Command="{Binding ZoomOutCommand}" Style="{StaticResource DefaultButton}"/>
+                            </StackPanel>
+                        </Grid>
+                        <wv2:WebView2 x:Name="WebView2PdfViewer" Source="about:blank"/>
+                    </DockPanel>
+                </Border>
+            </Grid>
+            <!-- 状态栏 -->
+            <Border Grid.Row="1" BorderBrush="LightGray" BorderThickness="0,1,0,0" Background="#F0F0F0">
+                <TextBlock Text="{Binding StatusText}" Margin="10" VerticalAlignment="Center" Foreground="#333333"/>
+            </Border>
+        </Grid>
+    </DockPanel>
 </Window>
