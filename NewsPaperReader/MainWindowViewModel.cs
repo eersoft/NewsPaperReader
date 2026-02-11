@@ -126,6 +126,9 @@ namespace NewsPaperReader
             SettingsCommand = new RelayCommand(Settings);
             AboutCommand = new RelayCommand(About);
             
+            // 加载应用设置
+            LoadAppSettings();
+            
             // 从设置中加载报纸列表
             LoadNewspapersFromSettings();
             

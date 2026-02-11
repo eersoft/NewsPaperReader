@@ -10,7 +10,7 @@
         WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         
@@ -20,6 +20,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="5"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 
@@ -35,7 +36,7 @@
                 </ToolBarTray>
                 
                 <!-- 报纸列表 -->
-                <Border Grid.Row="1" BorderBrush="LightGray" BorderThickness="0,1,0,1">
+                <Border Grid.Row="1" BorderBrush="LightGray" BorderThickness="0,1,0,0">
                     <DockPanel>
                         <TextBlock Text="报纸列表" FontWeight="Bold" DockPanel.Dock="Top" Style="{StaticResource DefaultTextBlock}"/>
                         <ListBox ItemsSource="{Binding Newspapers}" 
@@ -97,8 +98,11 @@
                     </DockPanel>
                 </Border>
                 
+                <!-- 分割条 -->
+                <GridSplitter Grid.Row="2" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="LightGray"/>
+                
                 <!-- 版面列表 -->
-                <Border Grid.Row="2">
+                <Border Grid.Row="3" BorderBrush="LightGray" BorderThickness="0,0,0,0">
                     <DockPanel>
                         <TextBlock Text="版面列表" FontWeight="Bold" DockPanel.Dock="Top" Style="{StaticResource DefaultTextBlock}"/>
                         <ListBox ItemsSource="{Binding Editions}" 

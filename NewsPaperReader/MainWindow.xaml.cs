@@ -86,7 +86,7 @@ namespace NewsPaperReader
         {
             if (LeftSidebar != null)
             {
-                LeftSidebar.Width = 0;
+                LeftSidebar.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -94,7 +94,7 @@ namespace NewsPaperReader
         {
             if (LeftSidebar != null)
             {
-                LeftSidebar.Width = 250;
+                LeftSidebar.Visibility = Visibility.Visible;
             }
         }
 
@@ -110,6 +110,8 @@ namespace NewsPaperReader
         {
             if (_currentDisplayStrategy == UIElementDisplayStrategy.AutoHide)
             {
+                // 直接隐藏面板，不再检查鼠标位置
+                // 因为MouseLeave事件只有在鼠标确实离开元素边界时才会触发
                 HideSidebars();
             }
         }
