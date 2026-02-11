@@ -14,8 +14,8 @@
             <ToolBar>
                 <Button Content="添加报纸" Command="{Binding AddNewspaperCommand}" Style="{StaticResource DefaultButton}"/>
                 <Button Content="刷新" Command="{Binding RefreshCommand}" Style="{StaticResource DefaultButton}"/>
-                <Button Content="全屏" Command="{Binding FullScreenCommand}" Style="{StaticResource DefaultButton}"/>
                 <Separator/>
+                <Button Content="设置" Command="{Binding SettingsCommand}" Style="{StaticResource DefaultButton}"/>
                 <Button Content="关于" Command="{Binding AboutCommand}" Style="{StaticResource DefaultButton}"/>
             </ToolBar>
         </ToolBarTray>
@@ -33,13 +33,15 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 
+                <!-- 自动隐藏触发区域 -->
+                <Border Grid.Column="0" Width="5" Background="Transparent" MouseEnter="AutoHideTrigger_MouseEnter"/>
+                
                 <!-- 报纸列表 -->
-                <Border Grid.Column="0" BorderBrush="LightGray" BorderThickness="0,1,1,0">
+                <Border x:Name="NewspaperListBorder" Grid.Column="0" BorderBrush="LightGray" BorderThickness="0,1,1,0" MouseLeave="Sidebar_MouseLeave">
                     <DockPanel>
                         <TextBlock Text="报纸列表" FontWeight="Bold" DockPanel.Dock="Top" Style="{StaticResource DefaultTextBlock}"/>
                         <ListBox ItemsSource="{Binding Newspapers}" 
                                  SelectedItem="{Binding SelectedNewspaper}"
-                                 DisplayMemberPath="Name"
                                  BorderThickness="0">
                             <ListBox.ItemContainerStyle>
                                 <Style TargetType="ListBoxItem">
@@ -47,12 +49,20 @@
                                     <Setter Property="Cursor" Value="Hand"/>
                                 </Style>
                             </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Image Source="{Binding TitleImagePath}" Width="50" Height="50" Stretch="Uniform" Margin="0,0,10,0"/>
+                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
                         </ListBox>
                     </DockPanel>
                 </Border>
                 
                 <!-- 版面列表 -->
-                <Border Grid.Column="1" BorderBrush="LightGray" BorderThickness="0,1,1,0">
+                <Border x:Name="EditionListBorder" Grid.Column="1" BorderBrush="LightGray" BorderThickness="0,1,1,0" MouseLeave="Sidebar_MouseLeave">
                     <DockPanel>
                         <TextBlock Text="版面列表" FontWeight="Bold" DockPanel.Dock="Top" Style="{StaticResource DefaultTextBlock}"/>
                         <ListBox ItemsSource="{Binding Editions}" 
@@ -73,20 +83,6 @@
                 <Border Grid.Column="2" BorderBrush="LightGray" BorderThickness="0,1,0,0">
                     <DockPanel>
                         <TextBlock Text="PDF查看器" FontWeight="Bold" DockPanel.Dock="Top" Style="{StaticResource DefaultTextBlock}"/>
-                        <Grid DockPanel.Dock="Bottom" Height="50" Background="LightGray">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <Button Content="上一页" Command="{Binding PreviousPageCommand}" Style="{StaticResource DefaultButton}"/>
-                                <TextBlock VerticalAlignment="Center" Margin="10">
-                                    <Run Text="{Binding CurrentPage}"/>
-                                    <Run Text=" / "/>
-                                    <Run Text="{Binding TotalPages}"/>
-                                </TextBlock>
-                                <Button Content="下一页" Command="{Binding NextPageCommand}" Style="{StaticResource DefaultButton}"/>
-                                <Separator Width="20"/>
-                                <Button Content="放大" Command="{Binding ZoomInCommand}" Style="{StaticResource DefaultButton}"/>
-                                <Button Content="缩小" Command="{Binding ZoomOutCommand}" Style="{StaticResource DefaultButton}"/>
-                            </StackPanel>
-                        </Grid>
                         <wv2:WebView2 x:Name="WebView2PdfViewer" Source="about:blank"/>
                     </DockPanel>
                 </Border>

@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using Microsoft.Web.WebView2.Wpf;
+using NewsPaperReader.Models;
 
 namespace NewsPaperReader
 {
@@ -29,6 +30,16 @@ namespace NewsPaperReader
         {
             _viewModel = new MainWindowViewModel();
             DataContext = _viewModel;
+            // 订阅NavigateToUrl事件
+            _viewModel.NavigateToUrl += ViewModel_NavigateToUrl;
+        }
+
+        private void ViewModel_NavigateToUrl(string url)
+        {
+            if (WebView2PdfViewer != null && WebView2PdfViewer.CoreWebView2 != null)
+            {
+                WebView2PdfViewer.Source = new Uri(url);
+            }
         }
 
         private async void InitializeWebView2()
@@ -40,6 +51,71 @@ namespace NewsPaperReader
             if (_viewModel != null)
             {
                 _viewModel.PropertyChanged += ViewModel_PropertyChanged;
+                _viewModel.ApplySettings += ApplySettings;
+                // 加载应用设置
+                _viewModel.LoadAppSettings();
+            }
+        }
+
+        private UIElementDisplayStrategy _currentDisplayStrategy = UIElementDisplayStrategy.AlwaysShow;
+
+        private void ApplySettings(UIElementDisplayStrategy displayStrategy, ContentDisplayMode displayMode)
+        {
+            _currentDisplayStrategy = displayStrategy;
+            
+            // 应用界面元素显示策略
+            if (displayStrategy == UIElementDisplayStrategy.AutoHide)
+            {
+                // 初始隐藏侧边栏
+                HideSidebars();
+            }
+            else
+            {
+                // 始终显示
+                ShowSidebars();
+            }
+
+            // 应用内容显示区默认显示模式
+            // 这里需要根据displayMode设置PDF的默认显示模式
+        }
+
+        private void AutoHideTrigger_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (_currentDisplayStrategy == UIElementDisplayStrategy.AutoHide)
+            {
+                ShowSidebars();
+            }
+        }
+
+        private void HideSidebars()
+        {
+            if (NewspaperListBorder != null)
+            {
+                NewspaperListBorder.Width = 0;
+            }
+            if (EditionListBorder != null)
+            {
+                EditionListBorder.Width = 0;
+            }
+        }
+
+        private void ShowSidebars()
+        {
+            if (NewspaperListBorder != null)
+            {
+                NewspaperListBorder.Width = 200;
+            }
+            if (EditionListBorder != null)
+            {
+                EditionListBorder.Width = 250;
+            }
+        }
+
+        private void Sidebar_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (_currentDisplayStrategy == UIElementDisplayStrategy.AutoHide)
+            {
+                HideSidebars();
             }
         }
 
@@ -99,6 +175,20 @@ namespace NewsPaperReader
                     // 使用file://协议加载本地PDF文件
                     string pdfUrl = "file:///" + pdfPath.Replace('\\', '/');
                     WebView2PdfViewer.Source = new Uri(pdfUrl);
+                    
+                    // 监听PDF加载完成事件，设置适合宽度显示模式
+                    WebView2PdfViewer.CoreWebView2.NavigationCompleted += (sender, args) =>
+                    {
+                        if (args.IsSuccess)
+                        {
+                            // 使用JavaScript设置PDF适合宽度显示
+                            WebView2PdfViewer.CoreWebView2.ExecuteScriptAsync(
+                                "if (typeof PDFViewerApplication !== 'undefined') { " +
+                                "PDFViewerApplication.zoom = 'page-width'; " +
+                                "}"
+                            );
+                        }
+                    };
                 }
             }
             else

@@ -1,4 +1,5 @@
 using NewsPaperReader.Models;
+using NewsPaperReader.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,12 +21,8 @@ namespace NewsPaperReader
         // 命令
         public ICommand AddNewspaperCommand { get; }
         public ICommand RefreshCommand { get; }
-        public ICommand FullScreenCommand { get; }
+        public ICommand SettingsCommand { get; }
         public ICommand AboutCommand { get; }
-        public ICommand PreviousPageCommand { get; }
-        public ICommand NextPageCommand { get; }
-        public ICommand ZoomInCommand { get; }
-        public ICommand ZoomOutCommand { get; }
 
         // 属性
         private List<Newspaper> _newspapers = new List<Newspaper>();
@@ -126,29 +123,11 @@ namespace NewsPaperReader
             // 初始化命令
             AddNewspaperCommand = new RelayCommand(AddNewspaper);
             RefreshCommand = new RelayCommand(Refresh);
-            FullScreenCommand = new RelayCommand(FullScreen);
+            SettingsCommand = new RelayCommand(Settings);
             AboutCommand = new RelayCommand(About);
-            PreviousPageCommand = new RelayCommand(PreviousPage);
-            NextPageCommand = new RelayCommand(NextPage);
-            ZoomInCommand = new RelayCommand(ZoomIn);
-            ZoomOutCommand = new RelayCommand(ZoomOut);
             
-            // 初始化数据
-            Newspapers = new List<Newspaper>
-            {
-                new Newspaper("人民日报", "https://paper.people.com.cn/rmrb/paperindex.htm"),
-                new Newspaper("讽刺与幽默", "https://paper.people.com.cn/fcyym/paperindex.htm"),
-                new Newspaper("松江报", "https://www.songjiangbao.com.cn/"),
-                new Newspaper("华西都市报", "https://www.wccdaily.com.cn/"),
-                new Newspaper("中国教师报", "https://www.chinateacher.com.cn/"),
-                new Newspaper("证券日报", "https://www.zqrb.cn/"),
-                new Newspaper("学习时报", "https://www.studytimes.cn/"),
-                new Newspaper("经济日报", "https://www.ce.cn/"),
-                new Newspaper("三峡都市报", "https://www.sxdsb.com.cn/"),
-                new Newspaper("重庆日报", "https://www.cqrb.cn/"),
-                new Newspaper("中国国防报", "https://www.81.cn/"),
-                new Newspaper("科技日报", "https://www.stdaily.com/")
-            };
+            // 从设置中加载报纸列表
+            LoadNewspapersFromSettings();
             
             Editions = new List<Edition>();
         }
@@ -158,8 +137,13 @@ namespace NewsPaperReader
             var dialog = new AddNewspaperDialog();
             if (dialog.ShowDialog() == true && dialog.IsConfirmed)
             {
-                var newspaper = new Newspaper(dialog.NewspaperName, dialog.NewspaperUrl);
+                var newspaper = new Newspaper(dialog.NewspaperName, dialog.NewspaperUrl, dialog.TitleImagePath);
                 Newspapers.Add(newspaper);
+                
+                // 更新设置中的报纸库
+                var settings = SettingsManager.LoadSettings();
+                settings.NewspaperLibrary.Add(new NewspaperInfo(dialog.NewspaperName, dialog.NewspaperUrl, dialog.TitleImagePath));
+                SettingsManager.SaveSettings(settings);
             }
         }
 
@@ -172,9 +156,14 @@ namespace NewsPaperReader
             }
         }
 
-        private void FullScreen(object? parameter)
+        private void Settings(object? parameter)
         {
-            // 实现全屏功能
+            var dialog = new SettingsWindow();
+            if (dialog.ShowDialog() == true)
+            {
+                // 重新加载报纸列表
+                LoadNewspapersFromSettings();
+            }
         }
 
         private void About(object? parameter)
@@ -182,30 +171,33 @@ namespace NewsPaperReader
             System.Windows.MessageBox.Show("在线报纸阅读器 v1.0\n\n一个智能分析和阅读在线报纸的工具", "关于", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
         }
 
-        private void PreviousPage(object? parameter)
+        private void LoadNewspapersFromSettings()
         {
-            if (CurrentPage > 1)
+            var settings = SettingsManager.LoadSettings();
+            string settingsDirectory = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "esNewsPaperReader"
+            );
+            
+            Newspapers = settings.NewspaperLibrary.Select(n => 
             {
-                CurrentPage--;
-            }
+                string titleImagePath = n.TitleImagePath;
+                // 如果是相对路径，转换为绝对路径
+                if (!string.IsNullOrEmpty(titleImagePath) && !Path.IsPathRooted(titleImagePath))
+                {
+                    titleImagePath = Path.Combine(settingsDirectory, titleImagePath);
+                }
+                return new Newspaper(n.Name, n.Url, titleImagePath);
+            }).ToList();
         }
 
-        private void NextPage(object? parameter)
-        {
-            if (CurrentPage < TotalPages)
-            {
-                CurrentPage++;
-            }
-        }
+        public event Action<string>? NavigateToUrl;
+        public event Action<UIElementDisplayStrategy, ContentDisplayMode>? ApplySettings;
 
-        private void ZoomIn(object? parameter)
+        public void LoadAppSettings()
         {
-            // 实现放大功能
-        }
-
-        private void ZoomOut(object? parameter)
-        {
-            // 实现缩小功能
+            var settings = SettingsManager.LoadSettings();
+            ApplySettings?.Invoke(settings.UIElementDisplayStrategy, settings.ContentDisplayMode);
         }
 
         private async Task LoadNewspaperEditionsAsync(Newspaper newspaper)
@@ -242,12 +234,16 @@ namespace NewsPaperReader
                 }
                 else
                 {
-                    StatusText = "未找到PDF链接，请检查URL是否正确";
+                    StatusText = "未找到PDF链接，正在打开网页版...";
+                    // 直接用WebView2打开网页
+                    NavigateToUrl?.Invoke(newspaper.Url);
                 }
             }
             catch (Exception ex)
             {
-                StatusText = $"加载失败: {ex.Message}";
+                StatusText = $"加载失败: {ex.Message}，正在打开网页版...";
+                // 出错时也直接用WebView2打开网页
+                NavigateToUrl?.Invoke(newspaper.Url);
             }
         }
 

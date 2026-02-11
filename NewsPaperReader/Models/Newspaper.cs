@@ -17,6 +17,11 @@ namespace NewsPaperReader.Models
         public string Url { get; set; }
 
         /// <summary>
+        /// 报纸标题图片路径
+        /// </summary>
+        public string TitleImagePath { get; set; }
+
+        /// <summary>
         /// 版面列表
         /// </summary>
         public List<Edition> Editions { get; set; }
@@ -30,14 +35,16 @@ namespace NewsPaperReader.Models
         {
             Name = string.Empty;
             Url = string.Empty;
+            TitleImagePath = string.Empty;
             Editions = new List<Edition>();
             IsLoaded = false;
         }
 
-        public Newspaper(string name, string url)
+        public Newspaper(string name, string url, string titleImagePath = "")
         {
             Name = name;
             Url = url;
+            TitleImagePath = titleImagePath;
             Editions = new List<Edition>();
             IsLoaded = false;
         }

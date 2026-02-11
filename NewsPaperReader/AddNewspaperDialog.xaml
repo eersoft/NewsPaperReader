@@ -5,11 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NewsPaperReader"
         mc:Ignorable="d"
-        Title="添加报纸" Height="300" Width="400"
+        Title="添加报纸" Height="350" Width="500"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -29,16 +30,22 @@
             <TextBox Text="{Binding NewspaperUrl}" Style="{StaticResource DefaultTextBox}"/>
         </StackPanel>
         
-        <StackPanel Grid.Row="3" Margin="10">
+        <StackPanel Orientation="Horizontal" Grid.Row="3" Margin="10">
+            <TextBlock Text="标题图片:" VerticalAlignment="Center" Width="80"/>
+            <TextBox x:Name="TitleImagePathTextBox" Text="{Binding TitleImagePath}" Style="{StaticResource DefaultTextBox}"/>
+            <Button Content="浏览..." Click="BrowseButton_Click" Margin="5,0,0,0" Width="60" Height="25"/>
+        </StackPanel>
+        
+        <StackPanel Grid.Row="4" Margin="10">
             <TextBlock Text="提示:" FontWeight="Bold" Margin="0,10,0,5"/>
             <TextBlock Text="1. 输入报纸的官方网站URL" FontSize="12" Foreground="Gray"/>
             <TextBlock Text="2. 系统将自动分析网页结构" FontSize="12" Foreground="Gray"/>
             <TextBlock Text="3. 请确保URL可以访问" FontSize="12" Foreground="Gray"/>
         </StackPanel>
         
-        <StackPanel Orientation="Horizontal" Grid.Row="4" HorizontalAlignment="Right" Margin="10">
-            <Button Content="取消" Click="CancelButton_Click" Style="{StaticResource DefaultButton}"/>
-            <Button Content="确定" Click="OKButton_Click" Style="{StaticResource DefaultButton}"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="5" HorizontalAlignment="Right" Margin="10">
+            <Button Content="取消" Click="CancelButton_Click" Width="80" Height="30" Margin="0,0,10,0"/>
+            <Button Content="确定" Click="OKButton_Click" Width="80" Height="30"/>
         </StackPanel>
     </Grid>
 </Window>
