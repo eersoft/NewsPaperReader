@@ -29,7 +29,8 @@ namespace NewsPaperReader.Models
     public enum NewspaperListDisplayMode
     {
         TextList,
-        ImageList
+        ImageList,
+        ImageTile
     }
 
     /// <summary>

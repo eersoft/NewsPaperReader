@@ -61,6 +61,7 @@
                     <ComboBox Grid.Row="3" Grid.Column="1" Margin="0,10,0,0" SelectedValue="{Binding Settings.NewspaperListDisplayMode}" SelectedValuePath="Tag">
                         <ComboBoxItem Content="文本式列表" Tag="{x:Static models:NewspaperListDisplayMode.TextList}"/>
                         <ComboBoxItem Content="图片式列表" Tag="{x:Static models:NewspaperListDisplayMode.ImageList}"/>
+                        <ComboBoxItem Content="图片平铺" Tag="{x:Static models:NewspaperListDisplayMode.ImageTile}"/>
                     </ComboBox>
                 </Grid>
             </TabItem>
