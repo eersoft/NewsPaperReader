@@ -21,6 +21,7 @@ namespace NewsPaperReader
         private readonly SettingsWindow _window;
         public AppSettings Settings { get; set; }
         public NewspaperInfo? SelectedNewspaperInfo { get; set; }
+        public event Action<AppSettings>? SettingsChanged;
 
         // 命令
         public RelayCommand OKCommand { get; }
@@ -47,6 +48,8 @@ namespace NewsPaperReader
         {
             // 保存设置
             SettingsManager.SaveSettings(Settings);
+            // 触发设置更改事件
+            SettingsChanged?.Invoke(Settings);
             _window.DialogResult = true;
             _window.Close();
         }

@@ -159,6 +159,13 @@ namespace NewsPaperReader
         private void Settings(object? parameter)
         {
             var dialog = new SettingsWindow();
+            // 订阅设置更改事件
+            dialog.ViewModel.SettingsChanged += (settings) => {
+                // 重新加载应用设置
+                LoadAppSettings();
+                // 重新加载报纸列表
+                LoadNewspapersFromSettings();
+            };
             if (dialog.ShowDialog() == true)
             {
                 // 重新加载报纸列表
@@ -192,12 +199,15 @@ namespace NewsPaperReader
         }
 
         public event Action<string>? NavigateToUrl;
-        public event Action<UIElementDisplayStrategy, ContentDisplayMode>? ApplySettings;
+        public event Action<UIElementDisplayStrategy, ContentDisplayMode, NewspaperListDisplayMode>? ApplySettings;
+
+        public NewspaperListDisplayMode NewspaperListMode { get; private set; } = NewspaperListDisplayMode.TextList;
 
         public void LoadAppSettings()
         {
             var settings = SettingsManager.LoadSettings();
-            ApplySettings?.Invoke(settings.UIElementDisplayStrategy, settings.ContentDisplayMode);
+            NewspaperListMode = settings.NewspaperListDisplayMode;
+            ApplySettings?.Invoke(settings.UIElementDisplayStrategy, settings.ContentDisplayMode, settings.NewspaperListDisplayMode);
         }
 
         private async Task LoadNewspaperEditionsAsync(Newspaper newspaper)

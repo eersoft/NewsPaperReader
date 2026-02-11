@@ -59,9 +59,12 @@ namespace NewsPaperReader
 
         private UIElementDisplayStrategy _currentDisplayStrategy = UIElementDisplayStrategy.AlwaysShow;
 
-        private void ApplySettings(UIElementDisplayStrategy displayStrategy, ContentDisplayMode displayMode)
+        private NewspaperListDisplayMode _currentListMode = NewspaperListDisplayMode.TextList;
+
+        private void ApplySettings(UIElementDisplayStrategy displayStrategy, ContentDisplayMode displayMode, NewspaperListDisplayMode listMode)
         {
             _currentDisplayStrategy = displayStrategy;
+            _currentListMode = listMode;
             
             // 应用界面元素显示策略
             if (displayStrategy == UIElementDisplayStrategy.AutoHide)
@@ -74,9 +77,25 @@ namespace NewsPaperReader
                 // 始终显示
                 ShowSidebars();
             }
-
+            
             // 应用内容显示区默认显示模式
             // 这里需要根据displayMode设置PDF的默认显示模式
+        }
+
+        private void HideSidebars()
+        {
+            if (LeftSidebar != null)
+            {
+                LeftSidebar.Width = 0;
+            }
+        }
+
+        private void ShowSidebars()
+        {
+            if (LeftSidebar != null)
+            {
+                LeftSidebar.Width = 250;
+            }
         }
 
         private void AutoHideTrigger_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -87,31 +106,7 @@ namespace NewsPaperReader
             }
         }
 
-        private void HideSidebars()
-        {
-            if (NewspaperListBorder != null)
-            {
-                NewspaperListBorder.Width = 0;
-            }
-            if (EditionListBorder != null)
-            {
-                EditionListBorder.Width = 0;
-            }
-        }
-
-        private void ShowSidebars()
-        {
-            if (NewspaperListBorder != null)
-            {
-                NewspaperListBorder.Width = 200;
-            }
-            if (EditionListBorder != null)
-            {
-                EditionListBorder.Width = 250;
-            }
-        }
-
-        private void Sidebar_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        private void LeftSidebar_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             if (_currentDisplayStrategy == UIElementDisplayStrategy.AutoHide)
             {
