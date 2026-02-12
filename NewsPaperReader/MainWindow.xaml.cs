@@ -89,6 +89,17 @@ namespace NewsPaperReader
                     double windowWidth = this.ActualWidth;
                     double windowHeight = this.ActualHeight;
                     
+                    // 检查窗口是否最大化
+                    if (this.WindowState == System.Windows.WindowState.Maximized)
+                    {
+                        // 当窗口最大化时，左侧边缘在屏幕左边缘
+                        windowLeft = 0;
+                        // 获取屏幕工作区的顶部和高度
+                        var screen = System.Windows.Forms.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(this).Handle);
+                        windowTop = screen.WorkingArea.Top;
+                        windowHeight = screen.WorkingArea.Height;
+                    }
+                    
                     // 计算鼠标与窗口左侧边缘的距离
                     double mouseDistanceToLeft = screenMousePosition.X - windowLeft;
                     
@@ -97,10 +108,6 @@ namespace NewsPaperReader
                     
                     // 检查鼠标是否在热区内（距离窗口左侧边缘100像素以内）
                     bool isMouseInHotZone = mouseDistanceToLeft >= 0 && mouseDistanceToLeft < 100 && isMouseInWindowVertical;
-                    
-                    // 计算窗口右下角坐标
-                    double windowRight = windowLeft + windowWidth;
-                    double windowBottom = windowTop + windowHeight;
                     
                     // 检查鼠标是否在热区内
                     if (isMouseInHotZone)
@@ -179,7 +186,8 @@ namespace NewsPaperReader
             UpdateNewspaperListLayout();
             
             // 应用内容显示区默认显示模式
-            // 这里需要根据displayMode设置PDF的默认显示模式
+            // 重新加载当前PDF以应用新的显示模式
+            UpdatePdfViewer();
         }
 
         private void HideSidebars()
