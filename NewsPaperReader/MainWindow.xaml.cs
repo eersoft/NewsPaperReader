@@ -10,6 +10,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using Microsoft.Web.WebView2.Wpf;
 using NewsPaperReader.Models;
+using NewsPaperReader.Services;
 using System.Windows.Forms;
 
 namespace NewsPaperReader
@@ -149,7 +150,7 @@ namespace NewsPaperReader
 
         private NewspaperListDisplayMode _currentListMode = NewspaperListDisplayMode.TextList;
 
-        private void ApplySettings(UIElementDisplayStrategy displayStrategy, ContentDisplayMode displayMode, NewspaperListDisplayMode listMode)
+        private void ApplySettings(UIElementDisplayStrategy displayStrategy, NewspaperListDisplayMode listMode)
         {
             _currentDisplayStrategy = displayStrategy;
             _currentListMode = listMode;
@@ -343,25 +344,9 @@ namespace NewsPaperReader
                     // 使用file://协议加载本地PDF文件
                     string pdfUrl = "file:///" + pdfPath.Replace('\\', '/');
                     
-                    // 根据ContentDisplayMode设置项来设置PDF的显示模式
-                    string viewMode = "FitW"; // 默认适应宽度
-                    switch (settings.ContentDisplayMode)
-                    {
-                        case NewsPaperReader.Models.ContentDisplayMode.FitWidth:
-                            viewMode = "FitW";
-                            break;
-                        case NewsPaperReader.Models.ContentDisplayMode.FitHeight:
-                            viewMode = "FitH";
-                            break;
-                        case NewsPaperReader.Models.ContentDisplayMode.FitPage:
-                            viewMode = "Fit";
-                            break;
-                    }
-                    
-                    // 构建PDF显示参数 - 使用正确的Edge PDF查看器参数格式
+                    // 构建PDF显示参数
                     string toolbarParam = settings.ShowPdfToolbar ? "1" : "0";
-                    // 确保参数顺序正确，view参数放在前面
-                    string pdfUrlWithParams = $"{pdfUrl}#view={viewMode}&toolbar={toolbarParam}&pagemode=none";
+                    string pdfUrlWithParams = $"{pdfUrl}#toolbar={toolbarParam}";
                     
                     // 加载带自定义参数的PDF
                     WebView2PdfViewer.Source = new Uri(pdfUrlWithParams);

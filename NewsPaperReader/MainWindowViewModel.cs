@@ -202,7 +202,7 @@ namespace NewsPaperReader
         }
 
         public event Action<string>? NavigateToUrl;
-        public event Action<UIElementDisplayStrategy, ContentDisplayMode, NewspaperListDisplayMode>? ApplySettings;
+        public event Action<UIElementDisplayStrategy, NewspaperListDisplayMode>? ApplySettings;
 
         public NewspaperListDisplayMode NewspaperListMode { get; private set; } = NewspaperListDisplayMode.TextList;
 
@@ -210,7 +210,7 @@ namespace NewsPaperReader
         {
             var settings = SettingsManager.LoadSettings();
             NewspaperListMode = settings.NewspaperListDisplayMode;
-            ApplySettings?.Invoke(settings.UIElementDisplayStrategy, settings.ContentDisplayMode, settings.NewspaperListDisplayMode);
+            ApplySettings?.Invoke(settings.UIElementDisplayStrategy, settings.NewspaperListDisplayMode);
         }
 
         private async Task LoadNewspaperEditionsAsync(Newspaper newspaper)
