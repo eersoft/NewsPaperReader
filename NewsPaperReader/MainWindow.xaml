@@ -9,14 +9,19 @@
         Title="在线报纸阅读器" Height="800" Width="1200"
         WindowStartupLocation="CenterScreen"
         Loaded="MainWindow_Loaded">
+
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         
         <!-- 左侧边栏 -->
-        <Border x:Name="LeftSidebar" Grid.Column="0" BorderBrush="LightGray" BorderThickness="0,0,1,0" MouseLeave="LeftSidebar_MouseLeave" Width="400" Background="White">
+        <Border x:Name="LeftSidebar" Grid.Row="0" Grid.Column="0" BorderBrush="LightGray" BorderThickness="0,0,1,0" MouseLeave="LeftSidebar_MouseLeave" Width="400" Background="White">
             <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -138,11 +143,13 @@
         </Border>
         
         <!-- 主内容区域 -->
-        <Border Grid.Column="1" BorderBrush="LightGray" BorderThickness="0,0,0,0">
+        <Border Grid.Row="0" Grid.Column="1" BorderBrush="LightGray" BorderThickness="0,0,0,0">
             <DockPanel>
                 <wv2:WebView2 x:Name="WebView2PdfViewer" Source="about:blank"/>
             </DockPanel>
         </Border>
+        
+
         
         <!-- 自动隐藏触发区域 -->
         <Border Width="5" Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Background="Transparent" MouseEnter="AutoHideTrigger_MouseEnter" HorizontalAlignment="Left" Panel.ZIndex="100"/>

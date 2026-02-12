@@ -1,6 +1,7 @@
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -260,6 +261,19 @@ namespace NewsPaperReader
             {
                 // 更新报纸列表布局
                 UpdateNewspaperListLayout();
+            }
+            
+            if (e.PropertyName == nameof(MainWindowViewModel.StatusText))
+            {
+                // 在窗口标题栏上显示状态和进度
+                if (!string.IsNullOrEmpty(_viewModel.StatusText))
+                {
+                    this.Title = $"在线报纸阅读器 - {_viewModel.StatusText}";
+                }
+                else
+                {
+                    this.Title = "在线报纸阅读器";
+                }
             }
         }
         

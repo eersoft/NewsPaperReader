@@ -219,6 +219,9 @@ namespace NewsPaperReader
             {
                 // 显示加载状态
                 StatusText = $"正在加载 {newspaper.Name} 的版面信息...";
+                
+                // 清空之前的版面列表
+                Editions = new List<Edition>();
 
                 // 分析网页
                 var editions = await _webAnalyzer.AnalyzeNewspaperPage(newspaper.Url);
@@ -243,6 +246,11 @@ namespace NewsPaperReader
                     if (newspaper.Editions.Count > 0)
                     {
                         SelectedEdition = newspaper.Editions[0];
+                        // 延迟清空状态文本，确保用户有足够时间看到加载成功的提示
+                        System.Threading.Tasks.Task.Delay(500).ContinueWith(t =>
+                        {
+                            StatusText = string.Empty;
+                        });
                     }
                 }
                 else
@@ -250,6 +258,11 @@ namespace NewsPaperReader
                     StatusText = "未找到PDF链接，正在打开网页版...";
                     // 直接用WebView2打开网页
                     NavigateToUrl?.Invoke(newspaper.Url);
+                    // 延迟清空状态文本，确保用户有足够时间看到提示
+                    System.Threading.Tasks.Task.Delay(500).ContinueWith(t =>
+                    {
+                        StatusText = string.Empty;
+                    });
                 }
             }
             catch (Exception ex)
@@ -257,6 +270,11 @@ namespace NewsPaperReader
                 StatusText = $"加载失败: {ex.Message}，正在打开网页版...";
                 // 出错时也直接用WebView2打开网页
                 NavigateToUrl?.Invoke(newspaper.Url);
+                // 延迟清空状态文本，确保用户有足够时间看到提示
+                System.Threading.Tasks.Task.Delay(500).ContinueWith(t =>
+                {
+                    StatusText = string.Empty;
+                });
             }
         }
 
