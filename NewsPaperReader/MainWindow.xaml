@@ -175,9 +175,10 @@
         
         <!-- 主内容区域 -->
         <Border Grid.Row="0" Grid.Column="1" BorderBrush="LightGray" BorderThickness="0,0,0,0">
-            <DockPanel>
+            <Grid x:Name="ContentContainer">
+                <!-- WebView2 -->
                 <wv2:WebView2 x:Name="WebView2PdfViewer" Source="about:blank"/>
-            </DockPanel>
+            </Grid>
         </Border>
         
 

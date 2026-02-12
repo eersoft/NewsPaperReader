@@ -61,6 +61,14 @@ namespace NewsPaperReader
             _mousePositionTimer.Tick += MousePositionTimer_Tick;
             _mousePositionTimer.Start();
 
+            // 加载HTML标题页面
+            string titlePagePath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "3rd_res", "html", "title.html");
+            if (System.IO.File.Exists(titlePagePath))
+            {
+                string titlePageUrl = "file:///" + titlePagePath.Replace('\\', '/');
+                WebView2PdfViewer.Source = new Uri(titlePageUrl);
+            }
+
             // 订阅事件
             if (_viewModel != null)
             {
@@ -73,6 +81,8 @@ namespace NewsPaperReader
             // 确保左侧面板显示出来
             ShowSidebars();
         }
+        
+
         
         private void MousePositionTimer_Tick(object sender, EventArgs e)
         {
