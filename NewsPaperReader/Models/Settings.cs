@@ -131,18 +131,6 @@ namespace NewsPaperReader.Models
             }
         }
 
-        // 启动后是否自动全屏
-        private bool _autoFullScreenOnStartup = false;
-        public bool AutoFullScreenOnStartup
-        {
-            get => _autoFullScreenOnStartup;
-            set
-            {
-                _autoFullScreenOnStartup = value;
-                OnPropertyChanged();
-            }
-        }
-
         // 报纸列表显示模式
         private NewspaperListDisplayMode _newspaperListDisplayMode = NewspaperListDisplayMode.TextList;
         public NewspaperListDisplayMode NewspaperListDisplayMode

@@ -9,6 +9,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <AssemblyName>NewsPaperReader</AssemblyName>
     <RootNamespace>NewsPaperReader</RootNamespace>
+    <ApplicationIcon>3rd_res\icon\报.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>

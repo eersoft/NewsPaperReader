@@ -45,29 +45,17 @@
                         <ComboBoxItem Content="自动隐藏" Tag="{x:Static models:UIElementDisplayStrategy.AutoHide}"/>
                     </ComboBox>
                     
-                    <!-- 内容显示区默认显示模式 -->
-                    <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,10,10,0" VerticalAlignment="Center">内容显示区默认显示模式:</TextBlock>
-                    <ComboBox Grid.Row="1" Grid.Column="1" Margin="0,10,0,0" SelectedValue="{Binding Settings.ContentDisplayMode}" SelectedValuePath="Tag">
-                        <ComboBoxItem Content="适合宽度" Tag="{x:Static models:ContentDisplayMode.FitWidth}"/>
-                        <ComboBoxItem Content="适合高度" Tag="{x:Static models:ContentDisplayMode.FitHeight}"/>
-                        <ComboBoxItem Content="适合页面" Tag="{x:Static models:ContentDisplayMode.FitPage}"/>
-                    </ComboBox>
-                    
-                    <!-- 启动后是否自动全屏 -->
-                    <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,10,10,0" VerticalAlignment="Center">启动后自动全屏:</TextBlock>
-                    <CheckBox Grid.Row="2" Grid.Column="1" Margin="0,10,0,0" IsChecked="{Binding Settings.AutoFullScreenOnStartup}"/>
-                    
                     <!-- 报纸列表显示模式 -->
-                    <TextBlock Grid.Row="3" Grid.Column="0" Margin="0,10,10,0" VerticalAlignment="Center">报纸列表显示模式:</TextBlock>
-                    <ComboBox Grid.Row="3" Grid.Column="1" Margin="0,10,0,0" SelectedValue="{Binding Settings.NewspaperListDisplayMode}" SelectedValuePath="Tag">
+                    <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,10,10,0" VerticalAlignment="Center">报纸列表显示模式:</TextBlock>
+                    <ComboBox Grid.Row="1" Grid.Column="1" Margin="0,10,0,0" SelectedValue="{Binding Settings.NewspaperListDisplayMode}" SelectedValuePath="Tag">
                         <ComboBoxItem Content="文本式列表" Tag="{x:Static models:NewspaperListDisplayMode.TextList}"/>
                         <ComboBoxItem Content="图片式列表" Tag="{x:Static models:NewspaperListDisplayMode.ImageList}"/>
                         <ComboBoxItem Content="图片平铺" Tag="{x:Static models:NewspaperListDisplayMode.ImageTile}"/>
                     </ComboBox>
                     
                     <!-- 显示PDF默认工具栏 -->
-                    <TextBlock Grid.Row="4" Grid.Column="0" Margin="0,10,10,0" VerticalAlignment="Center">显示PDF默认工具栏:</TextBlock>
-                    <CheckBox Grid.Row="4" Grid.Column="1" Margin="0,10,0,0" IsChecked="{Binding Settings.ShowPdfToolbar}"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,10,10,0" VerticalAlignment="Center">显示PDF默认工具栏:</TextBlock>
+                    <CheckBox Grid.Row="2" Grid.Column="1" Margin="0,10,0,0" IsChecked="{Binding Settings.ShowPdfToolbar}"/>
                     
 
                 </Grid>
