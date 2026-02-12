@@ -79,7 +79,8 @@
                             <ListBox x:Name="NewspaperListBox" ItemsSource="{Binding Newspapers}" 
                                  SelectedItem="{Binding SelectedNewspaper}"
                                  BorderThickness="0"
-                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 VerticalAlignment="Stretch">
                             <ListBox.ItemContainerStyle>
                                 <Style TargetType="ListBoxItem">
                                     <Setter Property="Padding" Value="2"/>
@@ -160,7 +161,8 @@
                             <ListBox ItemsSource="{Binding Editions}" 
                                      SelectedItem="{Binding SelectedEdition}"
                                      DisplayMemberPath="Title"
-                                     BorderThickness="0" Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType={x:Type Border}}}">
+                                     BorderThickness="0"
+                                     VerticalAlignment="Stretch">
                                 <ListBox.ItemContainerStyle>
                                     <Style TargetType="ListBoxItem">
                                         <Setter Property="Padding" Value="5"/>

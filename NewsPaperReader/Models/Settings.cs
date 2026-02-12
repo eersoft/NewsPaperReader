@@ -155,6 +155,30 @@ namespace NewsPaperReader.Models
             }
         }
 
+        // 是否禁用WebView2默认右键菜单
+        private bool _disableWebView2ContextMenu = false;
+        public bool DisableWebView2ContextMenu
+        {
+            get => _disableWebView2ContextMenu;
+            set
+            {
+                _disableWebView2ContextMenu = value;
+                OnPropertyChanged();
+            }
+        }
+
+        // 左侧面板宽度
+        private int _leftSidebarWidth = 150;
+        public int LeftSidebarWidth
+        {
+            get => _leftSidebarWidth;
+            set
+            {
+                _leftSidebarWidth = value;
+                OnPropertyChanged();
+            }
+        }
+
         // 报纸库
         private List<NewspaperInfo> _newspaperLibrary = new List<NewspaperInfo>();
         public List<NewspaperInfo> NewspaperLibrary

@@ -258,11 +258,6 @@ namespace NewsPaperReader
                     StatusText = "未找到PDF链接，正在打开网页版...";
                     // 直接用WebView2打开网页
                     NavigateToUrl?.Invoke(newspaper.Url);
-                    // 延迟清空状态文本，确保用户有足够时间看到提示
-                    System.Threading.Tasks.Task.Delay(500).ContinueWith(t =>
-                    {
-                        StatusText = string.Empty;
-                    });
                 }
             }
             catch (Exception ex)
@@ -270,11 +265,6 @@ namespace NewsPaperReader
                 StatusText = $"加载失败: {ex.Message}，正在打开网页版...";
                 // 出错时也直接用WebView2打开网页
                 NavigateToUrl?.Invoke(newspaper.Url);
-                // 延迟清空状态文本，确保用户有足够时间看到提示
-                System.Threading.Tasks.Task.Delay(500).ContinueWith(t =>
-                {
-                    StatusText = string.Empty;
-                });
             }
         }
 

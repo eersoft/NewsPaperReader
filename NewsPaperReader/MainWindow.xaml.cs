@@ -55,6 +55,19 @@ namespace NewsPaperReader
             // 初始化WebView2
             await WebView2PdfViewer.EnsureCoreWebView2Async();
 
+            // 禁用WebView2的F12键和调试功能
+            WebView2PdfViewer.CoreWebView2.Settings.AreDevToolsEnabled = false;
+
+            // 加载DisableWebView2ContextMenu设置
+            var settings = SettingsManager.LoadSettings();
+            WebView2PdfViewer.CoreWebView2.Settings.AreDefaultContextMenusEnabled = !settings.DisableWebView2ContextMenu;
+
+            // 订阅WebView2的导航完成事件
+            WebView2PdfViewer.NavigationCompleted += WebView2PdfViewer_NavigationCompleted;
+
+            // 订阅WebView2的新窗口请求事件，确保所有链接都在当前窗口中打开
+            WebView2PdfViewer.CoreWebView2.NewWindowRequested += WebView2PdfViewer_NewWindowRequested;
+
             // 初始化鼠标位置定时器
             _mousePositionTimer = new System.Windows.Threading.DispatcherTimer();
             _mousePositionTimer.Interval = TimeSpan.FromMilliseconds(50);
@@ -187,10 +200,22 @@ namespace NewsPaperReader
                 if (LeftSidebar != null)
                 {
                     Grid.SetColumn(LeftSidebar, 0);
-                    LeftSidebar.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
+                    LeftSidebar.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
                     LeftSidebar.VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
+                    // 从设置中获取左侧面板宽度
+                    var settings = SettingsManager.LoadSettings();
+                    LeftSidebar.Width = settings.LeftSidebarWidth;
+                    LeftSidebar.Height = double.NaN; // 清除固定高度
                     LeftSidebar.Margin = new Thickness(0, 0, 0, 0);
+                    System.Windows.Controls.Panel.SetZIndex(LeftSidebar, 0); // 重置ZIndex
                 }
+            }
+            
+            // 应用DisableWebView2ContextMenu设置
+            if (WebView2PdfViewer != null && WebView2PdfViewer.CoreWebView2 != null)
+            {
+                var settings = SettingsManager.LoadSettings();
+                WebView2PdfViewer.CoreWebView2.Settings.AreDefaultContextMenusEnabled = !settings.DisableWebView2ContextMenu;
             }
             
             // 更新报纸列表布局
@@ -219,7 +244,9 @@ namespace NewsPaperReader
                 {
                     LeftSidebar.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
                     LeftSidebar.VerticalAlignment = System.Windows.VerticalAlignment.Top;
-                    LeftSidebar.Width = 240;
+                    // 从设置中获取左侧面板宽度
+                    var settings = SettingsManager.LoadSettings();
+                    LeftSidebar.Width = settings.LeftSidebarWidth;
                     LeftSidebar.Height = this.ActualHeight;
                     LeftSidebar.Margin = new Thickness(0, 0, 0, 0);
                     System.Windows.Controls.Panel.SetZIndex(LeftSidebar, 100);
@@ -392,6 +419,47 @@ namespace NewsPaperReader
         {
             // 确保左侧面板显示出来
             ShowSidebars();
+        }
+        
+        private void WebView2PdfViewer_NavigationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs e)
+        {
+            // 当WebView2导航完成时，更新状态文本
+            if (_viewModel != null && WebView2PdfViewer != null && WebView2PdfViewer.Source != null)
+            {
+                string uriString = WebView2PdfViewer.Source.ToString();
+                // 检查是否是HTML标题页面
+                if (uriString.Contains("title.html"))
+                {
+                    _viewModel.StatusText = "就绪";
+                }
+                // 检查是否是PDF文件
+                else if (uriString.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+                {
+                    _viewModel.StatusText = "PDF文档加载完成";
+                }
+                // 检查是否是网页
+                else if (uriString.StartsWith("http://") || uriString.StartsWith("https://"))
+                {
+                    _viewModel.StatusText = "网页加载完成";
+                }
+                // 其他情况
+                else
+                {
+                    _viewModel.StatusText = "就绪";
+                }
+            }
+        }
+
+        private void WebView2PdfViewer_NewWindowRequested(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NewWindowRequestedEventArgs e)
+        {
+            // 阻止默认的新窗口行为
+            e.Handled = true;
+
+            // 在当前WebView2中打开链接
+            if (e.Uri != null && WebView2PdfViewer != null && WebView2PdfViewer.CoreWebView2 != null)
+            {
+                WebView2PdfViewer.Source = new Uri(e.Uri);
+            }
         }
     }
 }
