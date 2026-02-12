@@ -10,6 +10,29 @@
         WindowStartupLocation="CenterScreen"
         Loaded="MainWindow_Loaded">
 
+    <Window.Resources>
+        <!-- 图标资源 -->
+        <BitmapImage x:Key="AddIcon" UriSource="pack://application:,,,/NewsPaperReader;component/3rd_res/png/添加.png" />
+        <BitmapImage x:Key="RefreshIcon" UriSource="pack://application:,,,/NewsPaperReader;component/3rd_res/png/刷新.png" />
+        <BitmapImage x:Key="SettingsIcon" UriSource="pack://application:,,,/NewsPaperReader;component/3rd_res/png/设置.png" />
+        <BitmapImage x:Key="AboutIcon" UriSource="pack://application:,,,/NewsPaperReader;component/3rd_res/png/关于.png" />
+        
+        <!-- 图标按钮样式 -->
+        <Style x:Key="IconButton" TargetType="Button">
+            <Setter Property="Width" Value="36" />
+            <Setter Property="Height" Value="36" />
+            <Setter Property="Margin" Value="2" />
+            <Setter Property="ToolTip" Value="{Binding Content}" />
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <Image Source="{Binding}" Width="24" Height="24" />
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -33,11 +56,19 @@
                     <!-- 工具栏 -->
                     <ToolBarTray Grid.Row="0" IsLocked="True" Background="#F0F0F0">
                         <ToolBar>
-                            <Button Content="添加报纸" Command="{Binding AddNewspaperCommand}" Style="{StaticResource DefaultButton}"/>
-                            <Button Content="刷新" Command="{Binding RefreshCommand}" Style="{StaticResource DefaultButton}"/>
+                            <Button ToolTip="添加报纸" Command="{Binding AddNewspaperCommand}" Width="36" Height="36" Margin="2">
+                                <Image Source="pack://siteoforigin:,,,/3rd_res/png/添加.png" Width="24" Height="24" />
+                            </Button>
+                            <Button ToolTip="刷新" Command="{Binding RefreshCommand}" Width="36" Height="36" Margin="2">
+                                <Image Source="pack://siteoforigin:,,,/3rd_res/png/刷新.png" Width="24" Height="24" />
+                            </Button>
                             <Separator/>
-                            <Button Content="设置" Command="{Binding SettingsCommand}" Style="{StaticResource DefaultButton}"/>
-                            <Button Content="关于" Command="{Binding AboutCommand}" Style="{StaticResource DefaultButton}"/>
+                            <Button ToolTip="设置" Command="{Binding SettingsCommand}" Width="36" Height="36" Margin="2">
+                                <Image Source="pack://siteoforigin:,,,/3rd_res/png/设置.png" Width="24" Height="24" />
+                            </Button>
+                            <Button ToolTip="关于" Command="{Binding AboutCommand}" Width="36" Height="36" Margin="2">
+                                <Image Source="pack://siteoforigin:,,,/3rd_res/png/关于.png" Width="24" Height="24" />
+                            </Button>
                         </ToolBar>
                     </ToolBarTray>
                     
