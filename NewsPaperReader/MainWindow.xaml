@@ -46,15 +46,15 @@
                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                             <ListBox.ItemContainerStyle>
                                 <Style TargetType="ListBoxItem">
-                                    <Setter Property="Padding" Value="5"/>
+                                    <Setter Property="Padding" Value="2"/>
                                     <Setter Property="Cursor" Value="Hand"/>
-                                    <Setter Property="Margin" Value="2"/>
+                                    <Setter Property="Margin" Value="1"/>
                                 </Style>
                             </ListBox.ItemContainerStyle>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0">
-                                        <Image x:Name="TitleImage" Source="{Binding TitleImagePath}" Width="100" Height="70" Stretch="Uniform" Margin="0" Visibility="Collapsed"/>
+                                        <Image x:Name="TitleImage" Source="{Binding TitleImagePath}" Width="100" Height="40" Stretch="Uniform" Margin="0" Visibility="Collapsed"/>
                                         <TextBlock x:Name="NewspaperName" Text="{Binding Name}" VerticalAlignment="Center" TextAlignment="Left" Margin="0"/>
                                     </StackPanel>
                                     <DataTemplate.Triggers>

@@ -9,6 +9,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using Microsoft.Web.WebView2.Wpf;
 using NewsPaperReader.Models;
+using System.Windows.Forms;
 
 namespace NewsPaperReader
 {
@@ -52,6 +53,12 @@ namespace NewsPaperReader
             // 初始化WebView2
             await WebView2PdfViewer.EnsureCoreWebView2Async();
 
+            // 初始化鼠标位置定时器
+            _mousePositionTimer = new System.Windows.Threading.DispatcherTimer();
+            _mousePositionTimer.Interval = TimeSpan.FromMilliseconds(50);
+            _mousePositionTimer.Tick += MousePositionTimer_Tick;
+            _mousePositionTimer.Start();
+
             // 订阅事件
             if (_viewModel != null)
             {
@@ -67,31 +74,65 @@ namespace NewsPaperReader
         
         private void MousePositionTimer_Tick(object sender, EventArgs e)
         {
-            if (_currentDisplayStrategy == UIElementDisplayStrategy.AutoHide)
+            if (_currentDisplayStrategy == UIElementDisplayStrategy.AutoHide && this.IsVisible)
             {
-                // 获取鼠标在屏幕上的位置
-                var screenMousePosition = System.Windows.Input.Mouse.GetPosition(null);
-                
-                // 将屏幕坐标转换为窗口坐标
-                var windowMousePosition = this.PointFromScreen(screenMousePosition);
-                
-                // 检查鼠标是否在窗口内，并且在左侧边缘附近（距离左侧边缘100像素以内）
-                if (windowMousePosition.X >= 0 && windowMousePosition.X < 100 &&
-                    windowMousePosition.Y >= 0 && windowMousePosition.Y < this.ActualHeight)
+                try
                 {
-                    // 显示左侧面板
-                    ShowSidebars();
-                }
-                else
-                {
-                    // 检查鼠标是否在左侧面板内
-                    var sidebarMousePosition = System.Windows.Input.Mouse.GetPosition(LeftSidebar);
-                    if (sidebarMousePosition.X < 0 || sidebarMousePosition.X > LeftSidebar.ActualWidth ||
-                        sidebarMousePosition.Y < 0 || sidebarMousePosition.Y > LeftSidebar.ActualHeight)
+                    // 获取鼠标在屏幕上的位置（使用更可靠的方法）
+                    var cursorPosition = System.Windows.Forms.Cursor.Position;
+                    var screenMousePosition = new System.Windows.Point(cursorPosition.X, cursorPosition.Y);
+                    
+                    // 获取窗口在屏幕中的位置
+                    double windowLeft = this.Left;
+                    double windowTop = this.Top;
+                    double windowWidth = this.ActualWidth;
+                    double windowHeight = this.ActualHeight;
+                    
+                    // 计算鼠标与窗口左侧边缘的距离
+                    double mouseDistanceToLeft = screenMousePosition.X - windowLeft;
+                    
+                    // 检查鼠标是否在窗口的垂直范围内
+                    bool isMouseInWindowVertical = screenMousePosition.Y >= windowTop && screenMousePosition.Y <= windowTop + windowHeight;
+                    
+                    // 检查鼠标是否在热区内（距离窗口左侧边缘100像素以内）
+                    bool isMouseInHotZone = mouseDistanceToLeft >= 0 && mouseDistanceToLeft < 100 && isMouseInWindowVertical;
+                    
+                    // 计算窗口右下角坐标
+                    double windowRight = windowLeft + windowWidth;
+                    double windowBottom = windowTop + windowHeight;
+                    
+                    // 检查鼠标是否在热区内
+                    if (isMouseInHotZone)
                     {
-                        // 隐藏左侧面板
-                        HideSidebars();
+                        // 显示左侧面板
+                        ShowSidebars();
                     }
+                    else if (LeftSidebar != null && LeftSidebar.Visibility == Visibility.Visible)
+                    {
+                        // 只有当左侧面板可见时，才检查鼠标是否在面板内
+                        try
+                        {
+                            // 检查鼠标是否在左侧面板内
+                            var sidebarMousePosition = System.Windows.Input.Mouse.GetPosition(LeftSidebar);
+                            
+                            bool isMouseInSidebar = sidebarMousePosition.X >= 0 && sidebarMousePosition.X < LeftSidebar.ActualWidth &&
+                                                  sidebarMousePosition.Y >= 0 && sidebarMousePosition.Y < LeftSidebar.ActualHeight;
+                            
+                            if (!isMouseInSidebar)
+                            {
+                                // 隐藏左侧面板
+                                HideSidebars();
+                            }
+                        }
+                        catch
+                        {
+                            // 忽略可能的异常
+                        }
+                    }
+                }
+                catch
+                {
+                    // 忽略可能的异常
                 }
             }
         }
@@ -158,7 +199,7 @@ namespace NewsPaperReader
                 {
                     LeftSidebar.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
                     LeftSidebar.VerticalAlignment = System.Windows.VerticalAlignment.Top;
-                    LeftSidebar.Width = 250;
+                    LeftSidebar.Width = 240;
                     LeftSidebar.Height = this.ActualHeight;
                     LeftSidebar.Margin = new Thickness(0, 0, 0, 0);
                     System.Windows.Controls.Panel.SetZIndex(LeftSidebar, 100);
@@ -281,7 +322,7 @@ namespace NewsPaperReader
                     string pdfUrl = "file:///" + pdfPath.Replace('\\', '/');
                     
                     // 根据ContentDisplayMode设置项来设置PDF的显示模式
-                    string viewMode = "FitW";
+                    string viewMode = "FitW"; // 默认适应宽度
                     switch (settings.ContentDisplayMode)
                     {
                         case NewsPaperReader.Models.ContentDisplayMode.FitWidth:
@@ -295,12 +336,10 @@ namespace NewsPaperReader
                             break;
                     }
                     
-                    // 添加PDF显示参数
-                    // #view=FitW 默认适应宽度显示（FitH=适应高度，Fit=适应页面，100=100%缩放）
-                    // #pagemode=none 隐藏侧边栏
-                    // #toolbar=0 隐藏工具栏（根据设置决定）
-                    string toolbarParam = settings.ShowPdfToolbar ? "" : "&toolbar=0";
-                    string pdfUrlWithParams = $"{pdfUrl}#view={viewMode}&pagemode=none{toolbarParam}";
+                    // 构建PDF显示参数
+                    // Edge PDF查看器参数格式：#view=FitW&toolbar=0&pagemode=none
+                    string toolbarParam = settings.ShowPdfToolbar ? "1" : "0";
+                    string pdfUrlWithParams = $"{pdfUrl}#view={viewMode}&toolbar={toolbarParam}&pagemode=none";
                     
                     // 加载带自定义参数的PDF
                     WebView2PdfViewer.Source = new Uri(pdfUrlWithParams);
