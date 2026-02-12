@@ -358,9 +358,9 @@ namespace NewsPaperReader
                             break;
                     }
                     
-                    // 构建PDF显示参数
-                    // Edge PDF查看器参数格式：#view=FitW&toolbar=0&pagemode=none
+                    // 构建PDF显示参数 - 使用正确的Edge PDF查看器参数格式
                     string toolbarParam = settings.ShowPdfToolbar ? "1" : "0";
+                    // 确保参数顺序正确，view参数放在前面
                     string pdfUrlWithParams = $"{pdfUrl}#view={viewMode}&toolbar={toolbarParam}&pagemode=none";
                     
                     // 加载带自定义参数的PDF
@@ -373,6 +373,8 @@ namespace NewsPaperReader
                 WebView2PdfViewer.Source = new Uri("about:blank");
             }
         }
+        
+
 
         protected override void OnClosed(System.EventArgs e)
         {
