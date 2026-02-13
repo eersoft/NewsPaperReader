@@ -12,7 +12,6 @@ using Microsoft.Web.WebView2.Wpf;
 using NewsPaperReader.Models;
 using NewsPaperReader.Services;
 using System.Windows.Forms;
-using System.IO;
 
 namespace NewsPaperReader
 {
@@ -101,18 +100,32 @@ namespace NewsPaperReader
                     mousePosition.Y <= windowTop + windowHeight)
                 {
                     // 显示侧边栏
-                    if (!_viewModel.IsSidebarVisible || _viewModel.SidebarWidth == 0)
-                    {
-                        LogSidebarAction("Show", "MouseNearLeftEdge", mousePosition, windowLeft, windowTop, windowWidth, windowHeight, this.WindowState, _viewModel.SidebarWidth);
-                    }
                     _viewModel.IsSidebarVisible = true;
                     _viewModel.SidebarWidth = 300;
                 }
                 else if (_viewModel.IsSidebarVisible && _viewModel.SidebarWidth > 0)
                 {
                     // 鼠标不在侧边栏区域内，也不在触发区域内，立即隐藏侧边栏
-                    LogSidebarAction("Hide", "MouseAwayFromLeftEdge", mousePosition, windowLeft, windowTop, windowWidth, windowHeight, this.WindowState, _viewModel.SidebarWidth);
                     _viewModel.SidebarWidth = 0;
+                }
+
+                // 检查鼠标是否在窗口下边界10px内
+                const int statusBarTriggerDistance = 10;
+                if (mousePosition.Y >= (windowTop + windowHeight - statusBarTriggerDistance) && 
+                    mousePosition.Y <= windowTop + windowHeight && 
+                    mousePosition.X >= windowLeft && 
+                    mousePosition.X <= windowLeft + windowWidth)
+                {
+                    // 显示状态栏
+                    if (!_viewModel.IsStatusBarVisible)
+                    {
+                        _viewModel.IsStatusBarVisible = true;
+                    }
+                }
+                else if (_viewModel.IsStatusBarVisible && _viewModel.StatusText == "就绪")
+                {
+                    // 鼠标不在窗口下边界附近，且状态为就绪，隐藏状态栏
+                    _viewModel.IsStatusBarVisible = false;
                 }
             }
             catch (Exception)
@@ -361,7 +374,6 @@ namespace NewsPaperReader
 
         private System.Windows.Threading.DispatcherTimer _mouseMonitorTimer;
         private bool _isMouseOverSidebar = false;
-        private string _logFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "SidebarLog.txt");
 
         private void Sidebar_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
@@ -400,24 +412,11 @@ namespace NewsPaperReader
                 }
                 
                 // 立即隐藏侧边栏
-                LogSidebarAction("Hide", "MouseLeave", mousePosition, this.Left, this.Top, this.Width, this.Height, this.WindowState, _viewModel.SidebarWidth);
                 _viewModel.SidebarWidth = 0;
             }
         }
 
-        private void LogSidebarAction(string action, string reason, System.Drawing.Point mousePosition, double windowLeft, double windowTop, double windowWidth, double windowHeight, WindowState windowState, double sidebarWidth)
-        {
-            try
-            {
-                string logEntry = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] Action: {action}, Reason: {reason}, Mouse: ({mousePosition.X}, {mousePosition.Y}), Window: (Left: {windowLeft}, Top: {windowTop}, Width: {windowWidth}, Height: {windowHeight}), WindowState: {windowState}, SidebarWidth: {sidebarWidth}";
-                File.AppendAllText(_logFilePath, logEntry + Environment.NewLine);
-            }
-            catch (Exception)
-            {
-                // 忽略日志写入错误
-            }
-        }
-        
+
         private void WebView2PdfViewer_NavigationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs e)
         {
             // 当WebView2导航完成时，更新状态文本
@@ -432,12 +431,12 @@ namespace NewsPaperReader
                 // 检查是否是PDF文件
                 else if (uriString.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
                 {
-                    _viewModel.StatusText = "PDF文档加载完成";
+                    _viewModel.StatusText = "就绪";
                 }
                 // 检查是否是网页
                 else if (uriString.StartsWith("http://") || uriString.StartsWith("https://"))
                 {
-                    _viewModel.StatusText = "网页加载完成";
+                    _viewModel.StatusText = "就绪";
                 }
                 // 其他情况
                 else

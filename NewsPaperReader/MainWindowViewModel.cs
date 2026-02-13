@@ -116,6 +116,19 @@ namespace NewsPaperReader
             {
                 _statusText = value;
                 OnPropertyChanged();
+                // 控制状态栏的显示和隐藏
+                IsStatusBarVisible = !string.IsNullOrEmpty(value) && value != "就绪";
+            }
+        }
+
+        private bool _isStatusBarVisible = false;
+        public bool IsStatusBarVisible
+        {
+            get => _isStatusBarVisible;
+            set
+            {
+                _isStatusBarVisible = value;
+                OnPropertyChanged();
             }
         }
 
@@ -493,7 +506,7 @@ namespace NewsPaperReader
                 await Task.WhenAll(downloadTasks);
 
                 // 更新状态
-                StatusText = $"所有PDF文件下载完成";
+                StatusText = "就绪";
             }
             catch (Exception ex)
             {
@@ -535,7 +548,7 @@ namespace NewsPaperReader
                     edition.LocalFilePath = filePath;
                     edition.IsDownloaded = true;
                     
-                    StatusText = "PDF文件下载完成";
+                    StatusText = "就绪";
                 }
 
                 // WebView2会自动处理PDF文档的加载，这里只需要确保文件已下载
