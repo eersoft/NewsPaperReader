@@ -19,12 +19,35 @@
         <BitmapImage x:Key="SettingsIcon" UriSource="pack://application:,,,/NewsPaperReader;component/3rd_res/png/设置.png" />
         <BitmapImage x:Key="AboutIcon" UriSource="pack://application:,,,/NewsPaperReader;component/3rd_res/png/关于.png" />
         
+        <!-- 图钉图标 -->
+        <Path x:Key="PinIcon" Data="M14,4L16,2H8L10,4H14M13,15V17H11V15H13M13,7V13H11V7H13M17,1H7C5.9,1 5,1.9 5,3V21L12,17L19,21V3C19,1.9 18.1,1 17,1Z" Width="24" Height="24" Fill="{DynamicResource TextBrush}" />
+        <Path x:Key="UnpinIcon" Data="M17,17H7V15H17V17M17,13H7V11H17V13M17,9H7V7H17V9M19,3H5C3.9,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.9 20.1,3 19,3M19,19H5V5H19V19Z" Width="24" Height="24" Fill="{DynamicResource TextBrush}" />
+        
         <!-- 图标按钮样式 -->
         <Style x:Key="IconButton" TargetType="Button">
             <Setter Property="Width" Value="36" />
             <Setter Property="Height" Value="36" />
             <Setter Property="Margin" Value="2" />
             <Setter Property="Padding" Value="6" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource ButtonHoverBackground}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+                    <Setter Property="BorderThickness" Value="1" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
+        <!-- 小型操作按钮样式 -->
+        <Style x:Key="SmallActionButton" TargetType="Button">
+            <Setter Property="Width" Value="24" />
+            <Setter Property="Height" Value="24" />
+            <Setter Property="Margin" Value="2" />
+            <Setter Property="Padding" Value="2" />
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderBrush" Value="Transparent" />
             <Setter Property="BorderThickness" Value="0" />
@@ -69,6 +92,9 @@
                                 <Image Source="pack://siteoforigin:,,,/3rd_res/png/刷新.png" Width="24" Height="24" />
                             </Button>
                             <Separator/>
+                            <Button x:Name="PinButton" ToolTip="固定/取消固定侧边栏" Click="PinButton_Click" Style="{StaticResource IconButton}">
+                                <ContentControl Content="{DynamicResource PinIcon}" />
+                            </Button>
                             <Button ToolTip="设置" Command="{Binding SettingsCommand}" Style="{StaticResource IconButton}">
                                 <Image Source="pack://siteoforigin:,,,/3rd_res/png/设置.png" Width="24" Height="24" />
                             </Button>
@@ -81,7 +107,7 @@
                     <!-- 报纸列表 -->
                     <Border Grid.Row="1" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0">
                         <DockPanel>
-                            <TextBlock Text="报纸列表" FontWeight="Bold" DockPanel.Dock="Top" Style="{StaticResource DefaultTextBlock}"/>
+                            <TextBlock Text="报纸列表" FontWeight="Bold" DockPanel.Dock="Top" Style="{StaticResource DefaultTextBlock}" Foreground="{DynamicResource AccentBrush}"/>
                             <ListBox x:Name="NewspaperListBox" ItemsSource="{Binding Newspapers}" 
                                  SelectedItem="{Binding SelectedNewspaper}"
                                  BorderThickness="0"
@@ -93,15 +119,39 @@
                                     <Setter Property="Padding" Value="2"/>
                                     <Setter Property="Cursor" Value="Hand"/>
                                     <Setter Property="Margin" Value="1"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                                 </Style>
                             </ListBox.ItemContainerStyle>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0">
-                                        <Image x:Name="TitleImage" Source="{Binding TitleImagePath}" Width="100" Height="40" Stretch="Uniform" Margin="0" Visibility="Collapsed"/>
-                                        <TextBlock x:Name="NewspaperName" Text="{Binding Name}" VerticalAlignment="Center" TextAlignment="Left" Margin="0"/>
-                                    </StackPanel>
+                                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <!-- 报纸信息 -->
+                                        <StackPanel Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0">
+                                            <Image x:Name="TitleImage" Source="{Binding TitleImagePath}" Width="100" Height="40" Stretch="Uniform" Margin="0" Visibility="Collapsed"/>
+                                            <TextBlock x:Name="NewspaperName" Text="{Binding Name}" VerticalAlignment="Center" TextAlignment="Left" Margin="0"/>
+                                        </StackPanel>
+                                        
+                                        <!-- 操作按钮 -->
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Visibility="Collapsed" x:Name="ActionButtons">
+                                            <Button ToolTip="编辑" Style="{StaticResource SmallActionButton}" Click="EditNewspaperButton_Click" Tag="{Binding}">
+                                                <Path Data="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" Width="16" Height="16" Fill="{DynamicResource TextBrush}"/>
+                                            </Button>
+                                            <Button ToolTip="删除" Style="{StaticResource SmallActionButton}" Click="DeleteNewspaperButton_Click" Tag="{Binding}">
+                                                <Path Data="M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19M8,9H16V19H8V9M15.5,4L14.5,3H9.5L8.5,4H5V6H19V4H15.5Z" Width="16" Height="16" Fill="{DynamicResource TextBrush}"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </Grid>
                                     <DataTemplate.Triggers>
+                                        <!-- 鼠标悬停时显示操作按钮 -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="ActionButtons" Property="Visibility" Value="Visible"/>
+                                        </Trigger>
+                                        
                                         <!-- 文本列表模式：只显示名称 -->
                                         <DataTrigger Binding="{Binding DataContext.NewspaperListMode, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" Value="TextList">
                                             <Setter TargetName="TitleImage" Property="Visibility" Value="Collapsed"/>
@@ -164,7 +214,7 @@
                     <!-- 版面列表 -->
                     <Border Grid.Row="3" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,0">
                         <DockPanel>
-                            <TextBlock Text="版面列表" FontWeight="Bold" DockPanel.Dock="Top" Style="{StaticResource DefaultTextBlock}"/>
+                            <TextBlock Text="版面列表" FontWeight="Bold" DockPanel.Dock="Top" Style="{StaticResource DefaultTextBlock}" Foreground="{DynamicResource AccentBrush}"/>
                             <ListBox ItemsSource="{Binding Editions}" 
                                      SelectedItem="{Binding SelectedEdition}"
                                      DisplayMemberPath="Title"

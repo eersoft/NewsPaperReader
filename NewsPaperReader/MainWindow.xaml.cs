@@ -30,6 +30,23 @@ namespace NewsPaperReader
             
             // 确保左侧面板显示出来
             ShowSidebars();
+            
+            // 初始化图钉按钮状态
+            UpdatePinButtonState();
+        }
+        
+        private void UpdatePinButtonState()
+        {
+            if (_currentDisplayStrategy == UIElementDisplayStrategy.AlwaysShow)
+            {
+                PinButton.Content = this.Resources["PinIcon"];
+                PinButton.ToolTip = "固定侧边栏";
+            }
+            else
+            {
+                PinButton.Content = this.Resources["UnpinIcon"];
+                PinButton.ToolTip = "取消固定侧边栏";
+            }
         }
 
         private void InitializeViewModel()
@@ -224,6 +241,9 @@ namespace NewsPaperReader
             // 应用内容显示区默认显示模式
             // 重新加载当前PDF以应用新的显示模式
             UpdatePdfViewer();
+            
+            // 更新图钉按钮状态
+            UpdatePinButtonState();
         }
 
         private void HideSidebars()
@@ -459,6 +479,99 @@ namespace NewsPaperReader
             if (e.Uri != null && WebView2PdfViewer != null && WebView2PdfViewer.CoreWebView2 != null)
             {
                 WebView2PdfViewer.Source = new Uri(e.Uri);
+            }
+        }
+
+        private void PinButton_Click(object sender, RoutedEventArgs e)
+        {
+            // 切换左侧面板的显示策略
+            if (_currentDisplayStrategy == UIElementDisplayStrategy.AlwaysShow)
+            {
+                _currentDisplayStrategy = UIElementDisplayStrategy.AutoHide;
+                // 更改图钉图标
+                PinButton.Content = this.Resources["UnpinIcon"];
+                PinButton.ToolTip = "取消固定侧边栏";
+                // 应用新的显示策略
+                ApplySettings(_currentDisplayStrategy, _currentListMode);
+            }
+            else
+            {
+                _currentDisplayStrategy = UIElementDisplayStrategy.AlwaysShow;
+                // 更改图钉图标
+                PinButton.Content = this.Resources["PinIcon"];
+                PinButton.ToolTip = "固定侧边栏";
+                // 应用新的显示策略
+                ApplySettings(_currentDisplayStrategy, _currentListMode);
+            }
+        }
+
+        private void EditNewspaperButton_Click(object sender, RoutedEventArgs e)
+        {
+            // 获取被点击的报纸
+            var button = sender as System.Windows.Controls.Button;
+            var newspaper = button?.Tag as Newspaper;
+            if (newspaper != null)
+            {
+                // 打开编辑对话框
+                var dialog = new AddNewspaperDialog();
+                dialog.NewspaperName = newspaper.Name;
+                dialog.NewspaperUrl = newspaper.Url;
+                dialog.TitleImagePath = newspaper.TitleImagePath;
+                dialog.ParsePdf = newspaper.ParsePdf;
+                dialog.ForceWebView = newspaper.ForceWebView;
+                
+                if (dialog.ShowDialog() == true && dialog.IsConfirmed)
+                {
+                    // 更新报纸信息
+                    newspaper.Name = dialog.NewspaperName;
+                    newspaper.Url = dialog.NewspaperUrl;
+                    newspaper.TitleImagePath = dialog.TitleImagePath;
+                    newspaper.ParsePdf = dialog.ParsePdf;
+                    newspaper.ForceWebView = dialog.ForceWebView;
+                    
+                    // 更新设置中的报纸库
+                    var settings = SettingsManager.LoadSettings();
+                    var newspaperInfo = settings.NewspaperLibrary.FirstOrDefault(n => n.Name == newspaper.Name);
+                    if (newspaperInfo != null)
+                    {
+                        newspaperInfo.Url = dialog.NewspaperUrl;
+                        newspaperInfo.TitleImagePath = dialog.TitleImagePath;
+                        newspaperInfo.ParsePdf = dialog.ParsePdf;
+                        newspaperInfo.ForceWebView = dialog.ForceWebView;
+                        SettingsManager.SaveSettings(settings);
+                    }
+                }
+            }
+        }
+
+        private void DeleteNewspaperButton_Click(object sender, RoutedEventArgs e)
+        {
+            // 获取被点击的报纸
+            var button = sender as System.Windows.Controls.Button;
+            var newspaper = button?.Tag as Newspaper;
+            if (newspaper != null)
+            {
+                // 显示确认对话框
+                var result = System.Windows.MessageBox.Show(
+                    $"确定要删除报纸 '{newspaper.Name}' 吗？",
+                    "删除确认",
+                    System.Windows.MessageBoxButton.YesNo,
+                    System.Windows.MessageBoxImage.Question);
+                
+                if (result == System.Windows.MessageBoxResult.Yes)
+                {
+                    // 从列表中删除
+                    _viewModel?.Newspapers.Remove(newspaper);
+                    
+                    // 更新设置中的报纸库
+                    var settings = SettingsManager.LoadSettings();
+                    var newspaperInfo = settings.NewspaperLibrary.FirstOrDefault(n => n.Name == newspaper.Name);
+                    if (newspaperInfo != null)
+                    {
+                        settings.NewspaperLibrary.Remove(newspaperInfo);
+                        SettingsManager.SaveSettings(settings);
+                    }
+                }
             }
         }
     }
