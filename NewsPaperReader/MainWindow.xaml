@@ -21,6 +21,11 @@
         <local:DownloadStatusToVisibilityConverter x:Key="DownloadStatusToVisibilityConverter"/>
         <local:BoolToStringConverter x:Key="BoolToStringConverter"/>
         <local:BoolToPinIconConverter x:Key="BoolToPinIconConverter"/>
+        
+        <!-- 滚动条按钮样式 -->
+        <Style x:Key="ScrollBarButtonStyle" TargetType="RepeatButton">
+            <Setter Property="Visibility" Value="Collapsed"/>
+        </Style>
     </Window.Resources>
 
     <WindowChrome.WindowChrome>
@@ -132,10 +137,12 @@
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="0" 
-                                      Text="报纸列表" 
-                                      FontSize="14" FontWeight="Medium"
-                                      Margin="12,8"/>
+                            <Border Grid.Row="0" Background="{DynamicResource MaterialDesignCardBackground}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource MaterialDesignDivider}">
+                                <TextBlock Text="报纸列表" 
+                                          FontSize="14" FontWeight="Bold"
+                                          Margin="12,8"
+                                          Foreground="{DynamicResource MaterialDesignBody}" Opacity="0.6"/>
+                            </Border>
 
                             <ListBox Grid.Row="1"
                                     ItemsSource="{Binding FilteredNewspapers}"
@@ -151,6 +158,37 @@
                                 </ListBox.ItemContainerStyle>
                                 
                                 <ListBox.Resources>
+                                    <!-- 自定义滚动条样式，使其变窄 -->
+                                    <Style TargetType="ScrollBar">
+                                        <Setter Property="Width" Value="6"/>
+                                        <Setter Property="MinWidth" Value="6"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ScrollBar">
+                                                    <Grid Background="{DynamicResource MaterialDesignDivider}">
+                                                        <Track Name="PART_Track" Orientation="Vertical" IsDirectionReversed="True">
+                                                            <Track.DecreaseRepeatButton>
+                                                                <RepeatButton Command="ScrollBar.PageUpCommand" Style="{StaticResource ScrollBarButtonStyle}"/>
+                                                            </Track.DecreaseRepeatButton>
+                                                            <Track.Thumb>
+                                                                <Thumb BorderThickness="0">
+                                                                    <Thumb.Template>
+                                                                        <ControlTemplate TargetType="Thumb">
+                                                                            <Border Background="{DynamicResource MaterialDesignBody}" BorderThickness="0" CornerRadius="3"/>
+                                                                        </ControlTemplate>
+                                                                    </Thumb.Template>
+                                                                </Thumb>
+                                                            </Track.Thumb>
+                                                            <Track.IncreaseRepeatButton>
+                                                                <RepeatButton Command="ScrollBar.PageDownCommand" Style="{StaticResource ScrollBarButtonStyle}"/>
+                                                            </Track.IncreaseRepeatButton>
+                                                        </Track>
+                                                    </Grid>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                    
                                     <!-- 文本列表模板 -->
                                     <DataTemplate x:Key="TextListTemplate">
                                         <Grid Margin="0,4">
@@ -271,16 +309,50 @@
                         </Grid>
 
                         <!-- 版面列表标题 -->
-                        <TextBlock Grid.Row="3" 
-                                  Text="版面列表" 
-                                  FontSize="14" FontWeight="Medium"
-                                  Margin="12,8"/>
+                        <Border Grid.Row="3" Background="{DynamicResource MaterialDesignCardBackground}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource MaterialDesignDivider}">
+                            <TextBlock Text="版面列表" 
+                                      FontSize="14" FontWeight="Bold"
+                                      Margin="12,8"
+                                      Foreground="{DynamicResource MaterialDesignBody}" Opacity="0.6"/>
+                        </Border>
 
                         <!-- 版面列表 -->
                         <ListBox Grid.Row="4"
                                 ItemsSource="{Binding SelectedNewspaper.Editions}"
                                 SelectedItem="{Binding SelectedEdition}"
                                 BorderThickness="0">
+                            <ListBox.Resources>
+                                <!-- 自定义滚动条样式，使其变窄 -->
+                                <Style TargetType="ScrollBar">
+                                    <Setter Property="Width" Value="6"/>
+                                    <Setter Property="MinWidth" Value="6"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ScrollBar">
+                                                <Grid Background="{DynamicResource MaterialDesignDivider}">
+                                                    <Track Name="PART_Track" Orientation="Vertical" IsDirectionReversed="True">
+                                                        <Track.DecreaseRepeatButton>
+                                                            <RepeatButton Command="ScrollBar.PageUpCommand" Style="{StaticResource ScrollBarButtonStyle}"/>
+                                                        </Track.DecreaseRepeatButton>
+                                                        <Track.Thumb>
+                                                            <Thumb BorderThickness="0">
+                                                                <Thumb.Template>
+                                                                    <ControlTemplate TargetType="Thumb">
+                                                                        <Border Background="{DynamicResource MaterialDesignBody}" BorderThickness="0" CornerRadius="3"/>
+                                                                    </ControlTemplate>
+                                                                </Thumb.Template>
+                                                            </Thumb>
+                                                        </Track.Thumb>
+                                                        <Track.IncreaseRepeatButton>
+                                                            <RepeatButton Command="ScrollBar.PageDownCommand" Style="{StaticResource ScrollBarButtonStyle}"/>
+                                                        </Track.IncreaseRepeatButton>
+                                                    </Track>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.Resources>
                             <ListBox.ItemContainerStyle>
                                 <Style TargetType="ListBoxItem">
                                     <Setter Property="Padding" Value="12,8"/>
