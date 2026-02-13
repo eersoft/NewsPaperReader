@@ -23,7 +23,13 @@ namespace NewsPaperReader
         public ICommand RefreshCommand { get; }
         public ICommand SettingsCommand { get; }
         public ICommand AboutCommand { get; }
+        public ICommand OpenAboutCommand { get; }
         public ICommand ToggleSidebarPinCommand { get; }
+        public ICommand ToggleSidebarCommand { get; }
+        public ICommand DownloadEditionCommand { get; }
+        public ICommand DownloadAllEditionsCommand { get; }
+        public ICommand EditNewspaperCommand { get; }
+        public ICommand DeleteNewspaperCommand { get; }
 
         // 属性
         private List<Newspaper> _newspapers = new List<Newspaper>();
@@ -124,6 +130,64 @@ namespace NewsPaperReader
             }
         }
 
+        private string _searchText = string.Empty;
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                _searchText = value;
+                OnPropertyChanged();
+                // 当搜索文本变化时，更新过滤后的报纸列表
+                OnPropertyChanged(nameof(FilteredNewspapers));
+            }
+        }
+
+        public List<Newspaper> FilteredNewspapers
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_searchText))
+                {
+                    return Newspapers;
+                }
+                return Newspapers.Where(n => n.Name.Contains(_searchText, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+        }
+
+        private double _sidebarWidth = 300;
+        public double SidebarWidth
+        {
+            get => _sidebarWidth;
+            set
+            {
+                _sidebarWidth = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isSidebarVisible = true;
+        public bool IsSidebarVisible
+        {
+            get => _isSidebarVisible;
+            set
+            {
+                _isSidebarVisible = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _currentContent = "about:blank";
+        public string CurrentContent
+        {
+            get => _currentContent;
+            set
+            {
+                _currentContent = value;
+                OnPropertyChanged();
+            }
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public MainWindowViewModel()
@@ -137,7 +201,13 @@ namespace NewsPaperReader
             RefreshCommand = new RelayCommand(Refresh);
             SettingsCommand = new RelayCommand(Settings);
             AboutCommand = new RelayCommand(About);
+            OpenAboutCommand = new RelayCommand(About);
             ToggleSidebarPinCommand = new RelayCommand(ToggleSidebarPin);
+            ToggleSidebarCommand = new RelayCommand(ToggleSidebar);
+            DownloadEditionCommand = new RelayCommand(DownloadEdition);
+            DownloadAllEditionsCommand = new RelayCommand(DownloadAllEditions);
+            EditNewspaperCommand = new RelayCommand(EditNewspaper);
+            DeleteNewspaperCommand = new RelayCommand(DeleteNewspaper);
             
             // 加载应用设置
             LoadAppSettings();
@@ -197,6 +267,76 @@ namespace NewsPaperReader
         private void ToggleSidebarPin(object? parameter)
         {
             IsSidebarPinned = !IsSidebarPinned;
+        }
+
+        private void ToggleSidebar(object? parameter)
+        {
+            IsSidebarVisible = !IsSidebarVisible;
+        }
+
+        private void DownloadEdition(object? parameter)
+        {
+            if (parameter is Edition edition)
+            {
+                _ = LoadPdfFileAsync(edition);
+            }
+        }
+
+        private void DownloadAllEditions(object? parameter)
+        {
+            if (SelectedNewspaper != null && SelectedNewspaper.Editions.Count > 0)
+            {
+                _ = DownloadAllPdfsAsync(SelectedNewspaper.Editions);
+            }
+        }
+
+        private void EditNewspaper(object? parameter)
+        {
+            if (parameter is Newspaper newspaper)
+            {
+                var dialog = new AddNewspaperDialog(newspaper);
+                if (dialog.ShowDialog() == true && dialog.IsConfirmed)
+                {
+                    // 更新报纸信息
+                    newspaper.Name = dialog.NewspaperName;
+                    newspaper.Url = dialog.NewspaperUrl;
+                    newspaper.TitleImagePath = dialog.TitleImagePath;
+                    newspaper.ParsePdf = dialog.ParsePdf;
+                    newspaper.ForceWebView = dialog.ForceWebView;
+
+                    // 更新设置中的报纸库
+                    var settings = SettingsManager.LoadSettings();
+                    var newspaperInfo = settings.NewspaperLibrary.FirstOrDefault(n => n.Name == newspaper.Name);
+                    if (newspaperInfo != null)
+                    {
+                        newspaperInfo.Url = dialog.NewspaperUrl;
+                        newspaperInfo.TitleImagePath = dialog.TitleImagePath;
+                        newspaperInfo.ParsePdf = dialog.ParsePdf;
+                        newspaperInfo.ForceWebView = dialog.ForceWebView;
+                        SettingsManager.SaveSettings(settings);
+                    }
+                }
+            }
+        }
+
+        private void DeleteNewspaper(object? parameter)
+        {
+            if (parameter is Newspaper newspaper)
+            {
+                if (System.Windows.MessageBox.Show($"确定要删除报纸 {newspaper.Name} 吗？", "确认删除", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question) == System.Windows.MessageBoxResult.Yes)
+                {
+                    Newspapers.Remove(newspaper);
+
+                    // 更新设置中的报纸库
+                    var settings = SettingsManager.LoadSettings();
+                    var newspaperInfo = settings.NewspaperLibrary.FirstOrDefault(n => n.Name == newspaper.Name);
+                    if (newspaperInfo != null)
+                    {
+                        settings.NewspaperLibrary.Remove(newspaperInfo);
+                        SettingsManager.SaveSettings(settings);
+                    }
+                }
+            }
         }
 
         private void LoadNewspapersFromSettings()

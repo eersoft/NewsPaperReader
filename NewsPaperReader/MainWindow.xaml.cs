@@ -39,9 +39,9 @@ namespace NewsPaperReader
 
         private void ViewModel_NavigateToUrl(string url)
         {
-            if (WebView2PdfViewer != null && WebView2PdfViewer.CoreWebView2 != null)
+            if (_viewModel != null)
             {
-                WebView2PdfViewer.Source = new Uri(url);
+                _viewModel.CurrentContent = url;
             }
         }
 
@@ -139,6 +139,15 @@ namespace NewsPaperReader
             {
                 // 更新报纸列表布局
                 UpdateNewspaperListLayout();
+            }
+
+            if (e.PropertyName == nameof(MainWindowViewModel.CurrentContent) && !string.IsNullOrEmpty(_viewModel.CurrentContent))
+            {
+                // 导航到CurrentContent
+                if (WebView2PdfViewer != null && WebView2PdfViewer.CoreWebView2 != null)
+                {
+                    WebView2PdfViewer.Source = new Uri(_viewModel.CurrentContent);
+                }
             }
         }
         
@@ -271,20 +280,19 @@ namespace NewsPaperReader
 
         private void Sidebar_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            _sidebarBorder = sender as Border;
-            if (_sidebarBorder != null)
+            if (_viewModel != null)
             {
                 // 取消之前的计时器
                 _sidebarTimer?.Stop();
                 // 显示侧边栏
-                _sidebarBorder.Width = 300;
+                _viewModel.IsSidebarVisible = true;
+                _viewModel.SidebarWidth = 300;
             }
         }
 
         private void Sidebar_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            _sidebarBorder = sender as Border;
-            if (_sidebarBorder != null && _viewModel != null && !_viewModel.IsSidebarPinned)
+            if (_viewModel != null && !_viewModel.IsSidebarPinned)
             {
                 // 创建计时器，延迟隐藏侧边栏
                 _sidebarTimer = new System.Windows.Threading.DispatcherTimer();
@@ -293,7 +301,7 @@ namespace NewsPaperReader
                 {
                     _sidebarTimer.Stop();
                     // 隐藏侧边栏
-                    _sidebarBorder.Width = 50;
+                    _viewModel.SidebarWidth = 50;
                 };
                 _sidebarTimer.Start();
             }

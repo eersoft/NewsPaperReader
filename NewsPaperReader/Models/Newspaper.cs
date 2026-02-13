@@ -101,6 +101,22 @@ namespace NewsPaperReader.Models
             {
                 _isDownloaded = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(DownloadStatus));
+            }
+        }
+
+        /// <summary>
+        /// 下载状态
+        /// </summary>
+        public string DownloadStatus
+        {
+            get
+            {
+                if (IsDownloaded)
+                {
+                    return "已下载";
+                }
+                return "未下载";
             }
         }
 

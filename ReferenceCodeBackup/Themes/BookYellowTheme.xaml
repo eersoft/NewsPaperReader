@@ -1,0 +1,52 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+    <!-- 颜色定义 -->
+    <Color x:Key="PrimaryColor">#795548</Color>
+    <Color x:Key="PrimaryLightColor">#A1887F</Color>
+    <Color x:Key="PrimaryDarkColor">#5D4037</Color>
+    <Color x:Key="AccentColor">#FF8F00</Color>
+    <Color x:Key="AccentLightColor">#FFB300</Color>
+    
+    <Color x:Key="BackgroundColor">#FFF8E1</Color>
+    <Color x:Key="SurfaceColor">#FFFDE7</Color>
+    <Color x:Key="CardBackgroundColor">#FFFDE7</Color>
+    <Color x:Key="SidebarBackgroundColor">#FFECB3</Color>
+    
+    <Color x:Key="TextPrimaryColor">#3E2723</Color>
+    <Color x:Key="TextSecondaryColor">#5D4037</Color>
+    <Color x:Key="TextDisabledColor">#BCAAA4</Color>
+    <Color x:Key="TextHintColor">#8D6E63</Color>
+    
+    <Color x:Key="DividerColor">#D7CCC8</Color>
+    <Color x:Key="BorderColor">#BCAAA4</Color>
+    <Color x:Key="HoverBackgroundColor">#FFECB3</Color>
+    <Color x:Key="SelectedBackgroundColor">#FFE082</Color>
+    
+    <!-- 画刷定义 -->
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}"/>
+    <SolidColorBrush x:Key="PrimaryLightBrush" Color="{StaticResource PrimaryLightColor}"/>
+    <SolidColorBrush x:Key="PrimaryDarkBrush" Color="{StaticResource PrimaryDarkColor}"/>
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
+    
+    <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}"/>
+    <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}"/>
+    <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}"/>
+    <SolidColorBrush x:Key="SidebarBackgroundBrush" Color="{StaticResource SidebarBackgroundColor}"/>
+    
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimaryColor}"/>
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondaryColor}"/>
+    <SolidColorBrush x:Key="TextDisabledBrush" Color="{StaticResource TextDisabledColor}"/>
+    <SolidColorBrush x:Key="TextHintBrush" Color="{StaticResource TextHintColor}"/>
+    
+    <SolidColorBrush x:Key="DividerBrush" Color="{StaticResource DividerColor}"/>
+    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
+    <SolidColorBrush x:Key="HoverBackgroundBrush" Color="{StaticResource HoverBackgroundColor}"/>
+    <SolidColorBrush x:Key="SelectedBackgroundBrush" Color="{StaticResource SelectedBackgroundColor}"/>
+    
+    <!-- MaterialDesign主题配置 -->
+    <ResourceDictionary.MergedDictionaries>
+        <materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="Brown" SecondaryColor="Amber"/>
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

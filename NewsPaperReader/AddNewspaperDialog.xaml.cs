@@ -51,6 +51,38 @@ namespace NewsPaperReader
             }
         }
 
+        public AddNewspaperDialog(NewsPaperReader.Models.Newspaper newspaper)
+        {
+            InitializeComponent();
+            DataContext = this;
+            NewspaperName = newspaper.Name;
+            NewspaperUrl = newspaper.Url;
+            TitleImagePath = newspaper.TitleImagePath;
+            ParsePdf = newspaper.ParsePdf;
+            ForceWebView = newspaper.ForceWebView;
+            
+            // 确保标题图片预览正确显示
+            if (!string.IsNullOrEmpty(newspaper.TitleImagePath))
+            {
+                string settingsDirectory = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "esNewsPaperReader"
+                );
+                
+                // 如果是相对路径，转换为绝对路径用于预览
+                string imagePath = newspaper.TitleImagePath;
+                if (!Path.IsPathRooted(newspaper.TitleImagePath))
+                {
+                    imagePath = Path.Combine(settingsDirectory, newspaper.TitleImagePath);
+                }
+                
+                if (File.Exists(imagePath))
+                {
+                    TitleImagePreview.Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(imagePath));
+                }
+            }
+        }
+
         private void BrowseButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             var openFileDialog = new Microsoft.Win32.OpenFileDialog
