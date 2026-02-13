@@ -140,19 +140,6 @@ namespace NewsPaperReader
                 // 更新报纸列表布局
                 UpdateNewspaperListLayout();
             }
-            
-            if (e.PropertyName == nameof(MainWindowViewModel.StatusText))
-            {
-                // 在窗口标题栏上显示状态和进度
-                if (!string.IsNullOrEmpty(_viewModel.StatusText))
-                {
-                    this.Title = $"在线报纸阅读器 - {_viewModel.StatusText}";
-                }
-                else
-                {
-                    this.Title = "在线报纸阅读器";
-                }
-            }
         }
         
         private void UpdateNewspaperListLayout()
@@ -250,6 +237,61 @@ namespace NewsPaperReader
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
         }
+
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void MaximizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.WindowState == WindowState.Maximized)
+            {
+                this.WindowState = WindowState.Normal;
+            }
+            else
+            {
+                this.WindowState = WindowState.Maximized;
+            }
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private System.Windows.Threading.DispatcherTimer _sidebarTimer;
+        private Border _sidebarBorder;
+
+        private void Sidebar_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            _sidebarBorder = sender as Border;
+            if (_sidebarBorder != null)
+            {
+                // 取消之前的计时器
+                _sidebarTimer?.Stop();
+                // 显示侧边栏
+                _sidebarBorder.Width = 300;
+            }
+        }
+
+        private void Sidebar_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            _sidebarBorder = sender as Border;
+            if (_sidebarBorder != null && _viewModel != null && !_viewModel.IsSidebarPinned)
+            {
+                // 创建计时器，延迟隐藏侧边栏
+                _sidebarTimer = new System.Windows.Threading.DispatcherTimer();
+                _sidebarTimer.Interval = TimeSpan.FromSeconds(1);
+                _sidebarTimer.Tick += (s, args) =>
+                {
+                    _sidebarTimer.Stop();
+                    // 隐藏侧边栏
+                    _sidebarBorder.Width = 50;
+                };
+                _sidebarTimer.Start();
+            }
+        }
         
         private void WebView2PdfViewer_NavigationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs e)
         {
@@ -293,75 +335,5 @@ namespace NewsPaperReader
         }
 
 
-
-        private void EditNewspaperButton_Click(object sender, RoutedEventArgs e)
-        {
-            // 获取被点击的报纸
-            var button = sender as System.Windows.Controls.Button;
-            var newspaper = button?.Tag as Newspaper;
-            if (newspaper != null)
-            {
-                // 打开编辑对话框
-                var dialog = new AddNewspaperDialog();
-                dialog.NewspaperName = newspaper.Name;
-                dialog.NewspaperUrl = newspaper.Url;
-                dialog.TitleImagePath = newspaper.TitleImagePath;
-                dialog.ParsePdf = newspaper.ParsePdf;
-                dialog.ForceWebView = newspaper.ForceWebView;
-                
-                if (dialog.ShowDialog() == true && dialog.IsConfirmed)
-                {
-                    // 更新报纸信息
-                    newspaper.Name = dialog.NewspaperName;
-                    newspaper.Url = dialog.NewspaperUrl;
-                    newspaper.TitleImagePath = dialog.TitleImagePath;
-                    newspaper.ParsePdf = dialog.ParsePdf;
-                    newspaper.ForceWebView = dialog.ForceWebView;
-                    
-                    // 更新设置中的报纸库
-                    var settings = SettingsManager.LoadSettings();
-                    var newspaperInfo = settings.NewspaperLibrary.FirstOrDefault(n => n.Name == newspaper.Name);
-                    if (newspaperInfo != null)
-                    {
-                        newspaperInfo.Url = dialog.NewspaperUrl;
-                        newspaperInfo.TitleImagePath = dialog.TitleImagePath;
-                        newspaperInfo.ParsePdf = dialog.ParsePdf;
-                        newspaperInfo.ForceWebView = dialog.ForceWebView;
-                        SettingsManager.SaveSettings(settings);
-                    }
-                }
-            }
-        }
-
-        private void DeleteNewspaperButton_Click(object sender, RoutedEventArgs e)
-        {
-            // 获取被点击的报纸
-            var button = sender as System.Windows.Controls.Button;
-            var newspaper = button?.Tag as Newspaper;
-            if (newspaper != null)
-            {
-                // 显示确认对话框
-                var result = System.Windows.MessageBox.Show(
-                    $"确定要删除报纸 '{newspaper.Name}' 吗？",
-                    "删除确认",
-                    System.Windows.MessageBoxButton.YesNo,
-                    System.Windows.MessageBoxImage.Question);
-                
-                if (result == System.Windows.MessageBoxResult.Yes)
-                {
-                    // 从列表中删除
-                    _viewModel?.Newspapers.Remove(newspaper);
-                    
-                    // 更新设置中的报纸库
-                    var settings = SettingsManager.LoadSettings();
-                    var newspaperInfo = settings.NewspaperLibrary.FirstOrDefault(n => n.Name == newspaper.Name);
-                    if (newspaperInfo != null)
-                    {
-                        settings.NewspaperLibrary.Remove(newspaperInfo);
-                        SettingsManager.SaveSettings(settings);
-                    }
-                }
-            }
-        }
     }
 }

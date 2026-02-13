@@ -7,187 +7,269 @@
         xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="在线报纸阅读器" Height="800" Width="1200"
+        Title="在线报纸阅读器"
+        Height="800" Width="1200"
+        MinHeight="600" MinWidth="900"
         WindowStartupLocation="CenterScreen"
         Loaded="MainWindow_Loaded">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="40"
+                      GlassFrameThickness="0"
+                      CornerRadius="0"
+                      ResizeBorderThickness="5"/>
+    </WindowChrome.WindowChrome>
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        
-        <!-- 工具栏 -->
-        <materialDesign:Card Grid.Row="0" Grid.Column="0" Margin="10,10,0,10">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                <Button Command="{Binding AddNewspaperCommand}" Margin="2" Style="{StaticResource MaterialDesignRaisedButton}">
-                    <materialDesign:PackIcon Kind="Plus"/>
-                </Button>
-                <Button Command="{Binding RefreshCommand}" Margin="2" Style="{StaticResource MaterialDesignOutlinedButton}">
-                    <materialDesign:PackIcon Kind="Refresh"/>
-                </Button>
-                <Separator Width="10"/>
-                <Button Command="{Binding SettingsCommand}" Margin="2" Style="{StaticResource MaterialDesignOutlinedButton}">
-                    <materialDesign:PackIcon Kind="Cog"/>
-                </Button>
-                <Button Command="{Binding AboutCommand}" Margin="2" Style="{StaticResource MaterialDesignOutlinedButton}">
-                    <materialDesign:PackIcon Kind="Information"/>
-                </Button>
-            </StackPanel>
-        </materialDesign:Card>
-        
-        <!-- 搜索框 -->
-        <materialDesign:Card Grid.Row="0" Grid.Column="1" Margin="10" HorizontalAlignment="Stretch">
-            <TextBox materialDesign:HintAssist.Hint="搜索报纸..." Width="300" HorizontalAlignment="Left" Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
-        </materialDesign:Card>
-        
-        <!-- 左侧边栏 -->
-        <materialDesign:Card Grid.Row="1" Grid.Column="0" Margin="10,0,0,10" VerticalAlignment="Stretch">
+
+        <!-- 标题栏 -->
+        <Border Grid.Row="0" Height="40" Background="{DynamicResource MaterialDesignPaper}">
             <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                
-                <!-- 报纸列表标题 -->
-                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10,10,10,5">
-                    <TextBlock Text="报纸列表" FontWeight="Bold" FontSize="14"/>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- 应用图标和标题 -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="12,0">
+                    <materialDesign:PackIcon Kind="NewspaperVariant" 
+                                           Width="20" Height="20"
+                                           VerticalAlignment="Center"/>
+                    <TextBlock Text="EERSOFT-在线报纸阅读器" 
+                              FontSize="14" FontWeight="Medium"
+                              Margin="8,0,0,0"
+                              VerticalAlignment="Center"/>
                 </StackPanel>
-                
-                <!-- 报纸列表 -->
-                <ListBox Grid.Row="1" x:Name="NewspaperListBox" ItemsSource="{Binding Newspapers}" 
-                     SelectedItem="{Binding SelectedNewspaper}"
-                     BorderThickness="0"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                     VerticalAlignment="Stretch">
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="Padding" Value="2"/>
-                            <Setter Property="Cursor" Value="Hand"/>
-                            <Setter Property="Margin" Value="1"/>
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        </Style>
-                    </ListBox.ItemContainerStyle>
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                
-                                <!-- 报纸信息 -->
-                                <StackPanel Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0">
-                                    <Image x:Name="TitleImage" Source="{Binding TitleImagePath}" Width="100" Height="40" Stretch="Uniform" Margin="0" Visibility="Collapsed"/>
-                                    <TextBlock x:Name="NewspaperName" Text="{Binding Name}" VerticalAlignment="Center" TextAlignment="Left" Margin="0"/>
-                                </StackPanel>
-                                
-                                <!-- 操作按钮 -->
-                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Visibility="Collapsed" x:Name="ActionButtons">
-                                    <Button ToolTip="编辑" Click="EditNewspaperButton_Click" Tag="{Binding}" Margin="2">
-                                        <materialDesign:PackIcon Kind="Pencil" Width="16" Height="16"/>
-                                    </Button>
-                                    <Button ToolTip="删除" Click="DeleteNewspaperButton_Click" Tag="{Binding}" Margin="2">
-                                        <materialDesign:PackIcon Kind="Delete" Width="16" Height="16"/>
-                                    </Button>
-                                </StackPanel>
-                            </Grid>
-                            <DataTemplate.Triggers>
-                                <!-- 鼠标悬停时显示操作按钮 -->
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="ActionButtons" Property="Visibility" Value="Visible"/>
-                                </Trigger>
-                                
-                                <!-- 文本列表模式：只显示名称 -->
-                                <DataTrigger Binding="{Binding DataContext.NewspaperListMode, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" Value="TextList">
-                                    <Setter TargetName="TitleImage" Property="Visibility" Value="Collapsed"/>
-                                    <Setter TargetName="NewspaperName" Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                                <!-- 图片列表模式：显示图片，如果没有图片则显示名称 -->
-                                <DataTrigger Binding="{Binding DataContext.NewspaperListMode, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" Value="ImageList">
-                                    <Setter TargetName="TitleImage" Property="Visibility" Value="Visible"/>
-                                    <Setter TargetName="NewspaperName" Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>
-                                <!-- 图片列表模式下，没有图片时显示名称 -->
-                                <MultiDataTrigger>
-                                    <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding DataContext.NewspaperListMode, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" Value="ImageList"/>
-                                        <Condition Binding="{Binding TitleImagePath}" Value=""/>
-                                    </MultiDataTrigger.Conditions>
-                                    <Setter TargetName="TitleImage" Property="Visibility" Value="Collapsed"/>
-                                    <Setter TargetName="NewspaperName" Property="Visibility" Value="Visible"/>
-                                </MultiDataTrigger>
-                                <MultiDataTrigger>
-                                    <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding DataContext.NewspaperListMode, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" Value="ImageList"/>
-                                        <Condition Binding="{Binding TitleImagePath}" Value="{x:Null}"/>
-                                    </MultiDataTrigger.Conditions>
-                                    <Setter TargetName="TitleImage" Property="Visibility" Value="Collapsed"/>
-                                    <Setter TargetName="NewspaperName" Property="Visibility" Value="Visible"/>
-                                </MultiDataTrigger>
-                                <!-- 图片平铺模式：显示图片，如果没有图片则显示名称 -->
-                                <DataTrigger Binding="{Binding DataContext.NewspaperListMode, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" Value="ImageTile">
-                                    <Setter TargetName="TitleImage" Property="Visibility" Value="Visible"/>
-                                    <Setter TargetName="NewspaperName" Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>
-                                <!-- 图片平铺模式下，没有图片时显示名称 -->
-                                <MultiDataTrigger>
-                                    <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding DataContext.NewspaperListMode, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" Value="ImageTile"/>
-                                        <Condition Binding="{Binding TitleImagePath}" Value=""/>
-                                    </MultiDataTrigger.Conditions>
-                                    <Setter TargetName="TitleImage" Property="Visibility" Value="Collapsed"/>
-                                    <Setter TargetName="NewspaperName" Property="Visibility" Value="Visible"/>
-                                </MultiDataTrigger>
-                                <MultiDataTrigger>
-                                    <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding DataContext.NewspaperListMode, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" Value="ImageTile"/>
-                                        <Condition Binding="{Binding TitleImagePath}" Value="{x:Null}"/>
-                                    </MultiDataTrigger.Conditions>
-                                    <Setter TargetName="TitleImage" Property="Visibility" Value="Collapsed"/>
-                                    <Setter TargetName="NewspaperName" Property="Visibility" Value="Visible"/>
-                                </MultiDataTrigger>
-                            </DataTemplate.Triggers>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                
-                <!-- 分割条 -->
-                <Separator Grid.Row="2" Height="2" Margin="10"/>
-                
-                <!-- 版面列表标题 -->
-                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="10,5,10,5">
-                    <TextBlock Text="版面列表" FontWeight="Bold" FontSize="14"/>
+
+                <!-- 窗口控制按钮 -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" WindowChrome.IsHitTestVisibleInChrome="True">
+                    <Button Width="40" Height="40" Style="{StaticResource ToolbarButtonStyle}" ToolTip="最小化" Click="MinimizeButton_Click">
+                        <materialDesign:PackIcon Kind="WindowMinimize" Width="16" Height="16"/>
+                    </Button>
+                    <Button Width="40" Height="40" Style="{StaticResource ToolbarButtonStyle}" ToolTip="最大化" Click="MaximizeButton_Click">
+                        <materialDesign:PackIcon Kind="WindowMaximize" Width="16" Height="16"/>
+                    </Button>
+                    <Button Width="40" Height="40" Style="{StaticResource ToolbarButtonStyle}" ToolTip="关闭" Click="CloseButton_Click" Background="{DynamicResource MaterialDesignError}">
+                        <materialDesign:PackIcon Kind="WindowClose" Width="16" Height="16" Foreground="White"/>
+                    </Button>
                 </StackPanel>
-                
-                <!-- 版面列表 -->
-                <ListBox Grid.Row="3" ItemsSource="{Binding Editions}" 
-                         SelectedItem="{Binding SelectedEdition}"
-                         DisplayMemberPath="Title"
-                         BorderThickness="0"
-                         VerticalAlignment="Stretch">
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="Padding" Value="5"/>
-                            <Setter Property="Cursor" Value="Hand"/>
-                        </Style>
-                    </ListBox.ItemContainerStyle>
-                </ListBox>
             </Grid>
-        </materialDesign:Card>
-        
+        </Border>
+
         <!-- 主内容区域 -->
-        <materialDesign:Card Grid.Row="1" Grid.Column="1" Margin="10" VerticalAlignment="Stretch">
-            <Grid x:Name="ContentContainer">
-                <!-- WebView2 -->
-                <wv2:WebView2 x:Name="WebView2PdfViewer" Source="about:blank"/>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 左侧边栏 -->
+            <Border Grid.Column="0"
+                    Background="{DynamicResource MaterialDesignPaper}"
+                    BorderThickness="0,0,1,0"
+                    BorderBrush="{DynamicResource MaterialDesignDivider}"
+                    MouseEnter="Sidebar_MouseEnter"
+                    MouseLeave="Sidebar_MouseLeave">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- 工具栏 -->
+                    <Border Grid.Row="0" Background="{DynamicResource MaterialDesignPaper}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource MaterialDesignDivider}">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Command="{Binding AddNewspaperCommand}" Margin="2" Style="{StaticResource MaterialDesignToolButton}" ToolTip="添加报纸">
+                                <materialDesign:PackIcon Kind="Plus"/>
+                            </Button>
+                            <Button Command="{Binding RefreshCommand}" Margin="2" Style="{StaticResource MaterialDesignToolButton}" ToolTip="刷新">
+                                <materialDesign:PackIcon Kind="Refresh"/>
+                            </Button>
+                            <Button Command="{Binding SettingsCommand}" Margin="2" Style="{StaticResource MaterialDesignToolButton}" ToolTip="设置">
+                                <materialDesign:PackIcon Kind="Cog"/>
+                            </Button>
+                            <Button Command="{Binding ToggleSidebarPinCommand}" Margin="2" Style="{StaticResource MaterialDesignToolButton}" ToolTip="固定侧边栏">
+                                <materialDesign:PackIcon Kind="Pin"/>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+
+
+
+                    <!-- 报纸列表 -->
+                    <Grid Grid.Row="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" 
+                                  Text="报纸列表" 
+                                  FontSize="14" FontWeight="Medium"
+                                  Margin="12,8"/>
+
+                        <ListBox Grid.Row="1"
+                                ItemsSource="{Binding Newspapers}"
+                                SelectedItem="{Binding SelectedNewspaper}"
+                                BorderThickness="0"
+                                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Padding" Value="12,8"/>
+                                    <Setter Property="Cursor" Value="Hand"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid HorizontalAlignment="Stretch">
+                                        <!-- 报纸信息 -->
+                                        <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                            <Image x:Name="TitleImage" Source="{Binding TitleImagePath}" Width="100" Height="40" Stretch="Uniform" Margin="0" Visibility="Collapsed"/>
+                                            <TextBlock x:Name="NewspaperName" Text="{Binding Name}" VerticalAlignment="Center" TextAlignment="Left" Margin="0"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <DataTemplate.Triggers>
+                                        <!-- 文本列表模式：只显示名称 -->
+                                        <DataTrigger Binding="{Binding DataContext.NewspaperListMode, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" Value="TextList">
+                                            <Setter TargetName="TitleImage" Property="Visibility" Value="Collapsed"/>
+                                            <Setter TargetName="NewspaperName" Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                        <!-- 图片列表模式：显示图片，如果没有图片则显示名称 -->
+                                        <DataTrigger Binding="{Binding DataContext.NewspaperListMode, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" Value="ImageList">
+                                            <Setter TargetName="TitleImage" Property="Visibility" Value="Visible"/>
+                                            <Setter TargetName="NewspaperName" Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                        <!-- 图片列表模式下，没有图片时显示名称 -->
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding DataContext.NewspaperListMode, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" Value="ImageList"/>
+                                                <Condition Binding="{Binding TitleImagePath}" Value=""/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter TargetName="TitleImage" Property="Visibility" Value="Collapsed"/>
+                                            <Setter TargetName="NewspaperName" Property="Visibility" Value="Visible"/>
+                                        </MultiDataTrigger>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding DataContext.NewspaperListMode, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" Value="ImageList"/>
+                                                <Condition Binding="{Binding TitleImagePath}" Value="{x:Null}"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter TargetName="TitleImage" Property="Visibility" Value="Collapsed"/>
+                                            <Setter TargetName="NewspaperName" Property="Visibility" Value="Visible"/>
+                                        </MultiDataTrigger>
+                                        <!-- 图片平铺模式：显示图片，如果没有图片则显示名称 -->
+                                        <DataTrigger Binding="{Binding DataContext.NewspaperListMode, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" Value="ImageTile">
+                                            <Setter TargetName="TitleImage" Property="Visibility" Value="Visible"/>
+                                            <Setter TargetName="NewspaperName" Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                        <!-- 图片平铺模式下，没有图片时显示名称 -->
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding DataContext.NewspaperListMode, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" Value="ImageTile"/>
+                                                <Condition Binding="{Binding TitleImagePath}" Value=""/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter TargetName="TitleImage" Property="Visibility" Value="Collapsed"/>
+                                            <Setter TargetName="NewspaperName" Property="Visibility" Value="Visible"/>
+                                        </MultiDataTrigger>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding DataContext.NewspaperListMode, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" Value="ImageTile"/>
+                                                <Condition Binding="{Binding TitleImagePath}" Value="{x:Null}"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter TargetName="TitleImage" Property="Visibility" Value="Collapsed"/>
+                                            <Setter TargetName="NewspaperName" Property="Visibility" Value="Visible"/>
+                                        </MultiDataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+
+                    <!-- 版面列表标题 -->
+                    <TextBlock Grid.Row="3" 
+                              Text="版面列表" 
+                              FontSize="14" FontWeight="Medium"
+                              Margin="12,8"/>
+
+                    <!-- 版面列表 -->
+                    <ListBox Grid.Row="4"
+                            ItemsSource="{Binding Editions}"
+                            SelectedItem="{Binding SelectedEdition}"
+                            BorderThickness="0">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Padding" Value="12,8"/>
+                                <Setter Property="Cursor" Value="Hand"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <Border Grid.Column="0"
+                                           Width="24" Height="24"
+                                           CornerRadius="12"
+                                           Background="{DynamicResource MaterialDesignPrimaryLight}"
+                                           Margin="0,0,8,0">
+                                        <materialDesign:PackIcon Kind="FileDocument"
+                                                               Width="14" Height="14"
+                                                               HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center"/>
+                                    </Border>
+                                    
+                                    <TextBlock Grid.Column="1"
+                                              Text="{Binding Title}"
+                                              VerticalAlignment="Center"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+
+            <!-- 右侧内容区 -->
+            <Grid Grid.Column="1">
+                <!-- WebView2内容区 -->
+                <wv2:WebView2 x:Name="WebView2PdfViewer"
+                             Source="about:blank"
+                             DefaultBackgroundColor="White"/>
             </Grid>
-        </materialDesign:Card>
+        </Grid>
+
+        <!-- 状态栏 -->
+        <Border Grid.Row="2" Height="30" Background="{DynamicResource MaterialDesignPaper}" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource MaterialDesignDivider}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                          Text="就绪"
+                          FontSize="12"
+                          VerticalAlignment="Center"
+                          Margin="12,0"/>
+
+                <ProgressBar Grid.Column="1"
+                            Width="100"
+                            Height="10"
+                            Margin="0,10,12,10"
+                            Visibility="Collapsed"/>
+            </Grid>
+        </Border>
     </Grid>
 </Window>

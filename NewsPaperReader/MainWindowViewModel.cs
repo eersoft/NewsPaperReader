@@ -23,6 +23,7 @@ namespace NewsPaperReader
         public ICommand RefreshCommand { get; }
         public ICommand SettingsCommand { get; }
         public ICommand AboutCommand { get; }
+        public ICommand ToggleSidebarPinCommand { get; }
 
         // 属性
         private List<Newspaper> _newspapers = new List<Newspaper>();
@@ -112,6 +113,17 @@ namespace NewsPaperReader
             }
         }
 
+        private bool _isSidebarPinned = true;
+        public bool IsSidebarPinned
+        {
+            get => _isSidebarPinned;
+            set
+            {
+                _isSidebarPinned = value;
+                OnPropertyChanged();
+            }
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public MainWindowViewModel()
@@ -125,6 +137,7 @@ namespace NewsPaperReader
             RefreshCommand = new RelayCommand(Refresh);
             SettingsCommand = new RelayCommand(Settings);
             AboutCommand = new RelayCommand(About);
+            ToggleSidebarPinCommand = new RelayCommand(ToggleSidebarPin);
             
             // 加载应用设置
             LoadAppSettings();
@@ -179,6 +192,11 @@ namespace NewsPaperReader
         private void About(object? parameter)
         {
             System.Windows.MessageBox.Show("在线报纸阅读器 v1.0\n\n一个智能分析和阅读在线报纸的工具", "关于", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+        }
+
+        private void ToggleSidebarPin(object? parameter)
+        {
+            IsSidebarPinned = !IsSidebarPinned;
         }
 
         private void LoadNewspapersFromSettings()

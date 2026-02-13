@@ -35,4 +35,10 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="3rd_res\参考代码\**">
+      <ExcludeFromBuild>true</ExcludeFromBuild>
+    </None>
+  </ItemGroup>
+
 </Project>

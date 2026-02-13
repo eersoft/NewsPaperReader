@@ -1,0 +1,418 @@
+<Window x:Class="NewspaperReader.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:vm="clr-namespace:NewspaperReader.ViewModels"
+        xmlns:converters="clr-namespace:NewspaperReader.Converters"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        mc:Ignorable="d"
+        Title="在线报纸阅读器"
+        Height="800" Width="1200"
+        MinHeight="600" MinWidth="900"
+        WindowStartupLocation="CenterScreen"
+        Style="{StaticResource BaseWindowStyle}"
+        d:DataContext="{d:DesignInstance vm:MainWindowViewModel}">
+
+    <Window.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
+        <converters:DisplayModeToVisibilityConverter x:Key="DisplayModeToVisibilityConverter"/>
+        <converters:DownloadStatusToColorConverter x:Key="DownloadStatusToColorConverter"/>
+    </Window.Resources>
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="40"
+                      GlassFrameThickness="0"
+                      CornerRadius="0"
+                      ResizeBorderThickness="5"/>
+    </WindowChrome.WindowChrome>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 标题栏 -->
+        <Border Grid.Row="0" Style="{StaticResource ToolbarPanelStyle}" Height="40">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- 应用图标和标题 -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="12,0">
+                    <materialDesign:PackIcon Kind="NewspaperVariant" 
+                                           Width="20" Height="20"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource PrimaryBrush}"/>
+                    <TextBlock Text="在线报纸阅读器" 
+                              Style="{StaticResource SubtitleTextStyle}"
+                              Margin="8,0,0,0"
+                              VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- 窗口控制按钮 -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" WindowChrome.IsHitTestVisibleInChrome="True">
+                    <Button Style="{StaticResource ToolbarButtonStyle}"
+                            Command="{Binding MinimizeCommand}"
+                            ToolTip="最小化">
+                        <materialDesign:PackIcon Kind="WindowMinimize" Width="16" Height="16"/>
+                    </Button>
+                    <Button Style="{StaticResource ToolbarButtonStyle}"
+                            Command="{Binding MaximizeCommand}"
+                            ToolTip="最大化">
+                        <materialDesign:PackIcon Kind="WindowMaximize" Width="16" Height="16"/>
+                    </Button>
+                    <Button Style="{StaticResource ToolbarButtonStyle}"
+                            Command="{Binding CloseCommand}"
+                            ToolTip="关闭">
+                        <materialDesign:PackIcon Kind="WindowClose" Width="16" Height="16"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- 主内容区域 -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 左侧边栏 -->
+            <Border Grid.Column="0"
+                    Style="{StaticResource SidebarPanelStyle}"
+                    Width="{Binding SidebarWidth}"
+                    Visibility="{Binding IsSidebarVisible, Converter={StaticResource BoolToVisibilityConverter}}"
+                    MouseEnter="OnSidebarMouseEnter"
+                    MouseLeave="OnSidebarMouseLeave">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- 工具栏 -->
+                    <Border Grid.Row="0" Style="{StaticResource ToolbarPanelStyle}">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Style="{StaticResource ToolbarButtonStyle}"
+                                    Command="{Binding AddNewspaperCommand}"
+                                    ToolTip="添加报纸">
+                                <materialDesign:PackIcon Kind="Plus"/>
+                            </Button>
+                            <Button Style="{StaticResource ToolbarButtonStyle}"
+                                    Command="{Binding RefreshNewspaperCommand}"
+                                    ToolTip="刷新">
+                                <materialDesign:PackIcon Kind="Refresh"/>
+                            </Button>
+                            <Button Style="{StaticResource ToolbarButtonStyle}"
+                                    Command="{Binding OpenSettingsCommand}"
+                                    ToolTip="设置">
+                                <materialDesign:PackIcon Kind="Cog"/>
+                            </Button>
+                            <Button Style="{StaticResource ToolbarButtonStyle}"
+                                    Command="{Binding OpenAboutCommand}"
+                                    ToolTip="关于">
+                                <materialDesign:PackIcon Kind="InformationOutline"/>
+                            </Button>
+                            <Button Style="{StaticResource ToolbarButtonStyle}"
+                                    Command="{Binding ToggleSidebarPinCommand}"
+                                    ToolTip="{Binding IsSidebarPinned, Converter={StaticResource BoolToStringConverter}}">
+                                <materialDesign:PackIcon Kind="{Binding IsSidebarPinned, Converter={StaticResource BoolToPinIconConverter}}"/>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 搜索框 -->
+                    <Border Grid.Row="1" Padding="8,4">
+                        <TextBox Style="{StaticResource ModernTextBoxStyle}"
+                                materialDesign:TextFieldAssist.HasClearButton="True"
+                                materialDesign:TextFieldAssist.PrefixText="&#xF349;"
+                                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                materialDesign:HintAssist.Hint="搜索报纸..."/>
+                    </Border>
+
+                    <!-- 报纸列表 -->
+                    <Grid Grid.Row="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" 
+                                  Text="报纸列表" 
+                                  Style="{StaticResource SubtitleTextStyle}"
+                                  Margin="12,8"/>
+
+                        <ListBox Grid.Row="1"
+                                Style="{StaticResource ModernListBoxStyle}"
+                                ItemsSource="{Binding FilteredNewspapers}"
+                                SelectedItem="{Binding SelectedNewspaper}">
+                            <ListBox.Resources>
+                                <!-- 文本列表模板 -->
+                                <DataTemplate x:Key="TextListTemplate">
+                                    <Grid Margin="0,4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" 
+                                                  Text="{Binding Name}"
+                                                  Style="{StaticResource BodyTextStyle}"
+                                                  TextTrimming="CharacterEllipsis"/>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                            <Button Style="{StaticResource ToolbarButtonStyle}"
+                                                   Width="28" Height="28"
+                                                   Command="{Binding DataContext.EditNewspaperCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                                   CommandParameter="{Binding}"
+                                                   ToolTip="编辑">
+                                                <materialDesign:PackIcon Kind="Pencil" Width="14" Height="14"/>
+                                            </Button>
+                                            <Button Style="{StaticResource ToolbarButtonStyle}"
+                                                   Width="28" Height="28"
+                                                   Command="{Binding DataContext.DeleteNewspaperCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                                   CommandParameter="{Binding}"
+                                                   ToolTip="删除">
+                                                <materialDesign:PackIcon Kind="Delete" Width="14" Height="14"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+
+                                <!-- 图片列表模板 -->
+                                <DataTemplate x:Key="ImageListTemplate">
+                                    <Grid Margin="0,4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="48"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Grid.Column="0" 
+                                               Width="48" Height="48"
+                                               CornerRadius="4"
+                                               Background="{DynamicResource DividerBrush}">
+                                            <Image Source="{Binding TitleImagePath}"
+                                                  Stretch="UniformToFill"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="1" Margin="8,0" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Name}"
+                                                      Style="{StaticResource BodyTextStyle}"
+                                                      TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{Binding Url}"
+                                                      Style="{StaticResource HintTextStyle}"
+                                                      TextTrimming="CharacterEllipsis"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                            <Button Style="{StaticResource ToolbarButtonStyle}"
+                                                   Width="28" Height="28"
+                                                   Command="{Binding DataContext.EditNewspaperCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                                   CommandParameter="{Binding}"
+                                                   ToolTip="编辑">
+                                                <materialDesign:PackIcon Kind="Pencil" Width="14" Height="14"/>
+                                            </Button>
+                                            <Button Style="{StaticResource ToolbarButtonStyle}"
+                                                   Width="28" Height="28"
+                                                   Command="{Binding DataContext.DeleteNewspaperCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                                   CommandParameter="{Binding}"
+                                                   ToolTip="删除">
+                                                <materialDesign:PackIcon Kind="Delete" Width="14" Height="14"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+
+                                <!-- 图片平铺模板 -->
+                                <DataTemplate x:Key="ImageTileTemplate">
+                                    <Border Width="100" Height="120"
+                                           CornerRadius="8"
+                                           Background="{DynamicResource CardBackgroundBrush}"
+                                           Margin="4"
+                                           Cursor="Hand">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="80"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+                                            <Border Grid.Row="0" 
+                                                   CornerRadius="8,8,0,0"
+                                                   Background="{DynamicResource DividerBrush}">
+                                                <Image Source="{Binding TitleImagePath}"
+                                                      Stretch="UniformToFill"/>
+                                            </Border>
+                                            <TextBlock Grid.Row="1"
+                                                      Text="{Binding Name}"
+                                                      Style="{StaticResource BodyTextStyle}"
+                                                      TextAlignment="Center"
+                                                      TextTrimming="CharacterEllipsis"
+                                                      Margin="4"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.Resources>
+
+                            <ListBox.ItemTemplateSelector>
+                                <converters:NewspaperTemplateSelector 
+                                    TextListTemplate="{StaticResource TextListTemplate}"
+                                    ImageListTemplate="{StaticResource ImageListTemplate}"
+                                    ImageTileTemplate="{StaticResource ImageTileTemplate}"/>
+                            </ListBox.ItemTemplateSelector>
+
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel/>
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                        </ListBox>
+                    </Grid>
+
+                    <!-- 版面列表标题 -->
+                    <TextBlock Grid.Row="3" 
+                              Text="版面列表" 
+                              Style="{StaticResource SubtitleTextStyle}"
+                              Margin="12,8"/>
+
+                    <!-- 版面列表 -->
+                    <ListBox Grid.Row="4"
+                            Style="{StaticResource ModernListBoxStyle}"
+                            ItemsSource="{Binding SelectedNewspaper.Editions}"
+                            SelectedItem="{Binding SelectedEdition}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <Border Grid.Column="0"
+                                           Width="24" Height="24"
+                                           CornerRadius="12"
+                                           Background="{Binding DownloadStatus, Converter={StaticResource DownloadStatusToColorConverter}}"
+                                           Margin="0,0,8,0">
+                                        <materialDesign:PackIcon Kind="FileDocument"
+                                                               Width="14" Height="14"
+                                                               Foreground="White"
+                                                               HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center"/>
+                                    </Border>
+                                    
+                                    <TextBlock Grid.Column="1"
+                                              Text="{Binding Name}"
+                                              Style="{StaticResource BodyTextStyle}"
+                                              VerticalAlignment="Center"/>
+                                    
+                                    <Button Grid.Column="2"
+                                           Style="{StaticResource ToolbarButtonStyle}"
+                                           Width="28" Height="28"
+                                           Command="{Binding DataContext.DownloadEditionCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                           CommandParameter="{Binding}"
+                                           ToolTip="下载"
+                                           Visibility="{Binding DownloadStatus, Converter={StaticResource DownloadStatusToVisibilityConverter}}">
+                                        <materialDesign:PackIcon Kind="Download" Width="14" Height="14"/>
+                                    </Button>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+
+            <!-- 右侧内容区 -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- 内容工具栏 -->
+                <Border Grid.Row="0" Style="{StaticResource ToolbarPanelStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0"
+                               Style="{StaticResource ToolbarButtonStyle}"
+                               Command="{Binding ToggleSidebarCommand}"
+                               ToolTip="切换侧边栏">
+                            <materialDesign:PackIcon Kind="Menu"/>
+                        </Button>
+
+                        <TextBlock Grid.Column="1"
+                                  Text="{Binding SelectedNewspaper.Name}"
+                                  Style="{StaticResource SubtitleTextStyle}"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Center"/>
+
+                        <Button Grid.Column="2"
+                               Style="{StaticResource ToolbarButtonStyle}"
+                               Command="{Binding DownloadAllEditionsCommand}"
+                               ToolTip="下载所有版面"
+                               Visibility="{Binding SelectedNewspaper, Converter={StaticResource NullToVisibilityConverter}}">
+                            <materialDesign:PackIcon Kind="DownloadMultiple"/>
+                        </Button>
+                    </Grid>
+                </Border>
+
+                <!-- WebView2内容区 -->
+                <wv2:WebView2 Grid.Row="1"
+                             Source="{Binding CurrentContent}"
+                             DefaultBackgroundColor="Transparent"/>
+            </Grid>
+        </Grid>
+
+        <!-- 状态栏 -->
+        <Border Grid.Row="2" Style="{StaticResource StatusBarStyle}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                          Text="{Binding StatusMessage}"
+                          Style="{StaticResource BodyTextStyle}"
+                          VerticalAlignment="Center"/>
+
+                <ProgressBar Grid.Column="1"
+                            Style="{StaticResource ModernProgressBarStyle}"
+                            Width="100"
+                            IsIndeterminate="{Binding IsLoading}"
+                            Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"/>
+            </Grid>
+        </Border>
+
+        <!-- 加载遮罩 -->
+        <Grid Grid.RowSpan="3"
+              Background="#80000000"
+              Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <materialDesign:Card Padding="24">
+                    <StackPanel>
+                        <ProgressBar Style="{StaticResource ModernProgressBarStyle}"
+                                    IsIndeterminate="True"
+                                    Width="200"/>
+                        <TextBlock Text="{Binding LoadingMessage}"
+                                  Style="{StaticResource BodyTextStyle}"
+                                  Margin="0,16,0,0"
+                                  HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </materialDesign:Card>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
