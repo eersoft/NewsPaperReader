@@ -5,12 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NewsPaperReader"
         xmlns:models="clr-namespace:NewsPaperReader.Models"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Title="设置" Height="600" Width="800"
-        WindowStartupLocation="CenterScreen"
-        Background="{DynamicResource WindowBackground}"
-        Foreground="{DynamicResource TextBrush}">
-    <Grid Background="{DynamicResource WindowBackground}">
+        WindowStartupLocation="CenterScreen">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -18,112 +17,99 @@
         </Grid.RowDefinitions>
         
         <!-- 标题 -->
-        <Border Grid.Row="0" Background="{DynamicResource HeaderBackground}" Padding="10" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1">
-            <TextBlock Text="应用程序设置" FontWeight="Bold" FontSize="16" Foreground="{DynamicResource TextBrush}"/>
-        </Border>
+        <materialDesign:Card Grid.Row="0" Padding="10" Margin="10">
+            <TextBlock Text="应用程序设置" FontWeight="Bold" FontSize="16"/>
+        </materialDesign:Card>
         
         <!-- 内容区域 -->
-        <TabControl Grid.Row="1" Margin="10" Style="{StaticResource DefaultTabControl}">
-            <!-- 界面设置 -->
-            <TabItem Header="界面设置" Style="{StaticResource DefaultTabItem}">
-                <Grid Margin="10">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="200"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    
-                    <!-- 界面元素显示策略 -->
-                    <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,10,10,0" VerticalAlignment="Center">界面元素显示策略:</TextBlock>
-                    <ComboBox Grid.Row="0" Grid.Column="1" Margin="0,10,0,0" SelectedValue="{Binding Settings.UIElementDisplayStrategy}" SelectedValuePath="Tag">
-                        <ComboBoxItem Content="始终显示" Tag="{x:Static models:UIElementDisplayStrategy.AlwaysShow}"/>
-                        <ComboBoxItem Content="自动隐藏" Tag="{x:Static models:UIElementDisplayStrategy.AutoHide}"/>
-                    </ComboBox>
-                    
-                    <!-- 报纸列表显示模式 -->
-                    <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,10,10,0" VerticalAlignment="Center">报纸列表显示模式:</TextBlock>
-                    <ComboBox Grid.Row="1" Grid.Column="1" Margin="0,10,0,0" SelectedValue="{Binding Settings.NewspaperListDisplayMode}" SelectedValuePath="Tag">
-                        <ComboBoxItem Content="文本式列表" Tag="{x:Static models:NewspaperListDisplayMode.TextList}"/>
-                        <ComboBoxItem Content="图片式列表" Tag="{x:Static models:NewspaperListDisplayMode.ImageList}"/>
-                        <ComboBoxItem Content="图片平铺" Tag="{x:Static models:NewspaperListDisplayMode.ImageTile}"/>
-                    </ComboBox>
-                    
-                    <!-- 显示PDF默认工具栏 -->
-                    <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,10,10,0" VerticalAlignment="Center">显示PDF默认工具栏:</TextBlock>
-                    <CheckBox Grid.Row="2" Grid.Column="1" Margin="0,10,0,0" IsChecked="{Binding Settings.ShowPdfToolbar}"/>
-                    
-                    <!-- 禁用WebView2默认右键菜单 -->
-                    <TextBlock Grid.Row="3" Grid.Column="0" Margin="0,10,10,0" VerticalAlignment="Center">禁用WebView2默认右键菜单:</TextBlock>
-                    <CheckBox Grid.Row="3" Grid.Column="1" Margin="0,10,0,0" IsChecked="{Binding Settings.DisableWebView2ContextMenu}"/>
-                    
-                    <!-- 左侧面板宽度 -->
-                    <TextBlock Grid.Row="4" Grid.Column="0" Margin="0,10,10,0" VerticalAlignment="Center">左侧面板宽度:</TextBlock>
-                    <StackPanel Grid.Row="4" Grid.Column="1" Margin="0,10,0,0" Orientation="Horizontal" VerticalAlignment="Center">
-                        <Slider Minimum="100" Maximum="400" Value="{Binding Settings.LeftSidebarWidth}" Width="200" Margin="0,0,10,0"/>
-                        <TextBlock Text="{Binding Settings.LeftSidebarWidth}" Width="50" TextAlignment="Right"/>
-                        <TextBlock Text="px" Margin="5,0,0,0"/>
-                    </StackPanel>
-                    
-                    <!-- 应用主题 -->
-                    <TextBlock Grid.Row="5" Grid.Column="0" Margin="0,10,10,0" VerticalAlignment="Center">应用主题:</TextBlock>
-                    <ComboBox Grid.Row="5" Grid.Column="1" Margin="0,10,0,0" SelectedValue="{Binding Settings.Theme}" SelectedValuePath="Tag">
-                        <ComboBoxItem Content="亮色模式" Tag="Light"/>
-                        <ComboBoxItem Content="暗色模式" Tag="Dark"/>
-                        <ComboBoxItem Content="蓝色主题" Tag="Blue"/>
-                        <ComboBoxItem Content="绿色主题" Tag="Green"/>
-                        <ComboBoxItem Content="典雅灰主题" Tag="ElegantGray"/>
-                        <ComboBoxItem Content="书籍黄主题" Tag="BookYellow"/>
-                    </ComboBox>
-
-                </Grid>
-            </TabItem>
-            
-            <!-- 报纸库管理 -->
-            <TabItem Header="报纸库管理" Style="{StaticResource DefaultTabItem}">
-                <Grid Margin="10">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    
-                    <!-- 报纸列表 -->
-                    <ListBox Grid.Row="0" ItemsSource="{Binding Settings.NewspaperLibrary}" SelectedItem="{Binding SelectedNewspaperInfo}" Margin="0,0,0,10" Style="{StaticResource DefaultListBox}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" Margin="10">
-                                    <Image Source="{Binding TitleImagePath}" Width="50" Height="50" Stretch="Uniform" Margin="0,0,10,0"/>
-                                    <StackPanel>
-                                        <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
-                                        <TextBlock Text="{Binding Url}" FontSize="12" Foreground="Gray" TextWrapping="Wrap"/>
+        <materialDesign:Card Grid.Row="1" Margin="10">
+            <TabControl Margin="10" Style="{StaticResource MaterialDesignTabControl}">
+                <!-- 界面设置 -->
+                <TabItem Header="界面设置">
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <!-- 界面元素显示策略 -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,10,10,0" VerticalAlignment="Center">界面元素显示策略:</TextBlock>
+                        <ComboBox Grid.Row="0" Grid.Column="1" Margin="0,10,0,0" SelectedValue="{Binding Settings.UIElementDisplayStrategy}" SelectedValuePath="Tag" Style="{StaticResource MaterialDesignOutlinedComboBox}">
+                            <ComboBoxItem Content="始终显示" Tag="{x:Static models:UIElementDisplayStrategy.AlwaysShow}"/>
+                            <ComboBoxItem Content="自动隐藏" Tag="{x:Static models:UIElementDisplayStrategy.AutoHide}"/>
+                        </ComboBox>
+                        
+                        <!-- 报纸列表显示模式 -->
+                        <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,10,10,0" VerticalAlignment="Center">报纸列表显示模式:</TextBlock>
+                        <ComboBox Grid.Row="1" Grid.Column="1" Margin="0,10,0,0" SelectedValue="{Binding Settings.NewspaperListDisplayMode}" SelectedValuePath="Tag" Style="{StaticResource MaterialDesignOutlinedComboBox}">
+                            <ComboBoxItem Content="文本式列表" Tag="{x:Static models:NewspaperListDisplayMode.TextList}"/>
+                            <ComboBoxItem Content="图片式列表" Tag="{x:Static models:NewspaperListDisplayMode.ImageList}"/>
+                            <ComboBoxItem Content="图片平铺" Tag="{x:Static models:NewspaperListDisplayMode.ImageTile}"/>
+                        </ComboBox>
+                        
+                        <!-- 显示PDF默认工具栏 -->
+                        <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,10,10,0" VerticalAlignment="Center">显示PDF默认工具栏:</TextBlock>
+                        <CheckBox Grid.Row="2" Grid.Column="1" Margin="0,10,0,0" IsChecked="{Binding Settings.ShowPdfToolbar}" Style="{StaticResource MaterialDesignCheckBox}"/>
+                        
+                        <!-- 禁用WebView2默认右键菜单 -->
+                        <TextBlock Grid.Row="3" Grid.Column="0" Margin="0,10,10,0" VerticalAlignment="Center">禁用WebView2默认右键菜单:</TextBlock>
+                        <CheckBox Grid.Row="3" Grid.Column="1" Margin="0,10,0,0" IsChecked="{Binding Settings.DisableWebView2ContextMenu}" Style="{StaticResource MaterialDesignCheckBox}"/>
+                        
+                        <!-- 左侧面板宽度 -->
+                        <TextBlock Grid.Row="4" Grid.Column="0" Margin="0,10,10,0" VerticalAlignment="Center">左侧面板宽度:</TextBlock>
+                        <StackPanel Grid.Row="4" Grid.Column="1" Margin="0,10,0,0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Slider Minimum="100" Maximum="400" Value="{Binding Settings.LeftSidebarWidth}" Width="200" Margin="0,0,10,0" Style="{StaticResource MaterialDesignSlider}"/>
+                            <TextBlock Text="{Binding Settings.LeftSidebarWidth}" Width="50" TextAlignment="Right"/>
+                            <TextBlock Text="px" Margin="5,0,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
+                
+                <!-- 报纸库管理 -->
+                <TabItem Header="报纸库管理">
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        
+                        <!-- 报纸列表 -->
+                        <ListBox Grid.Row="0" ItemsSource="{Binding Settings.NewspaperLibrary}" SelectedItem="{Binding SelectedNewspaperInfo}" Margin="0,0,0,10">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Margin="10">
+                                        <Image Source="{Binding TitleImagePath}" Width="50" Height="50" Stretch="Uniform" Margin="0,0,10,0"/>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding Url}" FontSize="12" Foreground="Gray" TextWrapping="Wrap"/>
+                                        </StackPanel>
                                     </StackPanel>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                    
-                    <!-- 操作按钮 -->
-                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Content="添加" Command="{Binding AddNewspaperInfoCommand}" Margin="0,0,10,0" Style="{StaticResource DefaultButton}"/>
-                        <Button Content="编辑" Command="{Binding EditNewspaperInfoCommand}" Margin="0,0,10,0" Style="{StaticResource DefaultButton}"/>
-                        <Button Content="删除" Command="{Binding DeleteNewspaperInfoCommand}" Margin="0,0,10,0" Style="{StaticResource DefaultButton}"/>
-                    </StackPanel>
-                </Grid>
-            </TabItem>
-        </TabControl>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        
+                        <!-- 操作按钮 -->
+                        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="添加" Command="{Binding AddNewspaperInfoCommand}" Margin="0,0,10,0" Style="{StaticResource MaterialDesignRaisedButton}"/>
+                            <Button Content="编辑" Command="{Binding EditNewspaperInfoCommand}" Margin="0,0,10,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                            <Button Content="删除" Command="{Binding DeleteNewspaperInfoCommand}" Margin="0,0,10,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </materialDesign:Card>
         
         <!-- 按钮区域 -->
-        <Border Grid.Row="2" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="0,10,0,0" Margin="10">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="确定" Command="{Binding OKCommand}" Margin="0,0,10,0" Width="80" Style="{StaticResource DefaultButton}"/>
-                <Button Content="取消" Command="{Binding CancelCommand}" Width="80" Style="{StaticResource DefaultButton}"/>
-            </StackPanel>
-        </Border>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
+            <Button Content="确定" Command="{Binding OKCommand}" Margin="0,0,10,0" Width="80" Style="{StaticResource MaterialDesignRaisedButton}"/>
+            <Button Content="取消" Command="{Binding CancelCommand}" Width="80" Style="{StaticResource MaterialDesignOutlinedButton}"/>
+        </StackPanel>
     </Grid>
 </Window>

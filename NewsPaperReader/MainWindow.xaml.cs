@@ -27,26 +27,6 @@ namespace NewsPaperReader
             InitializeComponent();
             InitializeViewModel();
             InitializeWebView2();
-            
-            // 确保左侧面板显示出来
-            ShowSidebars();
-            
-            // 初始化图钉按钮状态
-            UpdatePinButtonState();
-        }
-        
-        private void UpdatePinButtonState()
-        {
-            if (_currentDisplayStrategy == UIElementDisplayStrategy.AlwaysShow)
-            {
-                PinButton.Content = this.Resources["PinIcon"];
-                PinButton.ToolTip = "固定侧边栏";
-            }
-            else
-            {
-                PinButton.Content = this.Resources["UnpinIcon"];
-                PinButton.ToolTip = "取消固定侧边栏";
-            }
         }
 
         private void InitializeViewModel()
@@ -65,11 +45,7 @@ namespace NewsPaperReader
             }
         }
 
-        private UIElementDisplayStrategy _currentDisplayStrategy = UIElementDisplayStrategy.AlwaysShow;
-
         private NewspaperListDisplayMode _currentListMode = NewspaperListDisplayMode.TextList;
-        
-        private System.Windows.Threading.DispatcherTimer _mousePositionTimer;
         
         private async void InitializeWebView2()
         {
@@ -89,12 +65,6 @@ namespace NewsPaperReader
             // 订阅WebView2的新窗口请求事件，确保所有链接都在当前窗口中打开
             WebView2PdfViewer.CoreWebView2.NewWindowRequested += WebView2PdfViewer_NewWindowRequested;
 
-            // 初始化鼠标位置定时器
-            _mousePositionTimer = new System.Windows.Threading.DispatcherTimer();
-            _mousePositionTimer.Interval = TimeSpan.FromMilliseconds(50);
-            _mousePositionTimer.Tick += MousePositionTimer_Tick;
-            _mousePositionTimer.Start();
-
             // 加载HTML标题页面
             string titlePagePath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "3rd_res", "html", "title.html");
             if (System.IO.File.Exists(titlePagePath))
@@ -111,122 +81,13 @@ namespace NewsPaperReader
                 // 加载应用设置
                 _viewModel.LoadAppSettings();
             }
-            
-            // 确保左侧面板显示出来
-            ShowSidebars();
         }
         
 
         
-        private void MousePositionTimer_Tick(object sender, EventArgs e)
-        {
-            if (_currentDisplayStrategy == UIElementDisplayStrategy.AutoHide && this.IsVisible)
-            {
-                try
-                {
-                    // 获取鼠标在屏幕上的位置（使用更可靠的方法）
-                    var cursorPosition = System.Windows.Forms.Cursor.Position;
-                    var screenMousePosition = new System.Windows.Point(cursorPosition.X, cursorPosition.Y);
-                    
-                    // 获取窗口在屏幕中的位置
-                    double windowLeft = this.Left;
-                    double windowTop = this.Top;
-                    double windowWidth = this.ActualWidth;
-                    double windowHeight = this.ActualHeight;
-                    
-                    // 检查窗口是否最大化
-                    if (this.WindowState == System.Windows.WindowState.Maximized)
-                    {
-                        // 当窗口最大化时，左侧边缘在屏幕左边缘
-                        windowLeft = 0;
-                        // 获取屏幕工作区的顶部和高度
-                        var screen = System.Windows.Forms.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(this).Handle);
-                        windowTop = screen.WorkingArea.Top;
-                        windowHeight = screen.WorkingArea.Height;
-                    }
-                    
-                    // 计算鼠标与窗口左侧边缘的距离
-                    double mouseDistanceToLeft = screenMousePosition.X - windowLeft;
-                    
-                    // 检查鼠标是否在窗口的垂直范围内
-                    bool isMouseInWindowVertical = screenMousePosition.Y >= windowTop && screenMousePosition.Y <= windowTop + windowHeight;
-                    
-                    // 检查鼠标是否在热区内（距离窗口左侧边缘100像素以内）
-                    bool isMouseInHotZone = mouseDistanceToLeft >= 0 && mouseDistanceToLeft < 100 && isMouseInWindowVertical;
-                    
-                    // 检查鼠标是否在热区内
-                    if (isMouseInHotZone)
-                    {
-                        // 显示左侧面板
-                        ShowSidebars();
-                    }
-                    else if (LeftSidebar != null && LeftSidebar.Visibility == Visibility.Visible)
-                    {
-                        // 只有当左侧面板可见时，才检查鼠标是否在面板内
-                        try
-                        {
-                            // 检查鼠标是否在左侧面板内
-                            var sidebarMousePosition = System.Windows.Input.Mouse.GetPosition(LeftSidebar);
-                            
-                            bool isMouseInSidebar = sidebarMousePosition.X >= 0 && sidebarMousePosition.X < LeftSidebar.ActualWidth &&
-                                                  sidebarMousePosition.Y >= 0 && sidebarMousePosition.Y < LeftSidebar.ActualHeight;
-                            
-                            if (!isMouseInSidebar)
-                            {
-                                // 隐藏左侧面板
-                                HideSidebars();
-                            }
-                        }
-                        catch
-                        {
-                            // 忽略可能的异常
-                        }
-                    }
-                }
-                catch
-                {
-                    // 忽略可能的异常
-                }
-            }
-        }
-
         private void ApplySettings(UIElementDisplayStrategy displayStrategy, NewspaperListDisplayMode listMode)
         {
-            _currentDisplayStrategy = displayStrategy;
             _currentListMode = listMode;
-            
-            // 应用界面元素显示策略
-            if (displayStrategy == UIElementDisplayStrategy.AutoHide)
-            {
-                // 初始隐藏侧边栏
-                HideSidebars();
-                // 设置为悬浮面板模式，不参与布局
-                if (LeftSidebar != null)
-                {
-                    Grid.SetColumn(LeftSidebar, 0);
-                    LeftSidebar.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
-                    LeftSidebar.VerticalAlignment = System.Windows.VerticalAlignment.Top;
-                    LeftSidebar.Margin = new Thickness(0, 0, 0, 0);
-                }
-            }
-            else
-            {
-                // 始终显示
-                ShowSidebars();
-                // 设置为普通面板模式，参与布局
-                if (LeftSidebar != null)
-                {
-                    Grid.SetColumn(LeftSidebar, 0);
-                    LeftSidebar.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
-                    LeftSidebar.VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
-                    // 从设置中获取左侧面板宽度
-                    var settings = SettingsManager.LoadSettings();
-                    LeftSidebar.Width = settings.LeftSidebarWidth;
-                    LeftSidebar.Height = double.NaN; // 清除固定高度
-                    LeftSidebar.Margin = new Thickness(0, 0, 0, 0);
-                    System.Windows.Controls.Panel.SetZIndex(LeftSidebar, 0); // 重置ZIndex
-                }
-            }
             
             // 应用DisableWebView2ContextMenu设置
             if (WebView2PdfViewer != null && WebView2PdfViewer.CoreWebView2 != null)
@@ -241,55 +102,6 @@ namespace NewsPaperReader
             // 应用内容显示区默认显示模式
             // 重新加载当前PDF以应用新的显示模式
             UpdatePdfViewer();
-            
-            // 更新图钉按钮状态
-            UpdatePinButtonState();
-        }
-
-        private void HideSidebars()
-        {
-            if (LeftSidebar != null)
-            {
-                LeftSidebar.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private void ShowSidebars()
-        {
-            if (LeftSidebar != null)
-            {
-                LeftSidebar.Visibility = Visibility.Visible;
-                // 如果是自动隐藏模式，设置为悬浮面板
-                if (_currentDisplayStrategy == UIElementDisplayStrategy.AutoHide)
-                {
-                    LeftSidebar.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
-                    LeftSidebar.VerticalAlignment = System.Windows.VerticalAlignment.Top;
-                    // 从设置中获取左侧面板宽度
-                    var settings = SettingsManager.LoadSettings();
-                    LeftSidebar.Width = settings.LeftSidebarWidth;
-                    LeftSidebar.Height = this.ActualHeight;
-                    LeftSidebar.Margin = new Thickness(0, 0, 0, 0);
-                    System.Windows.Controls.Panel.SetZIndex(LeftSidebar, 100);
-                }
-            }
-        }
-
-        private void AutoHideTrigger_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            if (_currentDisplayStrategy == UIElementDisplayStrategy.AutoHide)
-            {
-                ShowSidebars();
-            }
-        }
-
-        private void LeftSidebar_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            if (_currentDisplayStrategy == UIElementDisplayStrategy.AutoHide)
-            {
-                // 直接隐藏面板，不再检查鼠标位置
-                // 因为MouseLeave事件只有在鼠标确实离开元素边界时才会触发
-                HideSidebars();
-            }
         }
 
         private void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -437,8 +249,6 @@ namespace NewsPaperReader
         
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            // 确保左侧面板显示出来
-            ShowSidebars();
         }
         
         private void WebView2PdfViewer_NavigationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs e)
@@ -482,28 +292,7 @@ namespace NewsPaperReader
             }
         }
 
-        private void PinButton_Click(object sender, RoutedEventArgs e)
-        {
-            // 切换左侧面板的显示策略
-            if (_currentDisplayStrategy == UIElementDisplayStrategy.AlwaysShow)
-            {
-                _currentDisplayStrategy = UIElementDisplayStrategy.AutoHide;
-                // 更改图钉图标
-                PinButton.Content = this.Resources["UnpinIcon"];
-                PinButton.ToolTip = "取消固定侧边栏";
-                // 应用新的显示策略
-                ApplySettings(_currentDisplayStrategy, _currentListMode);
-            }
-            else
-            {
-                _currentDisplayStrategy = UIElementDisplayStrategy.AlwaysShow;
-                // 更改图钉图标
-                PinButton.Content = this.Resources["PinIcon"];
-                PinButton.ToolTip = "固定侧边栏";
-                // 应用新的显示策略
-                ApplySettings(_currentDisplayStrategy, _currentListMode);
-            }
-        }
+
 
         private void EditNewspaperButton_Click(object sender, RoutedEventArgs e)
         {

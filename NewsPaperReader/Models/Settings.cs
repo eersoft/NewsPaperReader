@@ -33,18 +33,7 @@ namespace NewsPaperReader.Models
         ImageTile
     }
 
-    /// <summary>
-    /// 应用主题
-    /// </summary>
-    public enum Theme
-    {
-        Light,      // 亮色模式
-        Dark,       // 暗色模式
-        Blue,       // 蓝色主题
-        Green,      // 绿色主题
-        ElegantGray,// 典雅灰主题
-        BookYellow  // 书籍黄主题
-    }
+
 
     /// <summary>
     /// 报纸信息
@@ -224,17 +213,7 @@ namespace NewsPaperReader.Models
             }
         }
 
-        // 应用主题
-        private Theme _theme = Theme.Light;
-        public Theme Theme
-        {
-            get => _theme;
-            set
-            {
-                _theme = value;
-                OnPropertyChanged();
-            }
-        }
+
 
         // 报纸库
         private List<NewspaperInfo> _newspaperLibrary = new List<NewspaperInfo>();
