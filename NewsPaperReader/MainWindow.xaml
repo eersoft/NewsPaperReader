@@ -24,14 +24,18 @@
             <Setter Property="Width" Value="36" />
             <Setter Property="Height" Value="36" />
             <Setter Property="Margin" Value="2" />
-            <Setter Property="ToolTip" Value="{Binding Content}" />
-            <Setter Property="ContentTemplate">
-                <Setter.Value>
-                    <DataTemplate>
-                        <Image Source="{Binding}" Width="24" Height="24" />
-                    </DataTemplate>
-                </Setter.Value>
-            </Setter>
+            <Setter Property="Padding" Value="6" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource ButtonHoverBackground}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+                    <Setter Property="BorderThickness" Value="1" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
     </Window.Resources>
 
@@ -58,17 +62,17 @@
                     <!-- 工具栏 -->
                     <ToolBarTray Grid.Row="0" IsLocked="True" Background="{DynamicResource ToolBarBackground}">
                         <ToolBar>
-                            <Button ToolTip="添加报纸" Command="{Binding AddNewspaperCommand}" Width="36" Height="36" Margin="2" Style="{StaticResource DefaultButton}">
+                            <Button ToolTip="添加报纸" Command="{Binding AddNewspaperCommand}" Style="{StaticResource IconButton}">
                                 <Image Source="pack://siteoforigin:,,,/3rd_res/png/添加.png" Width="24" Height="24" />
                             </Button>
-                            <Button ToolTip="刷新" Command="{Binding RefreshCommand}" Width="36" Height="36" Margin="2" Style="{StaticResource DefaultButton}">
+                            <Button ToolTip="刷新" Command="{Binding RefreshCommand}" Style="{StaticResource IconButton}">
                                 <Image Source="pack://siteoforigin:,,,/3rd_res/png/刷新.png" Width="24" Height="24" />
                             </Button>
                             <Separator/>
-                            <Button ToolTip="设置" Command="{Binding SettingsCommand}" Width="36" Height="36" Margin="2" Style="{StaticResource DefaultButton}">
+                            <Button ToolTip="设置" Command="{Binding SettingsCommand}" Style="{StaticResource IconButton}">
                                 <Image Source="pack://siteoforigin:,,,/3rd_res/png/设置.png" Width="24" Height="24" />
                             </Button>
-                            <Button ToolTip="关于" Command="{Binding AboutCommand}" Width="36" Height="36" Margin="2" Style="{StaticResource DefaultButton}">
+                            <Button ToolTip="关于" Command="{Binding AboutCommand}" Style="{StaticResource IconButton}">
                                 <Image Source="pack://siteoforigin:,,,/3rd_res/png/关于.png" Width="24" Height="24" />
                             </Button>
                         </ToolBar>

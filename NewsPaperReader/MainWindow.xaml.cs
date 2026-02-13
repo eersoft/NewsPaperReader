@@ -48,6 +48,10 @@ namespace NewsPaperReader
             }
         }
 
+        private UIElementDisplayStrategy _currentDisplayStrategy = UIElementDisplayStrategy.AlwaysShow;
+
+        private NewspaperListDisplayMode _currentListMode = NewspaperListDisplayMode.TextList;
+        
         private System.Windows.Threading.DispatcherTimer _mousePositionTimer;
         
         private async void InitializeWebView2()
@@ -168,10 +172,6 @@ namespace NewsPaperReader
                 }
             }
         }
-
-        private UIElementDisplayStrategy _currentDisplayStrategy = UIElementDisplayStrategy.AlwaysShow;
-
-        private NewspaperListDisplayMode _currentListMode = NewspaperListDisplayMode.TextList;
 
         private void ApplySettings(UIElementDisplayStrategy displayStrategy, NewspaperListDisplayMode listMode)
         {
