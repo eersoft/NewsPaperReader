@@ -62,6 +62,16 @@
                                 <TextBlock Text="px" Margin="5,0,0,0"/>
                             </StackPanel>
                         </StackPanel>
+                        
+                        <!-- 图片列表高度 -->
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,15">
+                            <TextBlock Width="200" Margin="0,0,10,0" VerticalAlignment="Center">图片列表高度:</TextBlock>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Slider Minimum="20" Maximum="100" Value="{Binding Settings.ImageListHeight}" Width="200" Margin="0,0,10,0" Style="{StaticResource MaterialDesignSlider}"/>
+                                <TextBlock Text="{Binding Settings.ImageListHeight}" Width="50" TextAlignment="Right"/>
+                                <TextBlock Text="px" Margin="5,0,0,0"/>
+                            </StackPanel>
+                        </StackPanel>
                     </StackPanel>
                 </TabItem>
                 
@@ -77,13 +87,34 @@
                         <ListBox Grid.Row="0" ItemsSource="{Binding Settings.NewspaperLibrary}" SelectedItem="{Binding SelectedNewspaperInfo}" Margin="0,0,0,10" MouseDoubleClick="ListBox_MouseDoubleClick">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" Margin="10">
-                                        <Image Source="{Binding TitleImagePath}" Width="50" Height="50" Stretch="Uniform" Margin="0,0,10,0"/>
-                                        <StackPanel>
+                                    <Grid HorizontalAlignment="Stretch" Margin="10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="50"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image Grid.Column="0" Source="{Binding TitleImagePath}" Width="50" Height="50" Stretch="Uniform" Margin="0,0,10,0"/>
+                                        <StackPanel Grid.Column="1">
                                             <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
                                             <TextBlock Text="{Binding Url}" FontSize="12" Foreground="Gray" TextWrapping="Wrap"/>
                                         </StackPanel>
-                                    </StackPanel>
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                            <Button Style="{StaticResource ToolbarButtonStyle}"
+                                                   Width="28" Height="28"
+                                                   Command="{Binding DataContext.EditNewspaperInfoCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                                   CommandParameter="{Binding}"
+                                                   ToolTip="编辑">
+                                                <materialDesign:PackIcon Kind="Pencil" Width="14" Height="14"/>
+                                            </Button>
+                                            <Button Style="{StaticResource ToolbarButtonStyle}"
+                                                   Width="28" Height="28"
+                                                   Command="{Binding DataContext.DeleteNewspaperInfoCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                                   CommandParameter="{Binding}"
+                                                   ToolTip="删除">
+                                                <materialDesign:PackIcon Kind="Delete" Width="14" Height="14"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </Grid>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>

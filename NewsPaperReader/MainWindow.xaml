@@ -98,10 +98,9 @@
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="4*"/>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="6*"/>
                         </Grid.RowDefinitions>
 
                         <!-- 工具栏 -->
@@ -122,36 +121,44 @@
                             </StackPanel>
                         </Border>
 
-                        <!-- 搜索框 -->
-                        <Border Grid.Row="1" Padding="8,4">
-                            <TextBox materialDesign:TextFieldAssist.HasClearButton="True"
-                                     materialDesign:TextFieldAssist.PrefixText="&#xF349;"
-                                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                                     materialDesign:HintAssist.Hint="搜索报纸..."/>
-                        </Border>
-
                         <!-- 报纸列表 -->
-                        <Grid Grid.Row="2">
+                        <Grid Grid.Row="1">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
                             <Border Grid.Row="0" Background="{DynamicResource MaterialDesignCardBackground}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource MaterialDesignDivider}">
-                                <TextBlock Text="报纸列表" 
-                                          FontSize="14" FontWeight="Bold"
-                                          Margin="12,8"
-                                          Foreground="{DynamicResource MaterialDesignBody}" Opacity="0.6"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="报纸列表" 
+                                              FontSize="14" FontWeight="Bold"
+                                              Margin="12,8"
+                                              Foreground="{DynamicResource MaterialDesignBody}" Opacity="0.6"/>
+                                    <Grid Grid.Column="1" Margin="0,8,12,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <materialDesign:PackIcon Grid.Column="0" Kind="Magnify" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBox Grid.Column="1" materialDesign:TextFieldAssist.HasClearButton="True"
+                                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                                 materialDesign:HintAssist.Hint="搜索报纸..." Margin="4,0,0,0"/>
+                                    </Grid>
+                                </Grid>
                             </Border>
 
-                            <ListBox Grid.Row="1"
+                            <ListBox x:Name="NewspaperListBox" Grid.Row="1"
                                     ItemsSource="{Binding FilteredNewspapers}"
                                     SelectedItem="{Binding SelectedNewspaper}"
                                     BorderThickness="0"
                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                 <ListBox.ItemContainerStyle>
                                     <Style TargetType="ListBoxItem">
-                                        <Setter Property="Padding" Value="12,8"/>
+                                        <Setter Property="Padding" Value="2,2"/>
                                         <Setter Property="Cursor" Value="Hand"/>
                                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                                     </Style>
@@ -192,103 +199,36 @@
                                     <!-- 文本列表模板 -->
                                     <DataTemplate x:Key="TextListTemplate">
                                         <Grid Margin="0,4">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" 
-                                                      Text="{Binding Name}"
+                                            <TextBlock Text="{Binding Name}"
                                                       FontSize="14" FontWeight="Medium"
                                                       TextTrimming="CharacterEllipsis"/>
-                                            <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                                <Button Style="{StaticResource ToolbarButtonStyle}"
-                                                       Width="28" Height="28"
-                                                       Command="{Binding DataContext.EditNewspaperCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
-                                                       CommandParameter="{Binding}"
-                                                       ToolTip="编辑">
-                                                    <materialDesign:PackIcon Kind="Pencil" Width="14" Height="14"/>
-                                                </Button>
-                                                <Button Style="{StaticResource ToolbarButtonStyle}"
-                                                       Width="28" Height="28"
-                                                       Command="{Binding DataContext.DeleteNewspaperCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
-                                                       CommandParameter="{Binding}"
-                                                       ToolTip="删除">
-                                                    <materialDesign:PackIcon Kind="Delete" Width="14" Height="14"/>
-                                                </Button>
-                                            </StackPanel>
                                         </Grid>
                                     </DataTemplate>
 
                                     <!-- 图片列表模板 -->
                                     <DataTemplate x:Key="ImageListTemplate">
-                                        <Grid HorizontalAlignment="Stretch" Margin="0,4">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="48"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Border Grid.Column="0" 
-                                                   Width="48" Height="48"
-                                                   CornerRadius="4"
-                                                   Background="{DynamicResource MaterialDesignDivider}">
+                                        <Grid HorizontalAlignment="Stretch" Margin="0,4" Height="{Binding DataContext.ImageListHeight, RelativeSource={RelativeSource AncestorType=ListBox}}">
+                                            <Border Width="200" 
+                                                   CornerRadius="4">
                                                 <Image Source="{Binding TitleImagePath}"
-                                                      Stretch="UniformToFill"
+                                                      Stretch="Uniform"
                                                       HorizontalAlignment="Center"
                                                       VerticalAlignment="Center"/>
                                             </Border>
-                                            <StackPanel Grid.Column="1" Margin="8,0" VerticalAlignment="Center">
-                                                <TextBlock Text="{Binding Name}"
-                                                          FontSize="14" FontWeight="Medium"
-                                                          TextTrimming="CharacterEllipsis"/>
-                                                <TextBlock Text="{Binding Url}"
-                                                          FontSize="12"
-                                                          TextTrimming="CharacterEllipsis"
-                                                          Opacity="0.7"/>
-                                            </StackPanel>
-                                            <StackPanel Grid.Column="2" Orientation="Horizontal">
-                                                <Button Style="{StaticResource ToolbarButtonStyle}"
-                                                       Width="28" Height="28"
-                                                       Command="{Binding DataContext.EditNewspaperCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
-                                                       CommandParameter="{Binding}"
-                                                       ToolTip="编辑">
-                                                    <materialDesign:PackIcon Kind="Pencil" Width="14" Height="14"/>
-                                                </Button>
-                                                <Button Style="{StaticResource ToolbarButtonStyle}"
-                                                       Width="28" Height="28"
-                                                       Command="{Binding DataContext.DeleteNewspaperCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
-                                                       CommandParameter="{Binding}"
-                                                       ToolTip="删除">
-                                                    <materialDesign:PackIcon Kind="Delete" Width="14" Height="14"/>
-                                                </Button>
-                                            </StackPanel>
                                         </Grid>
                                     </DataTemplate>
 
                                     <!-- 图片平铺模板 -->
                                     <DataTemplate x:Key="ImageTileTemplate">
-                                        <Border Width="100" Height="120"
-                                               CornerRadius="8"
+                                        <Border Width="100" 
+                                               CornerRadius="6"
                                                Background="{DynamicResource MaterialDesignPaper}"
-                                               Margin="4"
+                                               Margin="2"
                                                Cursor="Hand">
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="80"/>
-                                                    <RowDefinition Height="*"/>
-                                                </Grid.RowDefinitions>
-                                                <Border Grid.Row="0" 
-                                                       CornerRadius="8,8,0,0"
-                                                       Background="{DynamicResource MaterialDesignDivider}">
-                                                    <Image Source="{Binding TitleImagePath}"
-                                                          Stretch="UniformToFill"/>
-                                                </Border>
-                                                <TextBlock Grid.Row="1"
-                                                          Text="{Binding Name}"
-                                                          FontSize="12"
-                                                          TextAlignment="Center"
-                                                          TextTrimming="CharacterEllipsis"
-                                                          Margin="4"/>
-                                            </Grid>
+                                            <Border CornerRadius="6">
+                                                <Image Source="{Binding TitleImagePath}"
+                                                      Stretch="Uniform"/>
+                                            </Border>
                                         </Border>
                                     </DataTemplate>
                                 </ListBox.Resources>
@@ -302,14 +242,14 @@
 
                                 <ListBox.ItemsPanel>
                                     <ItemsPanelTemplate>
-                                        <VirtualizingStackPanel/>
+                                        <WrapPanel Orientation="Horizontal" ItemWidth="104" ItemHeight="120"/>
                                     </ItemsPanelTemplate>
                                 </ListBox.ItemsPanel>
                             </ListBox>
                         </Grid>
 
                         <!-- 版面列表标题 -->
-                        <Border Grid.Row="3" Background="{DynamicResource MaterialDesignCardBackground}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource MaterialDesignDivider}">
+                        <Border Grid.Row="2" Background="{DynamicResource MaterialDesignCardBackground}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource MaterialDesignDivider}">
                             <TextBlock Text="版面列表" 
                                       FontSize="14" FontWeight="Bold"
                                       Margin="12,8"
@@ -317,7 +257,7 @@
                         </Border>
 
                         <!-- 版面列表 -->
-                        <ListBox Grid.Row="4"
+                        <ListBox Grid.Row="3"
                                 ItemsSource="{Binding SelectedNewspaper.Editions}"
                                 SelectedItem="{Binding SelectedEdition}"
                                 BorderThickness="0">

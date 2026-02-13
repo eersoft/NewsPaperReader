@@ -178,6 +178,17 @@ namespace NewsPaperReader
                 OnPropertyChanged();
             }
         }
+        
+        private int _imageListHeight = 40;
+        public int ImageListHeight
+        {
+            get => _imageListHeight;
+            set
+            {
+                _imageListHeight = value;
+                OnPropertyChanged();
+            }
+        }
 
         private bool _isSidebarVisible = true;
         public bool IsSidebarVisible
@@ -384,13 +395,15 @@ namespace NewsPaperReader
         public event Action<string>? NavigateToUrl;
         public event Action<UIElementDisplayStrategy, NewspaperListDisplayMode>? ApplySettings;
 
-        public NewspaperListDisplayMode NewspaperListMode { get; private set; } = NewspaperListDisplayMode.TextList;
+        public static NewspaperListDisplayMode NewspaperListMode { get; private set; } = NewspaperListDisplayMode.TextList;
 
         public void LoadAppSettings()
         {
             var settings = SettingsManager.LoadSettings();
             NewspaperListMode = settings.NewspaperListDisplayMode;
             IsSidebarPinned = settings.IsSidebarPinned;
+            SidebarWidth = settings.LeftSidebarWidth;
+            ImageListHeight = settings.ImageListHeight;
             ApplySettings?.Invoke(settings.UIElementDisplayStrategy, settings.NewspaperListDisplayMode);
         }
 

@@ -224,6 +224,18 @@ namespace NewsPaperReader.Models
                 OnPropertyChanged();
             }
         }
+        
+        // 图片列表高度
+        private int _imageListHeight = 40;
+        public int ImageListHeight
+        {
+            get => _imageListHeight;
+            set
+            {
+                _imageListHeight = value;
+                OnPropertyChanged();
+            }
+        }
 
         // 是否固定侧边栏
         private bool _isSidebarPinned = true;

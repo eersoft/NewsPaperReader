@@ -1,4 +1,6 @@
+using System.ComponentModel;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using NewsPaperReader.Models;
 using NewsPaperReader.Services;
@@ -25,12 +27,23 @@ namespace NewsPaperReader
         }
     }
 
-    public class SettingsViewModel
+    public class SettingsViewModel : INotifyPropertyChanged
     {
         private readonly SettingsWindow _window;
         public AppSettings Settings { get; set; }
-        public NewspaperInfo? SelectedNewspaperInfo { get; set; }
+        
+        private NewspaperInfo? _selectedNewspaperInfo;
+        public NewspaperInfo? SelectedNewspaperInfo 
+        {
+            get => _selectedNewspaperInfo;
+            set
+            {
+                _selectedNewspaperInfo = value;
+                OnPropertyChanged();
+            }
+        }
         public event Action<AppSettings>? SettingsChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         // 命令
         public RelayCommand OKCommand { get; }
@@ -118,27 +131,57 @@ namespace NewsPaperReader
 
         private void EditNewspaperInfo(object? parameter)
         {
-            if (SelectedNewspaperInfo != null)
+            var newspaperInfo = parameter as NewspaperInfo ?? SelectedNewspaperInfo;
+            if (newspaperInfo != null)
             {
                 // 打开编辑报纸对话框
-                var dialog = new AddNewspaperDialog(SelectedNewspaperInfo.Name, SelectedNewspaperInfo.Url, SelectedNewspaperInfo.TitleImagePath, SelectedNewspaperInfo.ParsePdf, SelectedNewspaperInfo.ForceWebView);
+                var dialog = new AddNewspaperDialog(newspaperInfo.Name, newspaperInfo.Url, newspaperInfo.TitleImagePath, newspaperInfo.ParsePdf, newspaperInfo.ForceWebView);
                 if (dialog.ShowDialog() == true)
                 {
-                    SelectedNewspaperInfo.Name = dialog.NewspaperName;
-                    SelectedNewspaperInfo.Url = dialog.NewspaperUrl;
-                    SelectedNewspaperInfo.TitleImagePath = dialog.TitleImagePath;
-                    SelectedNewspaperInfo.ParsePdf = dialog.ParsePdf;
-                    SelectedNewspaperInfo.ForceWebView = dialog.ForceWebView;
+                    newspaperInfo.Name = dialog.NewspaperName;
+                    newspaperInfo.Url = dialog.NewspaperUrl;
+                    newspaperInfo.TitleImagePath = dialog.TitleImagePath;
+                    newspaperInfo.ParsePdf = dialog.ParsePdf;
+                    newspaperInfo.ForceWebView = dialog.ForceWebView;
                 }
             }
         }
 
         private void DeleteNewspaperInfo(object? parameter)
         {
-            if (SelectedNewspaperInfo != null)
+            var newspaperInfo = parameter as NewspaperInfo ?? SelectedNewspaperInfo;
+            if (newspaperInfo != null)
             {
-                Settings.NewspaperLibrary.Remove(SelectedNewspaperInfo);
+                // 显示确认对话框
+                var result = System.Windows.MessageBox.Show(
+                    $"确定要删除报纸 '{newspaperInfo.Name}' 吗？",
+                    "确认删除",
+                    System.Windows.MessageBoxButton.YesNo,
+                    System.Windows.MessageBoxImage.Question
+                );
+                
+                if (result == System.Windows.MessageBoxResult.Yes)
+                {
+                    // 从集合中移除
+                    Settings.NewspaperLibrary.Remove(newspaperInfo);
+                    
+                    // 创建一个新的集合引用，强制UI更新
+                    var updatedLibrary = new List<NewspaperInfo>(Settings.NewspaperLibrary);
+                    Settings.NewspaperLibrary = updatedLibrary;
+                    
+                    // 清除选择
+                    SelectedNewspaperInfo = null;
+                    
+                    // 保存设置并触发设置更改事件，确保主窗口实时更新
+                    SettingsManager.SaveSettings(Settings);
+                    SettingsChanged?.Invoke(Settings);
+                }
             }
+        }
+        
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

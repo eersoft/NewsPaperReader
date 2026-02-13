@@ -1,3 +1,4 @@
+using NewsPaperReader.Models;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -11,8 +12,17 @@ namespace NewsPaperReader
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            // 暂时默认使用图片列表模板，后续可以根据设置或其他逻辑选择不同模板
-            return ImageListTemplate;
+            switch (MainWindowViewModel.NewspaperListMode)
+            {
+                case NewspaperListDisplayMode.TextList:
+                    return TextListTemplate;
+                case NewspaperListDisplayMode.ImageList:
+                    return ImageListTemplate;
+                case NewspaperListDisplayMode.ImageTile:
+                    return ImageTileTemplate;
+                default:
+                    return TextListTemplate;
+            }
         }
     }
 }

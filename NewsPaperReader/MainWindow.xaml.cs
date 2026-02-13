@@ -35,12 +35,20 @@ namespace NewsPaperReader
             DataContext = _viewModel;
             // 订阅NavigateToUrl事件
             _viewModel.NavigateToUrl += ViewModel_NavigateToUrl;
+            // 订阅ApplySettings事件
+            _viewModel.ApplySettings += ViewModel_ApplySettings;
             
             // 初始化鼠标监测定时器
             _mouseMonitorTimer = new System.Windows.Threading.DispatcherTimer();
             _mouseMonitorTimer.Interval = TimeSpan.FromMilliseconds(100); // 每100毫秒监测一次
             _mouseMonitorTimer.Tick += MouseMonitorTimer_Tick;
             _mouseMonitorTimer.Start();
+        }
+        
+        private void ViewModel_ApplySettings(UIElementDisplayStrategy strategy, NewspaperListDisplayMode displayMode)
+        {
+            // 更新报纸列表的显示模式
+            UpdateNewspaperListLayout();
         }
 
         private void MouseMonitorTimer_Tick(object sender, EventArgs e)
@@ -101,7 +109,8 @@ namespace NewsPaperReader
                 {
                     // 显示侧边栏
                     _viewModel.IsSidebarVisible = true;
-                    _viewModel.SidebarWidth = 300;
+                    // 使用设置中保存的宽度值
+                    _viewModel.SidebarWidth = settings.LeftSidebarWidth;
                 }
                 else if (_viewModel.IsSidebarVisible && _viewModel.SidebarWidth > 0)
                 {
@@ -259,7 +268,7 @@ namespace NewsPaperReader
                 return;
             
             // 根据NewspaperListMode的值，动态切换报纸列表的ItemsPanel
-            switch (_viewModel.NewspaperListMode)
+            switch (MainWindowViewModel.NewspaperListMode)
             {
                 case NewspaperListDisplayMode.TextList:
                     // 文本列表模式：使用默认的StackPanel，垂直排列，只显示文本
@@ -382,7 +391,9 @@ namespace NewsPaperReader
             {
                 // 显示侧边栏
                 _viewModel.IsSidebarVisible = true;
-                _viewModel.SidebarWidth = 300;
+                // 使用设置中保存的宽度值
+                var settings = SettingsManager.LoadSettings();
+                _viewModel.SidebarWidth = settings.LeftSidebarWidth;
             }
         }
 
