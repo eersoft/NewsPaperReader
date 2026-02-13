@@ -15,6 +15,14 @@ namespace NewsPaperReader
             ViewModel = new SettingsViewModel(this);
             DataContext = ViewModel;
         }
+
+        private void ListBox_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (ViewModel.SelectedNewspaperInfo != null)
+            {
+                ViewModel.EditNewspaperInfoCommand.Execute(null);
+            }
+        }
     }
 
     public class SettingsViewModel

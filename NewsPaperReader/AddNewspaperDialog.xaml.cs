@@ -1,4 +1,5 @@
 using System.IO;
+using System.Windows.Controls;
 
 namespace NewsPaperReader
 {
@@ -28,6 +29,16 @@ namespace NewsPaperReader
             TitleImagePath = titleImagePath;
             ParsePdf = parsePdf;
             ForceWebView = forceWebView;
+            
+            // 更新窗口标题为编辑报纸
+            this.Title = "编辑报纸";
+            
+            // 更新标题文本为编辑报纸信息
+            var titleTextBlock = (TextBlock)FindName("TitleTextBlock");
+            if (titleTextBlock != null)
+            {
+                titleTextBlock.Text = "编辑报纸信息";
+            }
             
             // 确保标题图片预览正确显示
             if (!string.IsNullOrEmpty(titleImagePath))
@@ -60,6 +71,16 @@ namespace NewsPaperReader
             TitleImagePath = newspaper.TitleImagePath;
             ParsePdf = newspaper.ParsePdf;
             ForceWebView = newspaper.ForceWebView;
+            
+            // 更新窗口标题为编辑报纸
+            this.Title = "编辑报纸";
+            
+            // 更新标题文本为编辑报纸信息
+            var titleTextBlock = (TextBlock)FindName("TitleTextBlock");
+            if (titleTextBlock != null)
+            {
+                titleTextBlock.Text = "编辑报纸信息";
+            }
             
             // 确保标题图片预览正确显示
             if (!string.IsNullOrEmpty(newspaper.TitleImagePath))

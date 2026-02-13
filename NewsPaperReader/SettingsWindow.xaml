@@ -74,7 +74,7 @@
                         </Grid.RowDefinitions>
                         
                         <!-- 报纸列表 -->
-                        <ListBox Grid.Row="0" ItemsSource="{Binding Settings.NewspaperLibrary}" SelectedItem="{Binding SelectedNewspaperInfo}" Margin="0,0,0,10">
+                        <ListBox Grid.Row="0" ItemsSource="{Binding Settings.NewspaperLibrary}" SelectedItem="{Binding SelectedNewspaperInfo}" Margin="0,0,0,10" MouseDoubleClick="ListBox_MouseDoubleClick">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" Margin="10">

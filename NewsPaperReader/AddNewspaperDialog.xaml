@@ -6,68 +6,56 @@
         xmlns:local="clr-namespace:NewsPaperReader"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="添加报纸" Height="500" Width="650"
+        Title="添加报纸" Height="600" Width="600"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
-    <Grid>
+    <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
-        <materialDesign:Card Grid.Row="0" Padding="10" Margin="10">
-            <TextBlock Text="添加新报纸" FontWeight="Bold" FontSize="16"/>
-        </materialDesign:Card>
+        <TextBlock x:Name="TitleTextBlock" Grid.Row="0" Text="添加新报纸" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
         
-        <materialDesign:Card Grid.Row="1" Padding="10" Margin="10">
-            <StackPanel Orientation="Horizontal" Margin="10,5,10,5">
-                <TextBlock Text="报纸名称:" VerticalAlignment="Center" Width="80" HorizontalAlignment="Left"/>
-                <TextBox Text="{Binding NewspaperName}" Width="400" Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,5,0,10">
+            <TextBlock Text="报纸名称:" VerticalAlignment="Center" Width="80" HorizontalAlignment="Left"/>
+            <TextBox Text="{Binding NewspaperName}" Width="400" Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+        </StackPanel>
+        
+        <StackPanel Grid.Row="2" Margin="0,5,0,10">
+            <TextBlock Text="报纸URL:" VerticalAlignment="Center" Width="80" HorizontalAlignment="Left"/>
+            <TextBox Text="{Binding NewspaperUrl}" TextWrapping="Wrap" AcceptsReturn="False" HorizontalScrollBarVisibility="Auto" MinHeight="60" Width="400" Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+        </StackPanel>
+        
+        <StackPanel Grid.Row="3" Margin="0,5,0,10">
+            <TextBlock Text="标题图片:" VerticalAlignment="Center" Width="80" HorizontalAlignment="Left"/>
+            <StackPanel Orientation="Horizontal">
+                <Image x:Name="TitleImagePreview" Source="{Binding TitleImagePath}" Width="100" Height="50" Stretch="Uniform" Margin="0,0,10,0"/>
+                <Button Content="浏览..." Click="BrowseButton_Click" Margin="5,0,0,0" Width="60" Height="25" VerticalAlignment="Center" Style="{StaticResource MaterialDesignOutlinedButton}"/>
             </StackPanel>
-        </materialDesign:Card>
+        </StackPanel>
         
-        <materialDesign:Card Grid.Row="2" Padding="10" Margin="10">
-            <StackPanel Margin="10,5,10,5">
-                <TextBlock Text="报纸URL:" VerticalAlignment="Center" Width="80" HorizontalAlignment="Left"/>
-                <TextBox Text="{Binding NewspaperUrl}" TextWrapping="Wrap" AcceptsReturn="False" HorizontalScrollBarVisibility="Auto" MinHeight="60" Width="400" Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+        <StackPanel Grid.Row="4" Margin="0,5,0,10">
+            <TextBlock Text="处理方式:" FontWeight="Bold" Margin="0,0,0,5" HorizontalAlignment="Left"/>
+            <StackPanel Orientation="Vertical" Margin="20,0,0,0">
+                <RadioButton x:Name="ParsePdfRadioButton" Content="尝试解析PDF" IsChecked="{Binding ParsePdf}" Margin="0,5,0,0" Checked="ParsePdfRadioButton_Checked" Unchecked="ParsePdfRadioButton_Unchecked" Style="{StaticResource MaterialDesignRadioButton}"/>
+                <RadioButton x:Name="ForceWebViewRadioButton" Content="直接查看网页版" IsChecked="{Binding ForceWebView}" Margin="0,5,0,0" Checked="ForceWebViewRadioButton_Checked" Unchecked="ForceWebViewRadioButton_Unchecked" Style="{StaticResource MaterialDesignRadioButton}"/>
             </StackPanel>
-        </materialDesign:Card>
+        </StackPanel>
         
-        <materialDesign:Card Grid.Row="3" Padding="10" Margin="10">
-            <StackPanel Margin="10,5,10,5">
-                <TextBlock Text="标题图片:" VerticalAlignment="Center" Width="80" HorizontalAlignment="Left"/>
-                <StackPanel Orientation="Horizontal">
-                    <Image x:Name="TitleImagePreview" Source="{Binding TitleImagePath}" Width="100" Height="50" Stretch="Uniform" Margin="0,0,10,0"/>
-                    <Button Content="浏览..." Click="BrowseButton_Click" Margin="5,0,0,0" Width="60" Height="25" VerticalAlignment="Center" Style="{StaticResource MaterialDesignOutlinedButton}"/>
-                </StackPanel>
-            </StackPanel>
-        </materialDesign:Card>
+        <StackPanel Grid.Row="5" Margin="0,5,0,15">
+            <TextBlock Text="说明:" FontWeight="Bold" Margin="0,5,0,5" HorizontalAlignment="Left"/>
+            <TextBlock Text="标题图片：报纸名称标题图片，可以自行截图保存，然后设置；" FontSize="12" Opacity="0.8"/>
+            <TextBlock Text="解析PDF：尝试自动解析页面，获取版面目录与PDF版；" FontSize="12" Opacity="0.8"/>
+            <TextBlock Text="直接查看网页版：对于已知的无法解析的页面，直接访问网页版。" FontSize="12" Opacity="0.8"/>
+        </StackPanel>
         
-        <materialDesign:Card Grid.Row="4" Padding="10" Margin="10">
-            <StackPanel Margin="10,5,10,5">
-                <TextBlock Text="处理方式:" FontWeight="Bold" Margin="0,0,0,5" HorizontalAlignment="Left"/>
-                <StackPanel Orientation="Vertical" Margin="20,0,0,0">
-                    <RadioButton x:Name="ParsePdfRadioButton" Content="尝试解析PDF" IsChecked="{Binding ParsePdf}" Margin="0,5,0,0" Checked="ParsePdfRadioButton_Checked" Unchecked="ParsePdfRadioButton_Unchecked" Style="{StaticResource MaterialDesignRadioButton}"/>
-                    <RadioButton x:Name="ForceWebViewRadioButton" Content="直接查看网页版" IsChecked="{Binding ForceWebView}" Margin="0,5,0,0" Checked="ForceWebViewRadioButton_Checked" Unchecked="ForceWebViewRadioButton_Unchecked" Style="{StaticResource MaterialDesignRadioButton}"/>
-                </StackPanel>
-            </StackPanel>
-        </materialDesign:Card>
-        
-        <materialDesign:Card Grid.Row="5" Padding="10" Margin="10">
-            <StackPanel Margin="10,5,10,5">
-                <TextBlock Text="说明:" FontWeight="Bold" Margin="0,5,0,5" HorizontalAlignment="Left"/>
-                <TextBlock Text="标题图片：报纸名称标题图片，可以自行截图保存，然后设置；" FontSize="12" Opacity="0.8"/>
-                <TextBlock Text="解析PDF：尝试自动解析页面，获取版面目录与PDF版；" FontSize="12" Opacity="0.8"/>
-                <TextBlock Text="直接查看网页版：对于已知的无法解析的页面，直接访问网页版。" FontSize="12" Opacity="0.8"/>
-            </StackPanel>
-        </materialDesign:Card>
-        
-        <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10,5,10,10">
+        <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,10">
             <Button Content="取消" Click="CancelButton_Click" Width="80" Height="30" Margin="0,0,10,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
             <Button Content="确定" Click="OKButton_Click" Width="80" Height="30" Style="{StaticResource MaterialDesignRaisedButton}"/>
         </StackPanel>
