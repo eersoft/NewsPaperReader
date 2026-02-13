@@ -13,6 +13,68 @@
                 <!-- MaterialDesign 样式 -->
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            
+            <!-- 自定义样式 -->
+            <Style x:Key="ToolbarButtonStyle" TargetType="Button">
+                <Setter Property="Width" Value="40"/>
+                <Setter Property="Height" Value="40"/>
+                <Setter Property="Margin" Value="0"/>
+                <Setter Property="Padding" Value="8"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter x:Name="ContentPresenter" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource MaterialDesignDivider}"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource MaterialDesignSelection}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            
+            <!-- 关闭按钮样式 -->
+            <Style x:Key="CloseButtonStyle" TargetType="Button">
+                <Setter Property="Width" Value="40"/>
+                <Setter Property="Height" Value="40"/>
+                <Setter Property="Margin" Value="0"/>
+                <Setter Property="Padding" Value="8"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Grid>
+                                <Rectangle x:Name="BackgroundRect" Fill="Transparent" RadiusX="0" RadiusY="0"/>
+                                <materialDesign:PackIcon x:Name="Icon" Kind="WindowClose" Width="18" Height="18" Foreground="#FFB00020" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="BackgroundRect" Property="Fill" Value="#FFB00020"/>
+                                    <Setter TargetName="Icon" Property="Foreground" Value="White"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="BackgroundRect" Property="Fill" Value="#FFB00020"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

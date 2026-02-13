@@ -1,0 +1,46 @@
+<Application x:Class="NewspaperReader.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:converters="clr-namespace:NewspaperReader.Converters">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- MaterialDesign主题 -->
+                <materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="Blue" SecondaryColor="Orange"/>
+                
+                <!-- MaterialDesign控件样式 -->
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Card.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.CheckBox.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ComboBox.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.RadioButton.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBox.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ProgressBar.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Slider.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TabControl.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml"/>
+                
+                <!-- 自定义主题 -->
+                <ResourceDictionary Source="Themes/LightTheme.xaml"/>
+                
+                <!-- 自定义样式 -->
+                <ResourceDictionary Source="Themes/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- 全局转换器 -->
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            <converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
+            <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+            <converters:DisplayModeToVisibilityConverter x:Key="DisplayModeToVisibilityConverter"/>
+            <converters:DownloadStatusToColorConverter x:Key="DownloadStatusToColorConverter"/>
+            <converters:DownloadStatusToVisibilityConverter x:Key="DownloadStatusToVisibilityConverter"/>
+            <converters:ProcessingModeToBoolConverter x:Key="ProcessingModeToBoolConverter"/>
+            <converters:DisplayModeToBoolConverter x:Key="DisplayModeToBoolConverter"/>
+            <converters:ThemeToNameConverter x:Key="ThemeToNameConverter"/>
+            <converters:SidebarDisplayToNameConverter x:Key="SidebarDisplayToNameConverter"/>
+            <converters:BoolToStringConverter x:Key="BoolToStringConverter"/>
+            <converters:BoolToPinIconConverter x:Key="BoolToPinIconConverter"/>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
