@@ -28,6 +28,27 @@ namespace NewsPaperReader
             TitleImagePath = titleImagePath;
             ParsePdf = parsePdf;
             ForceWebView = forceWebView;
+            
+            // 确保标题图片预览正确显示
+            if (!string.IsNullOrEmpty(titleImagePath))
+            {
+                string settingsDirectory = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "esNewsPaperReader"
+                );
+                
+                // 如果是相对路径，转换为绝对路径用于预览
+                string imagePath = titleImagePath;
+                if (!Path.IsPathRooted(titleImagePath))
+                {
+                    imagePath = Path.Combine(settingsDirectory, titleImagePath);
+                }
+                
+                if (File.Exists(imagePath))
+                {
+                    TitleImagePreview.Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(imagePath));
+                }
+            }
         }
 
         private void BrowseButton_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -70,6 +91,9 @@ namespace NewsPaperReader
                 
                 // 保存相对路径
                 TitleImagePath = Path.Combine("title_image", fileName);
+                
+                // 更新图片预览
+                TitleImagePreview.Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(destPath));
             }
         }
 
