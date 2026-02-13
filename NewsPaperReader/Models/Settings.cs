@@ -80,6 +80,34 @@ namespace NewsPaperReader.Models
             }
         }
 
+        private bool _parsePdf = true;
+        /// <summary>
+        /// 是否尝试解析PDF（默认：true）
+        /// </summary>
+        public bool ParsePdf
+        {
+            get => _parsePdf;
+            set
+            {
+                _parsePdf = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _forceWebView = false;
+        /// <summary>
+        /// 是否强制直接访问网页版（默认：false）
+        /// </summary>
+        public bool ForceWebView
+        {
+            get => _forceWebView;
+            set
+            {
+                _forceWebView = value;
+                OnPropertyChanged();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public NewspaperInfo()
@@ -87,13 +115,17 @@ namespace NewsPaperReader.Models
             _name = string.Empty;
             _url = string.Empty;
             _titleImagePath = string.Empty;
+            _parsePdf = true;
+            _forceWebView = false;
         }
 
-        public NewspaperInfo(string name, string url, string titleImagePath = "")
+        public NewspaperInfo(string name, string url, string titleImagePath = "", bool parsePdf = true, bool forceWebView = false)
         {
             _name = name;
             _url = url;
             _titleImagePath = titleImagePath;
+            _parsePdf = parsePdf;
+            _forceWebView = forceWebView;
         }
 
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)

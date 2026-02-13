@@ -102,7 +102,7 @@ namespace NewsPaperReader
             var dialog = new AddNewspaperDialog();
             if (dialog.ShowDialog() == true)
             {
-                var newspaperInfo = new NewspaperInfo(dialog.NewspaperName, dialog.NewspaperUrl, dialog.TitleImagePath);
+                var newspaperInfo = new NewspaperInfo(dialog.NewspaperName, dialog.NewspaperUrl, dialog.TitleImagePath, dialog.ParsePdf, dialog.ForceWebView);
                 Settings.NewspaperLibrary.Add(newspaperInfo);
             }
         }
@@ -112,12 +112,14 @@ namespace NewsPaperReader
             if (SelectedNewspaperInfo != null)
             {
                 // 打开编辑报纸对话框
-                var dialog = new AddNewspaperDialog(SelectedNewspaperInfo.Name, SelectedNewspaperInfo.Url, SelectedNewspaperInfo.TitleImagePath);
+                var dialog = new AddNewspaperDialog(SelectedNewspaperInfo.Name, SelectedNewspaperInfo.Url, SelectedNewspaperInfo.TitleImagePath, SelectedNewspaperInfo.ParsePdf, SelectedNewspaperInfo.ForceWebView);
                 if (dialog.ShowDialog() == true)
                 {
                     SelectedNewspaperInfo.Name = dialog.NewspaperName;
                     SelectedNewspaperInfo.Url = dialog.NewspaperUrl;
                     SelectedNewspaperInfo.TitleImagePath = dialog.TitleImagePath;
+                    SelectedNewspaperInfo.ParsePdf = dialog.ParsePdf;
+                    SelectedNewspaperInfo.ForceWebView = dialog.ForceWebView;
                 }
             }
         }

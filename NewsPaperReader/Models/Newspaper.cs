@@ -31,6 +31,16 @@ namespace NewsPaperReader.Models
         /// </summary>
         public bool IsLoaded { get; set; }
 
+        /// <summary>
+        /// 是否尝试解析PDF（默认：true）
+        /// </summary>
+        public bool ParsePdf { get; set; }
+
+        /// <summary>
+        /// 是否强制直接访问网页版（默认：false）
+        /// </summary>
+        public bool ForceWebView { get; set; }
+
         public Newspaper()
         {
             Name = string.Empty;
@@ -38,15 +48,19 @@ namespace NewsPaperReader.Models
             TitleImagePath = string.Empty;
             Editions = new List<Edition>();
             IsLoaded = false;
+            ParsePdf = true;
+            ForceWebView = false;
         }
 
-        public Newspaper(string name, string url, string titleImagePath = "")
+        public Newspaper(string name, string url, string titleImagePath = "", bool parsePdf = true, bool forceWebView = false)
         {
             Name = name;
             Url = url;
             TitleImagePath = titleImagePath;
             Editions = new List<Edition>();
             IsLoaded = false;
+            ParsePdf = parsePdf;
+            ForceWebView = forceWebView;
         }
     }
 

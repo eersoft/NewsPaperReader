@@ -140,12 +140,12 @@ namespace NewsPaperReader
             var dialog = new AddNewspaperDialog();
             if (dialog.ShowDialog() == true && dialog.IsConfirmed)
             {
-                var newspaper = new Newspaper(dialog.NewspaperName, dialog.NewspaperUrl, dialog.TitleImagePath);
+                var newspaper = new Newspaper(dialog.NewspaperName, dialog.NewspaperUrl, dialog.TitleImagePath, dialog.ParsePdf, dialog.ForceWebView);
                 Newspapers.Add(newspaper);
                 
                 // 更新设置中的报纸库
                 var settings = SettingsManager.LoadSettings();
-                settings.NewspaperLibrary.Add(new NewspaperInfo(dialog.NewspaperName, dialog.NewspaperUrl, dialog.TitleImagePath));
+                settings.NewspaperLibrary.Add(new NewspaperInfo(dialog.NewspaperName, dialog.NewspaperUrl, dialog.TitleImagePath, dialog.ParsePdf, dialog.ForceWebView));
                 SettingsManager.SaveSettings(settings);
             }
         }
@@ -197,7 +197,7 @@ namespace NewsPaperReader
                 {
                     titleImagePath = Path.Combine(settingsDirectory, titleImagePath);
                 }
-                return new Newspaper(n.Name, n.Url, titleImagePath);
+                return new Newspaper(n.Name, n.Url, titleImagePath, n.ParsePdf, n.ForceWebView);
             }).ToList();
         }
 
@@ -223,39 +223,58 @@ namespace NewsPaperReader
                 // 清空之前的版面列表
                 Editions = new List<Edition>();
 
-                // 分析网页
-                var editions = await _webAnalyzer.AnalyzeNewspaperPage(newspaper.Url);
-                
-                if (editions.Count > 0)
+                // 检查是否强制直接访问网页版
+                if (newspaper.ForceWebView)
                 {
-                    newspaper.Editions.Clear();
-                    foreach (var edition in editions)
+                    StatusText = "正在直接打开网页版...";
+                    // 直接用WebView2打开网页
+                    NavigateToUrl?.Invoke(newspaper.Url);
+                    return;
+                }
+
+                // 检查是否尝试解析PDF
+                if (newspaper.ParsePdf)
+                {
+                    // 分析网页
+                    var editions = await _webAnalyzer.AnalyzeNewspaperPage(newspaper.Url);
+                    
+                    if (editions.Count > 0)
                     {
-                        newspaper.Editions.Add(new Edition(edition.Key, edition.Value));
-                    }
-                    
-                    Editions = newspaper.Editions;
-                    newspaper.IsLoaded = true;
-                    
-                    StatusText = $"成功加载 {editions.Count} 个版面，正在异步下载PDF文件...";
-                    
-                    // 异步下载所有PDF文件
-                    _ = DownloadAllPdfsAsync(newspaper.Editions);
-                    
-                    // 自动载入第一版PDF
-                    if (newspaper.Editions.Count > 0)
-                    {
-                        SelectedEdition = newspaper.Editions[0];
-                        // 延迟清空状态文本，确保用户有足够时间看到加载成功的提示
-                        System.Threading.Tasks.Task.Delay(500).ContinueWith(t =>
+                        newspaper.Editions.Clear();
+                        foreach (var edition in editions)
                         {
-                            StatusText = string.Empty;
-                        });
+                            newspaper.Editions.Add(new Edition(edition.Key, edition.Value));
+                        }
+                        
+                        Editions = newspaper.Editions;
+                        newspaper.IsLoaded = true;
+                        
+                        StatusText = $"成功加载 {editions.Count} 个版面，正在异步下载PDF文件...";
+                        
+                        // 异步下载所有PDF文件
+                        _ = DownloadAllPdfsAsync(newspaper.Editions);
+                        
+                        // 自动载入第一版PDF
+                        if (newspaper.Editions.Count > 0)
+                        {
+                            SelectedEdition = newspaper.Editions[0];
+                            // 延迟清空状态文本，确保用户有足够时间看到加载成功的提示
+                            System.Threading.Tasks.Task.Delay(500).ContinueWith(t =>
+                            {
+                                StatusText = string.Empty;
+                            });
+                        }
+                    }
+                    else
+                    {
+                        StatusText = "未找到PDF链接，正在打开网页版...";
+                        // 直接用WebView2打开网页
+                        NavigateToUrl?.Invoke(newspaper.Url);
                     }
                 }
                 else
                 {
-                    StatusText = "未找到PDF链接，正在打开网页版...";
+                    StatusText = "已跳过PDF解析，正在打开网页版...";
                     // 直接用WebView2打开网页
                     NavigateToUrl?.Invoke(newspaper.Url);
                 }

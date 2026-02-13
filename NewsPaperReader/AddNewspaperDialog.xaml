@@ -5,11 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NewsPaperReader"
         mc:Ignorable="d"
-        Title="添加报纸" Height="350" Width="500"
+        Title="添加报纸" Height="500" Width="550"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -37,13 +39,21 @@
         </StackPanel>
         
         <StackPanel Grid.Row="4" Margin="10">
-            <TextBlock Text="提示:" FontWeight="Bold" Margin="0,10,0,5"/>
-            <TextBlock Text="1. 输入报纸的官方网站URL" FontSize="12" Foreground="Gray"/>
-            <TextBlock Text="2. 系统将自动分析网页结构" FontSize="12" Foreground="Gray"/>
-            <TextBlock Text="3. 请确保URL可以访问" FontSize="12" Foreground="Gray"/>
+            <TextBlock Text="处理方式:" FontWeight="Bold" Margin="0,0,0,5"/>
+            <StackPanel Orientation="Vertical" Margin="20,0,0,0">
+                <RadioButton x:Name="ParsePdfRadioButton" Content="尝试解析PDF" IsChecked="{Binding ParsePdf}" Margin="0,5,0,0" Checked="ParsePdfRadioButton_Checked" Unchecked="ParsePdfRadioButton_Unchecked"/>
+                <RadioButton x:Name="ForceWebViewRadioButton" Content="直接查看网页版" IsChecked="{Binding ForceWebView}" Margin="0,5,0,0" Checked="ForceWebViewRadioButton_Checked" Unchecked="ForceWebViewRadioButton_Unchecked"/>
+            </StackPanel>
         </StackPanel>
         
-        <StackPanel Orientation="Horizontal" Grid.Row="5" HorizontalAlignment="Right" Margin="10">
+        <StackPanel Grid.Row="6" Margin="10">
+            <TextBlock Text="说明:" FontWeight="Bold" Margin="0,10,0,5"/>
+            <TextBlock Text="标题图片：报纸名称标题图片，可以自行截图保存，然后设置；" FontSize="12" Foreground="Gray"/>
+            <TextBlock Text="解析PDF：尝试自动解析页面，获取版面目录与PDF版；" FontSize="12" Foreground="Gray"/>
+            <TextBlock Text="直接查看网页版：对于已知的无法解析的页面，直接访问网页版。" FontSize="12" Foreground="Gray"/>
+        </StackPanel>
+        
+        <StackPanel Orientation="Horizontal" Grid.Row="7" HorizontalAlignment="Right" Margin="10">
             <Button Content="取消" Click="CancelButton_Click" Width="80" Height="30" Margin="0,0,10,0"/>
             <Button Content="确定" Click="OKButton_Click" Width="80" Height="30"/>
         </StackPanel>

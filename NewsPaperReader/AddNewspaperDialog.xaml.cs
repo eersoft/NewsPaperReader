@@ -7,21 +7,27 @@ namespace NewsPaperReader
         public string NewspaperName { get; set; } = string.Empty;
         public string NewspaperUrl { get; set; } = string.Empty;
         public string TitleImagePath { get; set; } = string.Empty;
+        public bool ParsePdf { get; set; } = true;
+        public bool ForceWebView { get; set; } = false;
         public bool IsConfirmed { get; private set; }
 
         public AddNewspaperDialog()
         {
             InitializeComponent();
             DataContext = this;
+            ParsePdf = true;
+            ForceWebView = false;
         }
 
-        public AddNewspaperDialog(string name, string url, string titleImagePath = "")
+        public AddNewspaperDialog(string name, string url, string titleImagePath = "", bool parsePdf = true, bool forceWebView = false)
         {
             InitializeComponent();
             DataContext = this;
             NewspaperName = name;
             NewspaperUrl = url;
             TitleImagePath = titleImagePath;
+            ParsePdf = parsePdf;
+            ForceWebView = forceWebView;
         }
 
         private void BrowseButton_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -89,6 +95,36 @@ namespace NewsPaperReader
             IsConfirmed = true;
             DialogResult = true;
             Close();
+        }
+
+        private void ParsePdfRadioButton_Checked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            ParsePdf = true;
+            ForceWebView = false;
+        }
+
+        private void ParsePdfRadioButton_Unchecked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            // 当取消选择解析PDF时，如果直接访问网页版也未被选择，则默认选择直接访问网页版
+            if (!ForceWebView)
+            {
+                ForceWebView = true;
+            }
+        }
+
+        private void ForceWebViewRadioButton_Checked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            ForceWebView = true;
+            ParsePdf = false;
+        }
+
+        private void ForceWebViewRadioButton_Unchecked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            // 当取消选择直接访问网页版时，如果解析PDF也未被选择，则默认选择解析PDF
+            if (!ParsePdf)
+            {
+                ParsePdf = true;
+            }
         }
 
         private void CancelButton_Click(object sender, System.Windows.RoutedEventArgs e)
