@@ -15,6 +15,7 @@
 
     <Window.Resources>
         <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <local:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
         <local:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
         <local:DownloadStatusToColorConverter x:Key="DownloadStatusToColorConverter"/>
         <local:DownloadStatusToVisibilityConverter x:Key="DownloadStatusToVisibilityConverter"/>
@@ -78,6 +79,8 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
+
+
                 <!-- 左侧边栏 -->
                 <Border Grid.Column="0"
                         Background="{DynamicResource MaterialDesignPaper}"
@@ -107,9 +110,6 @@
                                 </Button>
                                 <Button Command="{Binding SettingsCommand}" Margin="2" Style="{StaticResource ToolbarButtonStyle}" ToolTip="设置">
                                     <materialDesign:PackIcon Kind="Cog"/>
-                                </Button>
-                                <Button Command="{Binding OpenAboutCommand}" Margin="2" Style="{StaticResource ToolbarButtonStyle}" ToolTip="关于">
-                                    <materialDesign:PackIcon Kind="InformationOutline"/>
                                 </Button>
                                 <Button Command="{Binding ToggleSidebarPinCommand}" Margin="2" Style="{StaticResource ToolbarButtonStyle}" ToolTip="{Binding IsSidebarPinned, Converter={StaticResource BoolToStringConverter}}">
                                     <materialDesign:PackIcon Kind="{Binding IsSidebarPinned, Converter={StaticResource BoolToPinIconConverter}}"/>
@@ -331,46 +331,8 @@
 
                 <!-- 右侧内容区 -->
                 <Grid Grid.Column="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <!-- 内容工具栏 -->
-                    <Border Grid.Row="0" Background="{DynamicResource MaterialDesignPaper}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource MaterialDesignDivider}" Height="40">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Button Grid.Column="0"
-                                   Margin="2" Style="{StaticResource ToolbarButtonStyle}"
-                                   Command="{Binding ToggleSidebarCommand}"
-                                   ToolTip="切换侧边栏">
-                                <materialDesign:PackIcon Kind="Menu"/>
-                            </Button>
-
-                            <TextBlock Grid.Column="1"
-                                      Text="{Binding SelectedNewspaper.Name}"
-                                      FontSize="14" FontWeight="Medium"
-                                      VerticalAlignment="Center"
-                                      HorizontalAlignment="Center"/>
-
-                            <Button Grid.Column="2"
-                                   Margin="2" Style="{StaticResource ToolbarButtonStyle}"
-                                   Command="{Binding DownloadAllEditionsCommand}"
-                                   ToolTip="下载所有版面"
-                                   Visibility="{Binding SelectedNewspaper, Converter={StaticResource NullToVisibilityConverter}}">
-                                <materialDesign:PackIcon Kind="DownloadMultiple"/>
-                            </Button>
-                        </Grid>
-                    </Border>
-
                     <!-- WebView2内容区 -->
-                    <wv2:WebView2 Grid.Row="1"
-                                 x:Name="WebView2PdfViewer"
+                    <wv2:WebView2 x:Name="WebView2PdfViewer"
                                  Source="{Binding CurrentContent}"
                                  DefaultBackgroundColor="White"/>
                 </Grid>

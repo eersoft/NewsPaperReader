@@ -35,6 +35,78 @@ namespace NewsPaperReader
             DataContext = _viewModel;
             // 订阅NavigateToUrl事件
             _viewModel.NavigateToUrl += ViewModel_NavigateToUrl;
+            
+            // 初始化鼠标监测定时器
+            _mouseMonitorTimer = new System.Windows.Threading.DispatcherTimer();
+            _mouseMonitorTimer.Interval = TimeSpan.FromMilliseconds(100); // 每100毫秒监测一次
+            _mouseMonitorTimer.Tick += MouseMonitorTimer_Tick;
+            _mouseMonitorTimer.Start();
+        }
+
+        private void MouseMonitorTimer_Tick(object sender, EventArgs e)
+        {
+            if (_viewModel == null || _viewModel.IsSidebarPinned || _isMouseOverSidebar)
+            {
+                return;
+            }
+
+            try
+            {
+                // 加载设置中的触发距离
+                var settings = SettingsManager.LoadSettings();
+                var triggerDistance = settings.SidebarTriggerDistance;
+                
+                // 获取鼠标在屏幕上的位置
+                var mousePosition = System.Windows.Forms.Control.MousePosition;
+                
+                // 获取窗口在屏幕上的位置和大小
+                var windowLeft = this.Left;
+                var windowTop = this.Top;
+                var windowWidth = this.Width;
+                var windowHeight = this.Height;
+
+                // 处理窗口最大化的情况
+                if (this.WindowState == WindowState.Maximized)
+                {
+                    // 最大化时，窗口左侧边缘为屏幕左侧
+                    windowLeft = 0;
+                    // 获取屏幕工作区大小
+                    var screen = System.Windows.Forms.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(this).Handle);
+                    windowTop = screen.WorkingArea.Top;
+                    windowWidth = screen.WorkingArea.Width;
+                    windowHeight = screen.WorkingArea.Height;
+                }
+
+                // 检查鼠标是否在窗口左侧边缘附近
+                if (mousePosition.X >= windowLeft && 
+                    mousePosition.X <= windowLeft + triggerDistance && 
+                    mousePosition.Y >= windowTop && 
+                    mousePosition.Y <= windowTop + windowHeight)
+                {
+                    // 显示侧边栏
+                    _viewModel.IsSidebarVisible = true;
+                    _viewModel.SidebarWidth = 300;
+                }
+                else if (_viewModel.IsSidebarVisible && _viewModel.SidebarWidth > 0)
+                {
+                    // 检查鼠标是否在侧边栏区域内
+                    var sidebarRight = windowLeft + _viewModel.SidebarWidth;
+                    if (mousePosition.X > sidebarRight || 
+                        mousePosition.Y < windowTop || 
+                        mousePosition.Y > windowTop + windowHeight)
+                    {
+                        // 鼠标不在侧边栏区域内，立即隐藏侧边栏
+                        if (!_viewModel.IsSidebarPinned)
+                        {
+                            _viewModel.SidebarWidth = 0;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // 忽略错误，防止鼠标位置获取失败导致程序崩溃
+            }
         }
 
         private void ViewModel_NavigateToUrl(string url)
@@ -275,15 +347,14 @@ namespace NewsPaperReader
             this.Close();
         }
 
-        private System.Windows.Threading.DispatcherTimer _sidebarTimer;
-        private Border _sidebarBorder;
+        private System.Windows.Threading.DispatcherTimer _mouseMonitorTimer;
+        private bool _isMouseOverSidebar = false;
 
         private void Sidebar_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
+            _isMouseOverSidebar = true;
             if (_viewModel != null)
             {
-                // 取消之前的计时器
-                _sidebarTimer?.Stop();
                 // 显示侧边栏
                 _viewModel.IsSidebarVisible = true;
                 _viewModel.SidebarWidth = 300;
@@ -292,18 +363,11 @@ namespace NewsPaperReader
 
         private void Sidebar_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
+            _isMouseOverSidebar = false;
             if (_viewModel != null && !_viewModel.IsSidebarPinned)
             {
-                // 创建计时器，延迟隐藏侧边栏
-                _sidebarTimer = new System.Windows.Threading.DispatcherTimer();
-                _sidebarTimer.Interval = TimeSpan.FromSeconds(1);
-                _sidebarTimer.Tick += (s, args) =>
-                {
-                    _sidebarTimer.Stop();
-                    // 隐藏侧边栏
-                    _viewModel.SidebarWidth = 50;
-                };
-                _sidebarTimer.Start();
+                // 立即隐藏侧边栏
+                _viewModel.SidebarWidth = 0;
             }
         }
         

@@ -213,6 +213,18 @@ namespace NewsPaperReader.Models
             }
         }
 
+        // 侧边栏触发距离
+        private int _sidebarTriggerDistance = 20;
+        public int SidebarTriggerDistance
+        {
+            get => _sidebarTriggerDistance;
+            set
+            {
+                _sidebarTriggerDistance = value;
+                OnPropertyChanged();
+            }
+        }
+
 
 
         // 报纸库

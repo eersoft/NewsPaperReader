@@ -272,6 +272,10 @@ namespace NewsPaperReader
         private void ToggleSidebar(object? parameter)
         {
             IsSidebarVisible = !IsSidebarVisible;
+            if (IsSidebarVisible)
+            {
+                SidebarWidth = 300;
+            }
         }
 
         private void DownloadEdition(object? parameter)
