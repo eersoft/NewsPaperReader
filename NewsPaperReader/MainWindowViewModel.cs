@@ -267,6 +267,11 @@ namespace NewsPaperReader
         private void ToggleSidebarPin(object? parameter)
         {
             IsSidebarPinned = !IsSidebarPinned;
+            
+            // 保存到设置中
+            var settings = SettingsManager.LoadSettings();
+            settings.IsSidebarPinned = IsSidebarPinned;
+            SettingsManager.SaveSettings(settings);
         }
 
         private void ToggleSidebar(object? parameter)
@@ -372,6 +377,7 @@ namespace NewsPaperReader
         {
             var settings = SettingsManager.LoadSettings();
             NewspaperListMode = settings.NewspaperListDisplayMode;
+            IsSidebarPinned = settings.IsSidebarPinned;
             ApplySettings?.Invoke(settings.UIElementDisplayStrategy, settings.NewspaperListDisplayMode);
         }
 

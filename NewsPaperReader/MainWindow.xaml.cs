@@ -45,7 +45,7 @@ namespace NewsPaperReader
 
         private void MouseMonitorTimer_Tick(object sender, EventArgs e)
         {
-            if (_viewModel == null || _viewModel.IsSidebarPinned || _isMouseOverSidebar)
+            if (_viewModel == null || _viewModel.IsSidebarPinned)
             {
                 return;
             }
@@ -77,9 +77,25 @@ namespace NewsPaperReader
                     windowHeight = screen.WorkingArea.Height;
                 }
 
-                // 检查鼠标是否在窗口左侧边缘附近
-                if (mousePosition.X >= windowLeft && 
-                    mousePosition.X <= windowLeft + triggerDistance && 
+                // 检查鼠标是否在边侧栏区域内
+                bool isMouseInSidebar = false;
+                if (_viewModel.IsSidebarVisible && _viewModel.SidebarWidth > 0)
+                {
+                    var sidebarRight = windowLeft + _viewModel.SidebarWidth;
+                    isMouseInSidebar = mousePosition.X >= windowLeft && 
+                                      mousePosition.X <= sidebarRight && 
+                                      mousePosition.Y >= windowTop && 
+                                      mousePosition.Y <= windowTop + windowHeight;
+                }
+
+                // 如果鼠标在边侧栏区域内，保持边侧栏显示
+                if (isMouseInSidebar || _isMouseOverSidebar)
+                {
+                    return;
+                }
+
+                // 检查鼠标是否在窗口左侧边缘附近（包括鼠标在窗口左侧边缘之外的情况）
+                if ((mousePosition.X - windowLeft) < triggerDistance && 
                     mousePosition.Y >= windowTop && 
                     mousePosition.Y <= windowTop + windowHeight)
                 {
@@ -89,18 +105,8 @@ namespace NewsPaperReader
                 }
                 else if (_viewModel.IsSidebarVisible && _viewModel.SidebarWidth > 0)
                 {
-                    // 检查鼠标是否在侧边栏区域内
-                    var sidebarRight = windowLeft + _viewModel.SidebarWidth;
-                    if (mousePosition.X > sidebarRight || 
-                        mousePosition.Y < windowTop || 
-                        mousePosition.Y > windowTop + windowHeight)
-                    {
-                        // 鼠标不在侧边栏区域内，立即隐藏侧边栏
-                        if (!_viewModel.IsSidebarPinned)
-                        {
-                            _viewModel.SidebarWidth = 0;
-                        }
-                    }
+                    // 鼠标不在侧边栏区域内，也不在触发区域内，立即隐藏侧边栏
+                    _viewModel.SidebarWidth = 0;
                 }
             }
             catch (Exception)

@@ -225,6 +225,18 @@ namespace NewsPaperReader.Models
             }
         }
 
+        // 是否固定侧边栏
+        private bool _isSidebarPinned = true;
+        public bool IsSidebarPinned
+        {
+            get => _isSidebarPinned;
+            set
+            {
+                _isSidebarPinned = value;
+                OnPropertyChanged();
+            }
+        }
+
 
 
         // 报纸库
