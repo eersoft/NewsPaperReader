@@ -248,10 +248,16 @@ namespace NewsPaperReader
             if (this.WindowState == WindowState.Maximized)
             {
                 this.WindowState = WindowState.Normal;
+                // 切换为最大化图标
+                MaximizeIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.WindowMaximize;
+                MaximizeButton.ToolTip = "最大化";
             }
             else
             {
                 this.WindowState = WindowState.Maximized;
+                // 切换为还原图标
+                MaximizeIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.WindowRestore;
+                MaximizeButton.ToolTip = "还原";
             }
         }
 
