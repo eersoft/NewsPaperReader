@@ -84,6 +84,10 @@ namespace NewsPaperReader
             
             // 保存设置
             SettingsManager.SaveSettings(Settings);
+            
+            // 应用新主题
+            App.ApplyTheme(Settings.Theme);
+            
             // 触发设置更改事件
             SettingsChanged?.Invoke(Settings);
             _window.DialogResult = true;

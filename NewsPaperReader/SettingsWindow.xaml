@@ -7,8 +7,10 @@
         xmlns:models="clr-namespace:NewsPaperReader.Models"
         mc:Ignorable="d"
         Title="设置" Height="600" Width="800"
-        WindowStartupLocation="CenterScreen">
-    <Grid>
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource WindowBackground}"
+        Foreground="{DynamicResource TextBrush}">
+    <Grid Background="{DynamicResource WindowBackground}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -16,14 +18,14 @@
         </Grid.RowDefinitions>
         
         <!-- 标题 -->
-        <Border Grid.Row="0" Background="LightGray" Padding="10">
-            <TextBlock Text="应用程序设置" FontWeight="Bold" FontSize="16"/>
+        <Border Grid.Row="0" Background="{DynamicResource HeaderBackground}" Padding="10" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1">
+            <TextBlock Text="应用程序设置" FontWeight="Bold" FontSize="16" Foreground="{DynamicResource TextBrush}"/>
         </Border>
         
         <!-- 内容区域 -->
-        <TabControl Grid.Row="1" Margin="10">
+        <TabControl Grid.Row="1" Margin="10" Style="{StaticResource DefaultTabControl}">
             <!-- 界面设置 -->
-            <TabItem Header="界面设置">
+            <TabItem Header="界面设置" Style="{StaticResource DefaultTabItem}">
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -68,12 +70,23 @@
                         <TextBlock Text="{Binding Settings.LeftSidebarWidth}" Width="50" TextAlignment="Right"/>
                         <TextBlock Text="px" Margin="5,0,0,0"/>
                     </StackPanel>
+                    
+                    <!-- 应用主题 -->
+                    <TextBlock Grid.Row="5" Grid.Column="0" Margin="0,10,10,0" VerticalAlignment="Center">应用主题:</TextBlock>
+                    <ComboBox Grid.Row="5" Grid.Column="1" Margin="0,10,0,0" SelectedValue="{Binding Settings.Theme}" SelectedValuePath="Tag">
+                        <ComboBoxItem Content="亮色模式" Tag="Light"/>
+                        <ComboBoxItem Content="暗色模式" Tag="Dark"/>
+                        <ComboBoxItem Content="蓝色主题" Tag="Blue"/>
+                        <ComboBoxItem Content="绿色主题" Tag="Green"/>
+                        <ComboBoxItem Content="典雅灰主题" Tag="ElegantGray"/>
+                        <ComboBoxItem Content="书籍黄主题" Tag="BookYellow"/>
+                    </ComboBox>
 
                 </Grid>
             </TabItem>
             
             <!-- 报纸库管理 -->
-            <TabItem Header="报纸库管理">
+            <TabItem Header="报纸库管理" Style="{StaticResource DefaultTabItem}">
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
@@ -81,7 +94,7 @@
                     </Grid.RowDefinitions>
                     
                     <!-- 报纸列表 -->
-                    <ListBox Grid.Row="0" ItemsSource="{Binding Settings.NewspaperLibrary}" SelectedItem="{Binding SelectedNewspaperInfo}" Margin="0,0,0,10">
+                    <ListBox Grid.Row="0" ItemsSource="{Binding Settings.NewspaperLibrary}" SelectedItem="{Binding SelectedNewspaperInfo}" Margin="0,0,0,10" Style="{StaticResource DefaultListBox}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" Margin="10">
@@ -97,18 +110,20 @@
                     
                     <!-- 操作按钮 -->
                     <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Content="添加" Command="{Binding AddNewspaperInfoCommand}" Margin="0,0,10,0"/>
-                        <Button Content="编辑" Command="{Binding EditNewspaperInfoCommand}" Margin="0,0,10,0"/>
-                        <Button Content="删除" Command="{Binding DeleteNewspaperInfoCommand}" Margin="0,0,10,0"/>
+                        <Button Content="添加" Command="{Binding AddNewspaperInfoCommand}" Margin="0,0,10,0" Style="{StaticResource DefaultButton}"/>
+                        <Button Content="编辑" Command="{Binding EditNewspaperInfoCommand}" Margin="0,0,10,0" Style="{StaticResource DefaultButton}"/>
+                        <Button Content="删除" Command="{Binding DeleteNewspaperInfoCommand}" Margin="0,0,10,0" Style="{StaticResource DefaultButton}"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
         </TabControl>
         
         <!-- 按钮区域 -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
-            <Button Content="确定" Command="{Binding OKCommand}" Margin="0,0,10,0" Width="80"/>
-            <Button Content="取消" Command="{Binding CancelCommand}" Width="80"/>
-        </StackPanel>
+        <Border Grid.Row="2" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="0,10,0,0" Margin="10">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="确定" Command="{Binding OKCommand}" Margin="0,0,10,0" Width="80" Style="{StaticResource DefaultButton}"/>
+                <Button Content="取消" Command="{Binding CancelCommand}" Width="80" Style="{StaticResource DefaultButton}"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>

@@ -7,8 +7,10 @@
         mc:Ignorable="d"
         Title="添加报纸" Height="500" Width="650"
         WindowStartupLocation="CenterScreen"
-        ResizeMode="NoResize">
-    <Grid>
+        ResizeMode="NoResize"
+        Background="{DynamicResource WindowBackground}"
+        Foreground="{DynamicResource TextBrush}">
+    <Grid Background="{DynamicResource WindowBackground}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -19,44 +21,46 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
-        <TextBlock Text="添加新报纸" FontWeight="Bold" FontSize="16" Grid.Row="0" Margin="10,10,10,5"/>
+        <TextBlock Text="添加新报纸" FontWeight="Bold" FontSize="16" Grid.Row="0" Margin="10,10,10,5" Foreground="{DynamicResource TextBrush}"/>
         
         <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10,5,10,5">
-            <TextBlock Text="报纸名称:" VerticalAlignment="Center" Width="80" HorizontalAlignment="Left"/>
+            <TextBlock Text="报纸名称:" VerticalAlignment="Center" Width="80" HorizontalAlignment="Left" Foreground="{DynamicResource TextBrush}"/>
             <TextBox Text="{Binding NewspaperName}" Style="{StaticResource DefaultTextBox}"/>
         </StackPanel>
         
         <StackPanel Grid.Row="2" Margin="10,5,10,5">
-            <TextBlock Text="报纸URL:" VerticalAlignment="Center" Width="80" HorizontalAlignment="Left"/>
+            <TextBlock Text="报纸URL:" VerticalAlignment="Center" Width="80" HorizontalAlignment="Left" Foreground="{DynamicResource TextBrush}"/>
             <TextBox Text="{Binding NewspaperUrl}" Style="{StaticResource DefaultTextBox}" TextWrapping="Wrap" AcceptsReturn="False" HorizontalScrollBarVisibility="Auto" MinHeight="60"/>
         </StackPanel>
         
         <StackPanel Grid.Row="3" Margin="10,5,10,5">
-            <TextBlock Text="标题图片:" VerticalAlignment="Center" Width="80" HorizontalAlignment="Left"/>
+            <TextBlock Text="标题图片:" VerticalAlignment="Center" Width="80" HorizontalAlignment="Left" Foreground="{DynamicResource TextBrush}"/>
             <StackPanel Orientation="Horizontal">
                 <Image x:Name="TitleImagePreview" Source="{Binding TitleImagePath}" Width="100" Height="50" Stretch="Uniform" Margin="0,0,10,0"/>
-                <Button Content="浏览..." Click="BrowseButton_Click" Margin="5,0,0,0" Width="60" Height="25" VerticalAlignment="Center"/>
+                <Button Content="浏览..." Click="BrowseButton_Click" Margin="5,0,0,0" Width="60" Height="25" VerticalAlignment="Center" Style="{StaticResource DefaultButton}"/>
             </StackPanel>
         </StackPanel>
         
         <StackPanel Grid.Row="4" Margin="10,5,10,5">
-            <TextBlock Text="处理方式:" FontWeight="Bold" Margin="0,0,0,5" HorizontalAlignment="Left"/>
+            <TextBlock Text="处理方式:" FontWeight="Bold" Margin="0,0,0,5" HorizontalAlignment="Left" Foreground="{DynamicResource TextBrush}"/>
             <StackPanel Orientation="Vertical" Margin="20,0,0,0">
-                <RadioButton x:Name="ParsePdfRadioButton" Content="尝试解析PDF" IsChecked="{Binding ParsePdf}" Margin="0,5,0,0" Checked="ParsePdfRadioButton_Checked" Unchecked="ParsePdfRadioButton_Unchecked"/>
-                <RadioButton x:Name="ForceWebViewRadioButton" Content="直接查看网页版" IsChecked="{Binding ForceWebView}" Margin="0,5,0,0" Checked="ForceWebViewRadioButton_Checked" Unchecked="ForceWebViewRadioButton_Unchecked"/>
+                <RadioButton x:Name="ParsePdfRadioButton" Content="尝试解析PDF" IsChecked="{Binding ParsePdf}" Margin="0,5,0,0" Checked="ParsePdfRadioButton_Checked" Unchecked="ParsePdfRadioButton_Unchecked" Foreground="{DynamicResource TextBrush}"/>
+                <RadioButton x:Name="ForceWebViewRadioButton" Content="直接查看网页版" IsChecked="{Binding ForceWebView}" Margin="0,5,0,0" Checked="ForceWebViewRadioButton_Checked" Unchecked="ForceWebViewRadioButton_Unchecked" Foreground="{DynamicResource TextBrush}"/>
             </StackPanel>
         </StackPanel>
         
         <StackPanel Grid.Row="5" Margin="10,5,10,5">
-            <TextBlock Text="说明:" FontWeight="Bold" Margin="0,5,0,5" HorizontalAlignment="Left"/>
-            <TextBlock Text="标题图片：报纸名称标题图片，可以自行截图保存，然后设置；" FontSize="12" Foreground="Gray"/>
-            <TextBlock Text="解析PDF：尝试自动解析页面，获取版面目录与PDF版；" FontSize="12" Foreground="Gray"/>
-            <TextBlock Text="直接查看网页版：对于已知的无法解析的页面，直接访问网页版。" FontSize="12" Foreground="Gray"/>
+            <TextBlock Text="说明:" FontWeight="Bold" Margin="0,5,0,5" HorizontalAlignment="Left" Foreground="{DynamicResource TextBrush}"/>
+            <TextBlock Text="标题图片：报纸名称标题图片，可以自行截图保存，然后设置；" FontSize="12" Foreground="{DynamicResource TextBrush}" Opacity="0.8"/>
+            <TextBlock Text="解析PDF：尝试自动解析页面，获取版面目录与PDF版；" FontSize="12" Foreground="{DynamicResource TextBrush}" Opacity="0.8"/>
+            <TextBlock Text="直接查看网页版：对于已知的无法解析的页面，直接访问网页版。" FontSize="12" Foreground="{DynamicResource TextBrush}" Opacity="0.8"/>
         </StackPanel>
         
-        <StackPanel Orientation="Horizontal" Grid.Row="6" HorizontalAlignment="Right" Margin="10,5,10,10">
-            <Button Content="取消" Click="CancelButton_Click" Width="80" Height="30" Margin="0,0,10,0"/>
-            <Button Content="确定" Click="OKButton_Click" Width="80" Height="30"/>
-        </StackPanel>
+        <Border Grid.Row="6" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="0,10,0,0" Margin="10,5,10,10">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="取消" Click="CancelButton_Click" Width="80" Height="30" Margin="0,0,10,0" Style="{StaticResource DefaultButton}"/>
+                <Button Content="确定" Click="OKButton_Click" Width="80" Height="30" Style="{StaticResource DefaultButton}"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>

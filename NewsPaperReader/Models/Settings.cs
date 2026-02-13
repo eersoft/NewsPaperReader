@@ -34,6 +34,19 @@ namespace NewsPaperReader.Models
     }
 
     /// <summary>
+    /// 应用主题
+    /// </summary>
+    public enum Theme
+    {
+        Light,      // 亮色模式
+        Dark,       // 暗色模式
+        Blue,       // 蓝色主题
+        Green,      // 绿色主题
+        ElegantGray,// 典雅灰主题
+        BookYellow  // 书籍黄主题
+    }
+
+    /// <summary>
     /// 报纸信息
     /// </summary>
     public class NewspaperInfo : INotifyPropertyChanged
@@ -207,6 +220,18 @@ namespace NewsPaperReader.Models
             set
             {
                 _leftSidebarWidth = value;
+                OnPropertyChanged();
+            }
+        }
+
+        // 应用主题
+        private Theme _theme = Theme.Light;
+        public Theme Theme
+        {
+            get => _theme;
+            set
+            {
+                _theme = value;
                 OnPropertyChanged();
             }
         }

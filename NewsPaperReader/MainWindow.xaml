@@ -8,7 +8,9 @@
         mc:Ignorable="d"
         Title="在线报纸阅读器" Height="800" Width="1200"
         WindowStartupLocation="CenterScreen"
-        Loaded="MainWindow_Loaded">
+        Loaded="MainWindow_Loaded"
+        Background="{DynamicResource WindowBackground}"
+        Foreground="{DynamicResource TextBrush}">
 
     <Window.Resources>
         <!-- 图标资源 -->
@@ -33,7 +35,7 @@
         </Style>
     </Window.Resources>
 
-    <Grid>
+    <Grid Background="{DynamicResource WindowBackground}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
@@ -44,7 +46,7 @@
         </Grid.ColumnDefinitions>
         
         <!-- 左侧边栏 -->
-        <Border x:Name="LeftSidebar" Grid.Row="0" Grid.Column="0" BorderBrush="LightGray" BorderThickness="0,0,1,0" MouseLeave="LeftSidebar_MouseLeave" Width="400" Background="White">
+        <Border x:Name="LeftSidebar" Grid.Row="0" Grid.Column="0" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,1,0" MouseLeave="LeftSidebar_MouseLeave" Width="400" Background="{DynamicResource SidebarBackground}">
             <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -54,35 +56,36 @@
                     </Grid.RowDefinitions>
                     
                     <!-- 工具栏 -->
-                    <ToolBarTray Grid.Row="0" IsLocked="True" Background="#F0F0F0">
+                    <ToolBarTray Grid.Row="0" IsLocked="True" Background="{DynamicResource ToolBarBackground}">
                         <ToolBar>
-                            <Button ToolTip="添加报纸" Command="{Binding AddNewspaperCommand}" Width="36" Height="36" Margin="2">
+                            <Button ToolTip="添加报纸" Command="{Binding AddNewspaperCommand}" Width="36" Height="36" Margin="2" Style="{StaticResource DefaultButton}">
                                 <Image Source="pack://siteoforigin:,,,/3rd_res/png/添加.png" Width="24" Height="24" />
                             </Button>
-                            <Button ToolTip="刷新" Command="{Binding RefreshCommand}" Width="36" Height="36" Margin="2">
+                            <Button ToolTip="刷新" Command="{Binding RefreshCommand}" Width="36" Height="36" Margin="2" Style="{StaticResource DefaultButton}">
                                 <Image Source="pack://siteoforigin:,,,/3rd_res/png/刷新.png" Width="24" Height="24" />
                             </Button>
                             <Separator/>
-                            <Button ToolTip="设置" Command="{Binding SettingsCommand}" Width="36" Height="36" Margin="2">
+                            <Button ToolTip="设置" Command="{Binding SettingsCommand}" Width="36" Height="36" Margin="2" Style="{StaticResource DefaultButton}">
                                 <Image Source="pack://siteoforigin:,,,/3rd_res/png/设置.png" Width="24" Height="24" />
                             </Button>
-                            <Button ToolTip="关于" Command="{Binding AboutCommand}" Width="36" Height="36" Margin="2">
+                            <Button ToolTip="关于" Command="{Binding AboutCommand}" Width="36" Height="36" Margin="2" Style="{StaticResource DefaultButton}">
                                 <Image Source="pack://siteoforigin:,,,/3rd_res/png/关于.png" Width="24" Height="24" />
                             </Button>
                         </ToolBar>
                     </ToolBarTray>
                     
                     <!-- 报纸列表 -->
-                    <Border Grid.Row="1" BorderBrush="LightGray" BorderThickness="0,1,0,0">
+                    <Border Grid.Row="1" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0">
                         <DockPanel>
                             <TextBlock Text="报纸列表" FontWeight="Bold" DockPanel.Dock="Top" Style="{StaticResource DefaultTextBlock}"/>
                             <ListBox x:Name="NewspaperListBox" ItemsSource="{Binding Newspapers}" 
                                  SelectedItem="{Binding SelectedNewspaper}"
                                  BorderThickness="0"
                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                 VerticalAlignment="Stretch">
+                                 VerticalAlignment="Stretch"
+                                 Style="{StaticResource DefaultListBox}">
                             <ListBox.ItemContainerStyle>
-                                <Style TargetType="ListBoxItem">
+                                <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItem}">
                                     <Setter Property="Padding" Value="2"/>
                                     <Setter Property="Cursor" Value="Hand"/>
                                     <Setter Property="Margin" Value="1"/>
@@ -152,19 +155,20 @@
                     </Border>
                     
                     <!-- 分割条 -->
-                    <GridSplitter Grid.Row="2" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="LightGray"/>
+                    <GridSplitter Grid.Row="2" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{DynamicResource GridSplitterBackground}"/>
                     
                     <!-- 版面列表 -->
-                    <Border Grid.Row="3" BorderBrush="LightGray" BorderThickness="0,0,0,0">
+                    <Border Grid.Row="3" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,0">
                         <DockPanel>
                             <TextBlock Text="版面列表" FontWeight="Bold" DockPanel.Dock="Top" Style="{StaticResource DefaultTextBlock}"/>
                             <ListBox ItemsSource="{Binding Editions}" 
                                      SelectedItem="{Binding SelectedEdition}"
                                      DisplayMemberPath="Title"
                                      BorderThickness="0"
-                                     VerticalAlignment="Stretch">
+                                     VerticalAlignment="Stretch"
+                                     Style="{StaticResource DefaultListBox}">
                                 <ListBox.ItemContainerStyle>
-                                    <Style TargetType="ListBoxItem">
+                                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItem}">
                                         <Setter Property="Padding" Value="5"/>
                                         <Setter Property="Cursor" Value="Hand"/>
                                     </Style>
@@ -176,7 +180,7 @@
         </Border>
         
         <!-- 主内容区域 -->
-        <Border Grid.Row="0" Grid.Column="1" BorderBrush="LightGray" BorderThickness="0,0,0,0">
+        <Border Grid.Row="0" Grid.Column="1" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,0" Background="{DynamicResource WindowBackground}">
             <Grid x:Name="ContentContainer">
                 <!-- WebView2 -->
                 <wv2:WebView2 x:Name="WebView2PdfViewer" Source="about:blank"/>
