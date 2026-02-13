@@ -12,6 +12,7 @@ using Microsoft.Web.WebView2.Wpf;
 using NewsPaperReader.Models;
 using NewsPaperReader.Services;
 using System.Windows.Forms;
+using System.IO;
 
 namespace NewsPaperReader
 {
@@ -100,12 +101,17 @@ namespace NewsPaperReader
                     mousePosition.Y <= windowTop + windowHeight)
                 {
                     // 显示侧边栏
+                    if (!_viewModel.IsSidebarVisible || _viewModel.SidebarWidth == 0)
+                    {
+                        LogSidebarAction("Show", "MouseNearLeftEdge", mousePosition, windowLeft, windowTop, windowWidth, windowHeight, this.WindowState, _viewModel.SidebarWidth);
+                    }
                     _viewModel.IsSidebarVisible = true;
                     _viewModel.SidebarWidth = 300;
                 }
                 else if (_viewModel.IsSidebarVisible && _viewModel.SidebarWidth > 0)
                 {
                     // 鼠标不在侧边栏区域内，也不在触发区域内，立即隐藏侧边栏
+                    LogSidebarAction("Hide", "MouseAwayFromLeftEdge", mousePosition, windowLeft, windowTop, windowWidth, windowHeight, this.WindowState, _viewModel.SidebarWidth);
                     _viewModel.SidebarWidth = 0;
                 }
             }
@@ -355,6 +361,7 @@ namespace NewsPaperReader
 
         private System.Windows.Threading.DispatcherTimer _mouseMonitorTimer;
         private bool _isMouseOverSidebar = false;
+        private string _logFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "SidebarLog.txt");
 
         private void Sidebar_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
@@ -372,8 +379,42 @@ namespace NewsPaperReader
             _isMouseOverSidebar = false;
             if (_viewModel != null && !_viewModel.IsSidebarPinned)
             {
+                // 检查鼠标是否在窗口左侧边缘附近
+                var mousePosition = System.Windows.Forms.Control.MousePosition;
+                var windowLeft = this.Left;
+                
+                // 处理窗口最大化的情况
+                if (this.WindowState == WindowState.Maximized)
+                {
+                    windowLeft = 0;
+                }
+                
+                // 加载设置中的触发距离
+                var settings = SettingsManager.LoadSettings();
+                var triggerDistance = settings.SidebarTriggerDistance;
+                
+                // 如果鼠标在触发区域内，不隐藏边侧栏
+                if ((mousePosition.X - windowLeft) < triggerDistance)
+                {
+                    return;
+                }
+                
                 // 立即隐藏侧边栏
+                LogSidebarAction("Hide", "MouseLeave", mousePosition, this.Left, this.Top, this.Width, this.Height, this.WindowState, _viewModel.SidebarWidth);
                 _viewModel.SidebarWidth = 0;
+            }
+        }
+
+        private void LogSidebarAction(string action, string reason, System.Drawing.Point mousePosition, double windowLeft, double windowTop, double windowWidth, double windowHeight, WindowState windowState, double sidebarWidth)
+        {
+            try
+            {
+                string logEntry = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] Action: {action}, Reason: {reason}, Mouse: ({mousePosition.X}, {mousePosition.Y}), Window: (Left: {windowLeft}, Top: {windowTop}, Width: {windowWidth}, Height: {windowHeight}), WindowState: {windowState}, SidebarWidth: {sidebarWidth}";
+                File.AppendAllText(_logFilePath, logEntry + Environment.NewLine);
+            }
+            catch (Exception)
+            {
+                // 忽略日志写入错误
             }
         }
         
