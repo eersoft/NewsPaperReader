@@ -11,66 +11,58 @@
         WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
-        <!-- 标题 -->
-        <materialDesign:Card Grid.Row="0" Padding="10" Margin="10">
-            <TextBlock Text="应用程序设置" FontWeight="Bold" FontSize="16"/>
-        </materialDesign:Card>
-        
         <!-- 内容区域 -->
-        <materialDesign:Card Grid.Row="1" Margin="10">
-            <TabControl Margin="10" Style="{StaticResource MaterialDesignTabControl}">
+        <materialDesign:Card Grid.Row="0" Margin="10">
+            <TabControl Margin="10" Style="{StaticResource MaterialDesignTabControl}" TabStripPlacement="Left">
                 <!-- 界面设置 -->
                 <TabItem Header="界面设置">
-                    <Grid Margin="10">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="200"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        
+                    <StackPanel Margin="10" Orientation="Vertical">
                         <!-- 报纸列表显示模式 -->
-                        <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,10,10,0" VerticalAlignment="Center">报纸列表显示模式:</TextBlock>
-                        <ComboBox Grid.Row="0" Grid.Column="1" Margin="0,10,0,0" SelectedValue="{Binding Settings.NewspaperListDisplayMode}" SelectedValuePath="Tag" Style="{StaticResource MaterialDesignOutlinedComboBox}">
-                            <ComboBoxItem Content="文本式列表" Tag="{x:Static models:NewspaperListDisplayMode.TextList}"/>
-                            <ComboBoxItem Content="图片式列表" Tag="{x:Static models:NewspaperListDisplayMode.ImageList}"/>
-                            <ComboBoxItem Content="图片平铺" Tag="{x:Static models:NewspaperListDisplayMode.ImageTile}"/>
-                        </ComboBox>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,15">
+                            <TextBlock Width="200" Margin="0,0,10,0" VerticalAlignment="Center">报纸列表显示模式:</TextBlock>
+                            <ComboBox SelectedValue="{Binding Settings.NewspaperListDisplayMode}" SelectedValuePath="Tag" Style="{StaticResource MaterialDesignOutlinedComboBox}">
+                                <ComboBoxItem Content="文本式列表" Tag="{x:Static models:NewspaperListDisplayMode.TextList}"/>
+                                <ComboBoxItem Content="图片式列表" Tag="{x:Static models:NewspaperListDisplayMode.ImageList}"/>
+                                <ComboBoxItem Content="图片平铺" Tag="{x:Static models:NewspaperListDisplayMode.ImageTile}"/>
+                            </ComboBox>
+                        </StackPanel>
                         
                         <!-- 显示PDF默认工具栏 -->
-                        <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,10,10,0" VerticalAlignment="Center">显示PDF默认工具栏:</TextBlock>
-                        <CheckBox Grid.Row="1" Grid.Column="1" Margin="0,10,0,0" IsChecked="{Binding Settings.ShowPdfToolbar}" Style="{StaticResource MaterialDesignCheckBox}"/>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,15">
+                            <TextBlock Width="200" Margin="0,0,10,0" VerticalAlignment="Center">显示PDF默认工具栏:</TextBlock>
+                            <CheckBox IsChecked="{Binding Settings.ShowPdfToolbar}" Style="{StaticResource MaterialDesignCheckBox}"/>
+                        </StackPanel>
                         
                         <!-- 禁用WebView2默认右键菜单 -->
-                        <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,10,10,0" VerticalAlignment="Center">禁用WebView2默认右键菜单:</TextBlock>
-                        <CheckBox Grid.Row="2" Grid.Column="1" Margin="0,10,0,0" IsChecked="{Binding Settings.DisableWebView2ContextMenu}" Style="{StaticResource MaterialDesignCheckBox}"/>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,15">
+                            <TextBlock Width="200" Margin="0,0,10,0" VerticalAlignment="Center">禁用WebView2默认右键菜单:</TextBlock>
+                            <CheckBox IsChecked="{Binding Settings.DisableWebView2ContextMenu}" Style="{StaticResource MaterialDesignCheckBox}"/>
+                        </StackPanel>
                         
                         <!-- 左侧面板宽度 -->
-                        <TextBlock Grid.Row="3" Grid.Column="0" Margin="0,10,10,0" VerticalAlignment="Center">左侧面板宽度:</TextBlock>
-                        <StackPanel Grid.Row="3" Grid.Column="1" Margin="0,10,0,0" Orientation="Horizontal" VerticalAlignment="Center">
-                            <Slider Minimum="100" Maximum="400" Value="{Binding Settings.LeftSidebarWidth}" Width="200" Margin="0,0,10,0" Style="{StaticResource MaterialDesignSlider}"/>
-                            <TextBlock Text="{Binding Settings.LeftSidebarWidth}" Width="50" TextAlignment="Right"/>
-                            <TextBlock Text="px" Margin="5,0,0,0"/>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,15">
+                            <TextBlock Width="200" Margin="0,0,10,0" VerticalAlignment="Center">左侧面板宽度:</TextBlock>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Slider Minimum="100" Maximum="400" Value="{Binding Settings.LeftSidebarWidth}" Width="200" Margin="0,0,10,0" Style="{StaticResource MaterialDesignSlider}"/>
+                                <TextBlock Text="{Binding Settings.LeftSidebarWidth}" Width="50" TextAlignment="Right"/>
+                                <TextBlock Text="px" Margin="5,0,0,0"/>
+                            </StackPanel>
                         </StackPanel>
 
                         <!-- 侧边栏触发距离 -->
-                        <TextBlock Grid.Row="4" Grid.Column="0" Margin="0,10,10,0" VerticalAlignment="Center">侧边栏触发距离:</TextBlock>
-                        <StackPanel Grid.Row="4" Grid.Column="1" Margin="0,10,0,0" Orientation="Horizontal" VerticalAlignment="Center">
-                            <Slider Minimum="5" Maximum="50" Value="{Binding Settings.SidebarTriggerDistance}" Width="200" Margin="0,0,10,0" Style="{StaticResource MaterialDesignSlider}"/>
-                            <TextBlock Text="{Binding Settings.SidebarTriggerDistance}" Width="50" TextAlignment="Right"/>
-                            <TextBlock Text="px" Margin="5,0,0,0"/>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,15">
+                            <TextBlock Width="200" Margin="0,0,10,0" VerticalAlignment="Center">侧边栏触发距离:</TextBlock>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Slider Minimum="5" Maximum="50" Value="{Binding Settings.SidebarTriggerDistance}" Width="200" Margin="0,0,10,0" Style="{StaticResource MaterialDesignSlider}"/>
+                                <TextBlock Text="{Binding Settings.SidebarTriggerDistance}" Width="50" TextAlignment="Right"/>
+                                <TextBlock Text="px" Margin="5,0,0,0"/>
+                            </StackPanel>
                         </StackPanel>
-                    </Grid>
+                    </StackPanel>
                 </TabItem>
                 
                 <!-- 报纸库管理 -->
@@ -108,7 +100,7 @@
         </materialDesign:Card>
         
         <!-- 按钮区域 -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
             <Button Content="确定" Command="{Binding OKCommand}" Margin="0,0,10,0" Width="80" Style="{StaticResource MaterialDesignRaisedButton}"/>
             <Button Content="取消" Command="{Binding CancelCommand}" Width="80" Style="{StaticResource MaterialDesignOutlinedButton}"/>
         </StackPanel>
