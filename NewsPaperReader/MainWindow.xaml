@@ -181,7 +181,7 @@
                                                                 <Thumb BorderThickness="0">
                                                                     <Thumb.Template>
                                                                         <ControlTemplate TargetType="Thumb">
-                                                                            <Border Background="{DynamicResource MaterialDesignBody}" BorderThickness="0" CornerRadius="3"/>
+                                                                            <Border Background="#888888" BorderThickness="0" CornerRadius="3"/>
                                                                         </ControlTemplate>
                                                                     </Thumb.Template>
                                                                 </Thumb>
@@ -274,7 +274,7 @@
                                                             <Thumb BorderThickness="0">
                                                                 <Thumb.Template>
                                                                     <ControlTemplate TargetType="Thumb">
-                                                                        <Border Background="{DynamicResource MaterialDesignBody}" BorderThickness="0" CornerRadius="3"/>
+                                                                        <Border Background="#888888" BorderThickness="0" CornerRadius="3"/>
                                                                     </ControlTemplate>
                                                                 </Thumb.Template>
                                                             </Thumb>
