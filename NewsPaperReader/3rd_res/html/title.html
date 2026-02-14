@@ -44,6 +44,7 @@
             color: #2c3e50;
             margin-bottom: 15px;
             letter-spacing: -0.5px;
+            animation: pulse 3s ease-in-out infinite;
         }
         
         .developer {
@@ -51,6 +52,36 @@
             color: #3498db;
             margin-bottom: 40px;
             font-weight: 500;
+            animation: colorGradient 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+        }
+        
+        @keyframes colorGradient {
+            0% {
+                color: #3498db;
+            }
+            25% {
+                color: #2980b9;
+            }
+            50% {
+                color: #1f618d;
+            }
+            75% {
+                color: #2980b9;
+            }
+            100% {
+                color: #3498db;
+            }
         }
         
         .instructions {
@@ -118,6 +149,11 @@
             
             .title {
                 font-size: 28px;
+                animation: pulse 3s ease-in-out infinite;
+            }
+            
+            .developer {
+                animation: colorGradient 4s ease-in-out infinite;
             }
             
             .logo {
@@ -133,6 +169,11 @@
             
             .title {
                 font-size: 24px;
+                animation: pulse 3s ease-in-out infinite;
+            }
+            
+            .developer {
+                animation: fadeInOut 4s ease-in-out infinite;
             }
             
             .instructions li {
