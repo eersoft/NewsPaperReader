@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心仪读报 - 使用帮助</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        section {
+            margin-bottom: 40px;
+            background-color: #f8f9fa;
+            padding: 30px;
+        }
+        
+        h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #34495e;
+            margin: 20px 0 10px 0;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            color: #555;
+        }
+        
+        ul {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+        
+        li {
+            margin-bottom: 10px;
+            color: #555;
+        }
+        
+        .tip {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .tip-title {
+            font-weight: 600;
+            color: #2980b9;
+            margin-bottom: 8px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #888;
+            font-size: 14px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #3498db;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .back-link:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 15px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>心仪读报</h1>
+            <p class="subtitle">使用帮助</p>
+        </header>
+        
+        <section>
+            <h2>基本操作</h2>
+            
+            <h3>1. 启动应用</h3>
+            <p>双击应用图标启动心仪读报，等待应用加载完成。</p>
+            
+            <h3>2. 浏览报纸</h3>
+            <p>鼠标移动到屏幕左侧，边侧栏会自动显示，其中包含报纸列表。</p>
+            <ul>
+                <li>在报纸列表中选择您感兴趣的报纸</li>
+                <li>选择报纸后，下方会显示该报纸的版面列表</li>
+                <li>点击版面包名查看具体内容</li>
+            </ul>
+            <p>系统会尝试自动解析报纸网站，获取PDF文件和版面目录。如果解析失败，会自动切换到直接访问网页的方式。</p>
+            
+            <h3>3. 搜索报纸</h3>
+            <p>在报纸列表上方的搜索框中输入报纸名称，系统会自动过滤显示匹配的报纸。</p>
+        </section>
+        
+        <section>
+            <h2>界面控制</h2>
+            
+            <h3>1. 边侧栏控制</h3>
+            <ul>
+                <li><strong>固定/取消固定</strong>：点击边侧栏顶部的固定图标，可以固定或取消固定边侧栏</li>
+                <li><strong>自动隐藏</strong>：取消固定后，鼠标移开边侧栏会自动隐藏</li>
+                <li><strong>调整宽度</strong>：在设置中可以调整边侧栏的宽度</li>
+            </ul>
+            
+            <h3>2. 内容浏览</h3>
+            <ul>
+                <li><strong>滚动</strong>：使用鼠标滚轮或拖动滚动条浏览内容</li>
+                <li><strong>缩放</strong>：按住Ctrl键同时滚动鼠标滚轮，可以放大或缩小页面</li>
+                <li><strong>右键菜单</strong>：在内容区域右键点击，可以使用WebView2的默认右键菜单功能</li>
+            </ul>
+        </section>
+        
+        <section>
+            <h2>高级功能</h2>
+            
+            <h3>1. 添加新报纸</h3>
+            <p>点击边侧栏顶部的"添加"按钮，在弹出的对话框中输入报纸名称和网址，点击确定即可添加新报纸。</p>
+            <p>在添加报纸时，您可以选择是否"强制直接访问网页版"，如果启用此选项，系统将跳过PDF解析步骤，直接打开报纸的网页版。</p>
+            
+            <h3>2. 刷新内容</h3>
+            <p>点击边侧栏顶部的"刷新"按钮，可以刷新当前报纸的版面信息。</p>
+            
+            <h3>3. 应用设置</h3>
+            <p>点击边侧栏顶部的"设置"按钮，可以打开设置窗口，调整以下选项：</p>
+            <ul>
+                <li>报纸列表显示模式（文本式列表或图片平铺）</li>
+                <li>左侧面板宽度</li>
+                <li>侧边栏触发距离</li>
+                <li>是否显示PDF默认工具栏</li>
+                <li>是否禁用WebView2默认右键菜单</li>
+            </ul>
+            
+            <h3>4. 修改报纸访问方式</h3>
+            <p>在设置窗口的"报纸库管理"选项卡中，您可以修改已添加报纸的访问方式：</p>
+            <ul>
+                <li>选择要修改的报纸</li>
+                <li>点击"编辑"按钮</li>
+                <li>在编辑对话框中，勾选或取消勾选"强制直接访问网页版"选项</li>
+                <li>点击确定保存修改</li>
+            </ul>
+        </section>
+        
+        <section>
+            <h2>常见问题</h2>
+            
+            <h3>1. 为什么看不到最新的报纸内容？</h3>
+            <p>可能是因为缓存机制，您可以删除桌面"心仪读报"文件夹中对应日期的报纸文件夹，然后重新打开应用。</p>
+            
+            <h3>2. 如何调整边侧栏的显示灵敏度？</h3>
+            <p>在设置窗口中，您可以调整"侧边栏触发距离"滑块，数值越大，需要鼠标更靠近屏幕边缘才会显示边侧栏。</p>
+            
+            <h3>3. 报纸内容显示异常怎么办？</h3>
+            <p>尝试点击"刷新"按钮重新加载版面信息，或检查网络连接是否正常。</p>
+        </section>
+        
+        <section>
+            <h2>注意事项</h2>
+            
+            <div class="tip">
+                <div class="tip-title">存储空间</div>
+                <p>软件会在桌面上创建"心仪读报"文件夹，用于存储浏览过的报纸文件。建议定期清理不需要的文件，以节省存储空间。</p>
+            </div>
+            
+            <div class="tip">
+                <div class="tip-title">网络连接</div>
+                <p>使用心仪读报需要稳定的网络连接，以获取报纸内容和版面信息。</p>
+            </div>
+            
+            <div class="tip">
+                <div class="tip-title">版权声明</div>
+                <p>心仪读报仅提供报纸内容的浏览功能，报纸内容的版权归原出版机构所有。</p>
+            </div>
+        </section>
+        
+        <footer>
+            <a href="title.html" class="back-link">返回</a>
+            <p>© 2026 EERSOFT. 保留所有权利。</p>
+        </footer>
+    </div>
+</body>
+</html>
