@@ -1,4 +1,5 @@
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System;
@@ -11,7 +12,7 @@ using System.Windows.Navigation;
 using Microsoft.Web.WebView2.Wpf;
 using NewsPaperReader.Models;
 using NewsPaperReader.Services;
-using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace NewsPaperReader
 {
@@ -21,6 +22,8 @@ namespace NewsPaperReader
     public partial class MainWindow : Window
     {
         private MainWindowViewModel? _viewModel;
+        
+
 
         public MainWindow()
         {
@@ -317,7 +320,7 @@ namespace NewsPaperReader
                     
                     // 构建PDF显示参数
                     string toolbarParam = settings.ShowPdfToolbar ? "1" : "0";
-                    string pdfUrlWithParams = $"{pdfUrl}#toolbar={toolbarParam}";
+                    string pdfUrlWithParams = $"{pdfUrl}#toolbar={toolbarParam}&view=FitH";
                     
                     // 加载带自定义参数的PDF
                     WebView2PdfViewer.Source = new Uri(pdfUrlWithParams);
