@@ -21,22 +21,14 @@ namespace NewsPaperReader.Services
         /// <returns>应用程序设置</returns>
         public static AppSettings LoadSettings()
         {
-            try
+            if (File.Exists(SettingsFilePath))
             {
-                if (File.Exists(SettingsFilePath))
-                {
-                    string json = File.ReadAllText(SettingsFilePath);
-                    return JsonSerializer.Deserialize<AppSettings>(json) ?? new AppSettings();
-                }
-                else
-                {
-                    // 如果设置文件不存在，返回默认设置
-                    return new AppSettings();
-                }
+                string json = File.ReadAllText(SettingsFilePath);
+                return JsonSerializer.Deserialize<AppSettings>(json) ?? new AppSettings();
             }
-            catch
+            else
             {
-                // 如果读取失败，返回默认设置
+                // 如果设置文件不存在，返回默认设置
                 return new AppSettings();
             }
         }
@@ -47,26 +39,19 @@ namespace NewsPaperReader.Services
         /// <param name="settings">应用程序设置</param>
         public static void SaveSettings(AppSettings settings)
         {
-            try
+            // 确保目录存在
+            string directory = Path.GetDirectoryName(SettingsFilePath);
+            if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
             {
-                // 确保目录存在
-                string directory = Path.GetDirectoryName(SettingsFilePath);
-                if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-                {
-                    Directory.CreateDirectory(directory);
-                }
+                Directory.CreateDirectory(directory);
+            }
 
-                // 序列化并保存设置
-                string json = JsonSerializer.Serialize(settings, new JsonSerializerOptions
-                {
-                    WriteIndented = true
-                });
-                File.WriteAllText(SettingsFilePath, json);
-            }
-            catch
+            // 序列化并保存设置
+            string json = JsonSerializer.Serialize(settings, new JsonSerializerOptions
             {
-                // 忽略保存失败的情况
-            }
+                WriteIndented = true
+            });
+            File.WriteAllText(SettingsFilePath, json);
         }
     }
 }

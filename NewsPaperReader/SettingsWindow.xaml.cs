@@ -126,6 +126,14 @@ namespace NewsPaperReader
             {
                 var newspaperInfo = new NewspaperInfo(dialog.NewspaperName, dialog.NewspaperUrl, dialog.TitleImagePath, dialog.ParsePdf, dialog.ForceWebView);
                 Settings.NewspaperLibrary.Add(newspaperInfo);
+                
+                // 创建一个新的集合引用，强制UI更新
+                var updatedLibrary = new List<NewspaperInfo>(Settings.NewspaperLibrary);
+                Settings.NewspaperLibrary = updatedLibrary;
+                
+                // 保存设置并触发设置更改事件，确保主窗口实时更新
+                SettingsManager.SaveSettings(Settings);
+                SettingsChanged?.Invoke(Settings);
             }
         }
 
@@ -143,6 +151,10 @@ namespace NewsPaperReader
                     newspaperInfo.TitleImagePath = dialog.TitleImagePath;
                     newspaperInfo.ParsePdf = dialog.ParsePdf;
                     newspaperInfo.ForceWebView = dialog.ForceWebView;
+                    
+                    // 保存设置并触发设置更改事件，确保主窗口实时更新
+                    SettingsManager.SaveSettings(Settings);
+                    SettingsChanged?.Invoke(Settings);
                 }
             }
         }
@@ -174,7 +186,11 @@ namespace NewsPaperReader
                     
                     // 保存设置并触发设置更改事件，确保主窗口实时更新
                     SettingsManager.SaveSettings(Settings);
-                    SettingsChanged?.Invoke(Settings);
+                    // 确保触发事件
+                    if (SettingsChanged != null)
+                    {
+                        SettingsChanged(Settings);
+                    }
                 }
             }
         }

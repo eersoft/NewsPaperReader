@@ -40,6 +40,8 @@ namespace NewsPaperReader
             {
                 _newspapers = value;
                 OnPropertyChanged();
+                // 当Newspapers变化时，也要通知FilteredNewspapers变化
+                OnPropertyChanged(nameof(FilteredNewspapers));
             }
         }
 
@@ -267,11 +269,9 @@ namespace NewsPaperReader
                 // 重新加载报纸列表
                 LoadNewspapersFromSettings();
             };
-            if (dialog.ShowDialog() == true)
-            {
-                // 重新加载报纸列表
-                LoadNewspapersFromSettings();
-            }
+            dialog.ShowDialog();
+            // 无论对话框返回什么结果，都重新加载报纸列表
+            LoadNewspapersFromSettings();
         }
 
         private void About(object? parameter)
@@ -365,13 +365,15 @@ namespace NewsPaperReader
 
         private void LoadNewspapersFromSettings()
         {
+            // 重新加载设置
             var settings = SettingsManager.LoadSettings();
             string settingsDirectory = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "esNewsPaperReader"
             );
             
-            Newspapers = settings.NewspaperLibrary.Select(n => 
+            // 创建新的报纸列表
+            var newNewspapers = settings.NewspaperLibrary.Select(n => 
             {
                 string titleImagePath = n.TitleImagePath;
                 // 如果是相对路径，转换为绝对路径
@@ -381,6 +383,9 @@ namespace NewsPaperReader
                 }
                 return new Newspaper(n.Name, n.Url, titleImagePath, n.ParsePdf, n.ForceWebView);
             }).ToList();
+            
+            // 确保更新Newspapers属性，触发PropertyChanged事件
+            Newspapers = newNewspapers;
         }
 
         public event Action<string>? NavigateToUrl;
