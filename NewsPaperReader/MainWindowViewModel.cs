@@ -209,7 +209,7 @@ namespace NewsPaperReader
         {
             _webAnalyzer = new WebAnalyzer();
             _httpClient = new HttpClient();
-            _pathRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "在线报纸");
+            _pathRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "心仪读报");
             
             // 初始化命令
             AddNewspaperCommand = new RelayCommand(AddNewspaper);
@@ -276,7 +276,7 @@ namespace NewsPaperReader
 
         private void About(object? parameter)
         {
-            System.Windows.MessageBox.Show("在线报纸阅读器 v1.0\n\n一个智能分析和阅读在线报纸的工具", "关于", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            System.Windows.MessageBox.Show("心仪读报 v1.0\n\n一个智能分析和阅读在线报纸的工具", "关于", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
         }
 
         private void ToggleSidebarPin(object? parameter)
