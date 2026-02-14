@@ -33,6 +33,17 @@ namespace NewsPaperReader.Models
         ImageTile
     }
 
+    /// <summary>
+    /// 字体大小级别
+    /// </summary>
+    public enum FontSizeLevel
+    {
+        Normal,    // 普通
+        Larger,    // 较大
+        Large,     // 大
+        ExtraLarge // 很大
+    }
+
 
 
     /// <summary>
@@ -235,6 +246,18 @@ namespace NewsPaperReader.Models
             set
             {
                 _isSidebarPinned = value;
+                OnPropertyChanged();
+            }
+        }
+
+        // 字体大小级别
+        private FontSizeLevel _fontSizeLevel = FontSizeLevel.Normal;
+        public FontSizeLevel FontSizeLevel
+        {
+            get => _fontSizeLevel;
+            set
+            {
+                _fontSizeLevel = value;
                 OnPropertyChanged();
             }
         }

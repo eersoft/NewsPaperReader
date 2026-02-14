@@ -1,5 +1,7 @@
 using System.IO;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace NewsPaperReader
 {
@@ -11,17 +13,29 @@ namespace NewsPaperReader
         public bool ParsePdf { get; set; } = true;
         public bool ForceWebView { get; set; } = false;
         public bool IsConfirmed { get; private set; }
+        public Models.FontSizeLevel FontSizeLevel { get; set; } = Models.FontSizeLevel.Normal;
 
         public AddNewspaperDialog()
         {
+            // 加载字体大小设置
+            var settings = Services.SettingsManager.LoadSettings();
+            FontSizeLevel = settings.FontSizeLevel;
+            
             InitializeComponent();
             DataContext = this;
             ParsePdf = true;
             ForceWebView = false;
+            
+            // 动态设置字体大小
+            ApplyFontSizeSettings();
         }
 
         public AddNewspaperDialog(string name, string url, string titleImagePath = "", bool parsePdf = true, bool forceWebView = false)
         {
+            // 加载字体大小设置
+            var settings = Services.SettingsManager.LoadSettings();
+            FontSizeLevel = settings.FontSizeLevel;
+            
             InitializeComponent();
             DataContext = this;
             NewspaperName = name;
@@ -33,12 +47,7 @@ namespace NewsPaperReader
             // 更新窗口标题为编辑报纸
             this.Title = "编辑报纸";
             
-            // 更新标题文本为编辑报纸信息
-            var titleTextBlock = (TextBlock)FindName("TitleTextBlock");
-            if (titleTextBlock != null)
-            {
-                titleTextBlock.Text = "编辑报纸信息";
-            }
+
             
             // 确保标题图片预览正确显示
             if (!string.IsNullOrEmpty(titleImagePath))
@@ -60,10 +69,17 @@ namespace NewsPaperReader
                     TitleImagePreview.Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(imagePath));
                 }
             }
+            
+            // 动态设置字体大小
+            ApplyFontSizeSettings();
         }
 
         public AddNewspaperDialog(NewsPaperReader.Models.Newspaper newspaper)
         {
+            // 加载字体大小设置
+            var settings = Services.SettingsManager.LoadSettings();
+            FontSizeLevel = settings.FontSizeLevel;
+            
             InitializeComponent();
             DataContext = this;
             NewspaperName = newspaper.Name;
@@ -75,12 +91,7 @@ namespace NewsPaperReader
             // 更新窗口标题为编辑报纸
             this.Title = "编辑报纸";
             
-            // 更新标题文本为编辑报纸信息
-            var titleTextBlock = (TextBlock)FindName("TitleTextBlock");
-            if (titleTextBlock != null)
-            {
-                titleTextBlock.Text = "编辑报纸信息";
-            }
+
             
             // 确保标题图片预览正确显示
             if (!string.IsNullOrEmpty(newspaper.TitleImagePath))
@@ -101,6 +112,52 @@ namespace NewsPaperReader
                 {
                     TitleImagePreview.Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(imagePath));
                 }
+            }
+            
+            // 动态设置字体大小
+            ApplyFontSizeSettings();
+        }
+        
+        private void ApplyFontSizeSettings()
+        {
+            // 根据字体大小级别设置不同的字体大小
+            double baseFontSize = 14; // 基础字体大小
+            double currentFontSize = baseFontSize;
+
+            switch (FontSizeLevel)
+            {
+                case Models.FontSizeLevel.Normal:
+                    currentFontSize = baseFontSize;
+                    break;
+                case Models.FontSizeLevel.Larger:
+                    currentFontSize = baseFontSize * 1.2;
+                    break;
+                case Models.FontSizeLevel.Large:
+                    currentFontSize = baseFontSize * 1.4;
+                    break;
+                case Models.FontSizeLevel.ExtraLarge:
+                    currentFontSize = baseFontSize * 1.6;
+                    break;
+            }
+            
+            // 设置所有文本元素的字体大小
+            SetFontSizeForAllTextElements(this, currentFontSize);
+        }
+        
+        private void SetFontSizeForAllTextElements(DependencyObject parent, double fontSize)
+        {
+            // 设置当前元素的字体大小
+            if (parent is System.Windows.Controls.Control control)
+            {
+                control.FontSize = fontSize;
+            }
+            
+            // 递归设置子元素的字体大小
+            int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < childrenCount; i++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(parent, i);
+                SetFontSizeForAllTextElements(child, fontSize);
             }
         }
 

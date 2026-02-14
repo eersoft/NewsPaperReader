@@ -5,12 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NewsPaperReader"
         xmlns:models="clr-namespace:NewsPaperReader.Models"
+        xmlns:converters="clr-namespace:NewsPaperReader.Converters"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Title="设置" Height="600" Width="800"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <local:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
+        <converters:FontSizeLevelToFontSizeConverter x:Key="FontSizeLevelToFontSizeConverter"/>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -20,53 +22,75 @@
         
         <!-- 内容区域 -->
         <materialDesign:Card Grid.Row="0" Margin="10">
-            <TabControl Margin="10" Style="{StaticResource MaterialDesignTabControl}" TabStripPlacement="Left">
+            <TabControl Margin="10" Style="{StaticResource MaterialDesignTabControl}" TabStripPlacement="Left" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}">
                 <!-- 界面设置 -->
-                <TabItem Header="界面设置">
+                <TabItem Header="界面设置" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}">
                     <StackPanel Margin="10" Orientation="Vertical">
                         <!-- 报纸列表显示模式 -->
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,15">
-                            <TextBlock Width="200" Margin="0,0,10,0" VerticalAlignment="Center">报纸列表显示模式:</TextBlock>
+                            <TextBlock Width="200" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}">报纸列表显示模式:</TextBlock>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <RadioButton Content="文本式列表" 
                                             IsChecked="{Binding Settings.NewspaperListDisplayMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:NewspaperListDisplayMode.TextList}}" 
                                             Style="{StaticResource MaterialDesignRadioButton}" 
-                                            Margin="0,0,20,0"/>
+                                            Margin="0,0,20,0" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
                                 <RadioButton Content="图片平铺" 
                                             IsChecked="{Binding Settings.NewspaperListDisplayMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:NewspaperListDisplayMode.ImageTile}}" 
-                                            Style="{StaticResource MaterialDesignRadioButton}"/>
+                                            Style="{StaticResource MaterialDesignRadioButton}" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
                             </StackPanel>
                         </StackPanel>
                         
                         <!-- 显示PDF默认工具栏 -->
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,15">
-                            <TextBlock Width="200" Margin="0,0,10,0" VerticalAlignment="Center">显示PDF默认工具栏:</TextBlock>
-                            <CheckBox IsChecked="{Binding Settings.ShowPdfToolbar}" Style="{StaticResource MaterialDesignCheckBox}"/>
+                            <TextBlock Width="200" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}">显示PDF默认工具栏:</TextBlock>
+                            <CheckBox IsChecked="{Binding Settings.ShowPdfToolbar}" Style="{StaticResource MaterialDesignCheckBox}" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
                         </StackPanel>
                         
                         <!-- 禁用WebView2默认右键菜单 -->
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,15">
-                            <TextBlock Width="200" Margin="0,0,10,0" VerticalAlignment="Center">禁用WebView2默认右键菜单:</TextBlock>
-                            <CheckBox IsChecked="{Binding Settings.DisableWebView2ContextMenu}" Style="{StaticResource MaterialDesignCheckBox}"/>
+                            <TextBlock Width="200" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}">禁用右键菜单:</TextBlock>
+                            <CheckBox IsChecked="{Binding Settings.DisableWebView2ContextMenu}" Style="{StaticResource MaterialDesignCheckBox}" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
                         </StackPanel>
                         
                         <!-- 左侧面板宽度 -->
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,15">
-                            <TextBlock Width="200" Margin="0,0,10,0" VerticalAlignment="Center">左侧面板宽度:</TextBlock>
+                            <TextBlock Width="200" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}">左侧面板宽度:</TextBlock>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Slider Minimum="100" Maximum="400" Value="{Binding Settings.LeftSidebarWidth}" Width="200" Margin="0,0,10,0" Style="{StaticResource MaterialDesignSlider}"/>
-                                <TextBlock Text="{Binding Settings.LeftSidebarWidth}" Width="50" TextAlignment="Right"/>
-                                <TextBlock Text="px" Margin="5,0,0,0"/>
+                                <TextBlock Text="{Binding Settings.LeftSidebarWidth}" Width="50" TextAlignment="Right" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
+                                <TextBlock Text="px" Margin="5,0,0,0" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
                             </StackPanel>
                         </StackPanel>
 
                         <!-- 侧边栏触发距离 -->
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,15">
-                            <TextBlock Width="200" Margin="0,0,10,0" VerticalAlignment="Center">侧边栏触发距离:</TextBlock>
+                            <TextBlock Width="200" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}">侧边栏触发距离:</TextBlock>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Slider Minimum="5" Maximum="50" Value="{Binding Settings.SidebarTriggerDistance}" Width="200" Margin="0,0,10,0" Style="{StaticResource MaterialDesignSlider}"/>
-                                <TextBlock Text="{Binding Settings.SidebarTriggerDistance}" Width="50" TextAlignment="Right"/>
-                                <TextBlock Text="px" Margin="5,0,0,0"/>
+                                <TextBlock Text="{Binding Settings.SidebarTriggerDistance}" Width="50" TextAlignment="Right" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
+                                <TextBlock Text="px" Margin="5,0,0,0" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- 字体大小 -->
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,15">
+                            <TextBlock Width="200" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}">字体大小:</TextBlock>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <RadioButton Content="普通" 
+                                            IsChecked="{Binding Settings.FontSizeLevel, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:FontSizeLevel.Normal}}" 
+                                            Style="{StaticResource MaterialDesignRadioButton}" 
+                                            Margin="0,0,20,0" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
+                                <RadioButton Content="较大" 
+                                            IsChecked="{Binding Settings.FontSizeLevel, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:FontSizeLevel.Larger}}" 
+                                            Style="{StaticResource MaterialDesignRadioButton}" 
+                                            Margin="0,0,20,0" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
+                                <RadioButton Content="大" 
+                                            IsChecked="{Binding Settings.FontSizeLevel, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:FontSizeLevel.Large}}" 
+                                            Style="{StaticResource MaterialDesignRadioButton}" 
+                                            Margin="0,0,20,0" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
+                                <RadioButton Content="很大" 
+                                            IsChecked="{Binding Settings.FontSizeLevel, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:FontSizeLevel.ExtraLarge}}" 
+                                            Style="{StaticResource MaterialDesignRadioButton}" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
                             </StackPanel>
                         </StackPanel>
                         
@@ -75,7 +99,7 @@
                 </TabItem>
                 
                 <!-- 报纸库管理 -->
-                <TabItem Header="报纸库管理">
+                <TabItem Header="报纸库管理" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}">
                     <Grid Margin="10">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
@@ -94,23 +118,29 @@
                                         </Grid.ColumnDefinitions>
                                         <Image Grid.Column="0" Source="{Binding TitleImagePath}" Width="200" Height="40" Stretch="Uniform" Margin="0,0,2,0"/>
                                         <StackPanel Grid.Column="1">
-                                            <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
-                                            <TextBlock Text="{Binding Url}" FontSize="12" Foreground="Gray" TextWrapping="Wrap"/>
+                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="{Binding DataContext.Settings.FontSizeLevel, RelativeSource={RelativeSource AncestorType=ListBox}, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
+                                            <TextBlock Text="{Binding Url}" FontSize="{Binding DataContext.Settings.FontSizeLevel, RelativeSource={RelativeSource AncestorType=ListBox}, Converter={StaticResource FontSizeLevelToFontSizeConverter}}" Foreground="Gray" TextWrapping="Wrap"/>
                                         </StackPanel>
-                                        <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" Width="Auto" Height="Auto">
                                             <Button Style="{StaticResource ToolbarButtonStyle}"
-                                                   Width="32" Height="32"
+                                                   MinWidth="40"
+                                                   MinHeight="40"
+                                                   Width="{Binding DataContext.Settings.FontSizeLevel, RelativeSource={RelativeSource AncestorType=ListBox}, Converter={StaticResource FontSizeLevelToFontSizeConverter}, ConverterParameter=1.5}"
+                                                   Height="{Binding DataContext.Settings.FontSizeLevel, RelativeSource={RelativeSource AncestorType=ListBox}, Converter={StaticResource FontSizeLevelToFontSizeConverter}, ConverterParameter=1.5}"
                                                    Command="{Binding DataContext.EditNewspaperInfoCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
                                                    CommandParameter="{Binding}"
-                                                   ToolTip="编辑">
-                                                <materialDesign:PackIcon Kind="Pencil" Width="16" Height="16"/>
+                                                   ToolTip="编辑" FontSize="{Binding DataContext.Settings.FontSizeLevel, RelativeSource={RelativeSource AncestorType=ListBox}, Converter={StaticResource FontSizeLevelToFontSizeConverter}}">
+                                                <materialDesign:PackIcon Kind="Pencil" Width="{Binding DataContext.Settings.FontSizeLevel, RelativeSource={RelativeSource AncestorType=ListBox}, Converter={StaticResource FontSizeLevelToFontSizeConverter}}" Height="{Binding DataContext.Settings.FontSizeLevel, RelativeSource={RelativeSource AncestorType=ListBox}, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
                                             </Button>
                                             <Button Style="{StaticResource ToolbarButtonStyle}"
-                                                   Width="32" Height="32"
+                                                   MinWidth="40"
+                                                   MinHeight="40"
+                                                   Width="{Binding DataContext.Settings.FontSizeLevel, RelativeSource={RelativeSource AncestorType=ListBox}, Converter={StaticResource FontSizeLevelToFontSizeConverter}, ConverterParameter=1.5}"
+                                                   Height="{Binding DataContext.Settings.FontSizeLevel, RelativeSource={RelativeSource AncestorType=ListBox}, Converter={StaticResource FontSizeLevelToFontSizeConverter}, ConverterParameter=1.5}"
                                                    Command="{Binding DataContext.DeleteNewspaperInfoCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
                                                    CommandParameter="{Binding}"
-                                                   ToolTip="删除">
-                                                <materialDesign:PackIcon Kind="Delete" Width="16" Height="16"/>
+                                                   ToolTip="删除" FontSize="{Binding DataContext.Settings.FontSizeLevel, RelativeSource={RelativeSource AncestorType=ListBox}, Converter={StaticResource FontSizeLevelToFontSizeConverter}}">
+                                                <materialDesign:PackIcon Kind="Delete" Width="{Binding DataContext.Settings.FontSizeLevel, RelativeSource={RelativeSource AncestorType=ListBox}, Converter={StaticResource FontSizeLevelToFontSizeConverter}}" Height="{Binding DataContext.Settings.FontSizeLevel, RelativeSource={RelativeSource AncestorType=ListBox}, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
                                             </Button>
                                         </StackPanel>
                                     </Grid>
@@ -120,11 +150,11 @@
                         
                         <!-- 操作按钮 -->
                         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Content="添加" Command="{Binding AddNewspaperInfoCommand}" Margin="0,0,10,0" Style="{StaticResource MaterialDesignRaisedButton}"/>
-                            <Button Content="编辑" Command="{Binding EditNewspaperInfoCommand}" Margin="0,0,10,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
-                            <Button Content="删除" Command="{Binding DeleteNewspaperInfoCommand}" Margin="0,0,10,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
-                            <Button Content="导入" Command="{Binding ImportNewspaperLibraryCommand}" Margin="0,0,10,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
-                            <Button Content="导出" Command="{Binding ExportNewspaperLibraryCommand}" Margin="0,0,10,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                            <Button Content="添加" Command="{Binding AddNewspaperInfoCommand}" Margin="0,0,10,0" Style="{StaticResource MaterialDesignRaisedButton}" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
+                            <Button Content="编辑" Command="{Binding EditNewspaperInfoCommand}" Margin="0,0,10,0" Style="{StaticResource MaterialDesignOutlinedButton}" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
+                            <Button Content="删除" Command="{Binding DeleteNewspaperInfoCommand}" Margin="0,0,10,0" Style="{StaticResource MaterialDesignOutlinedButton}" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
+                            <Button Content="导入" Command="{Binding ImportNewspaperLibraryCommand}" Margin="0,0,10,0" Style="{StaticResource MaterialDesignOutlinedButton}" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
+                            <Button Content="导出" Command="{Binding ExportNewspaperLibraryCommand}" Margin="0,0,10,0" Style="{StaticResource MaterialDesignOutlinedButton}" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
                         </StackPanel>
                     </Grid>
                 </TabItem>
@@ -133,8 +163,8 @@
         
         <!-- 按钮区域 -->
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
-            <Button Content="确定" Command="{Binding OKCommand}" Margin="0,0,10,0" Width="80" Style="{StaticResource MaterialDesignRaisedButton}"/>
-            <Button Content="取消" Command="{Binding CancelCommand}" Width="80" Style="{StaticResource MaterialDesignOutlinedButton}"/>
+            <Button Content="确定" Command="{Binding OKCommand}" Margin="0,0,10,0" Width="80" Style="{StaticResource MaterialDesignRaisedButton}" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
+            <Button Content="取消" Command="{Binding CancelCommand}" Width="80" Style="{StaticResource MaterialDesignOutlinedButton}" FontSize="{Binding Settings.FontSizeLevel, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
         </StackPanel>
     </Grid>
 </Window>

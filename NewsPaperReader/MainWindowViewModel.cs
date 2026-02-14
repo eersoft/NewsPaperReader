@@ -390,8 +390,19 @@ namespace NewsPaperReader
 
         public event Action<string>? NavigateToUrl;
         public event Action<UIElementDisplayStrategy, NewspaperListDisplayMode>? ApplySettings;
+        public event Action<FontSizeLevel>? FontSizeChanged;
 
         public static NewspaperListDisplayMode NewspaperListMode { get; private set; } = NewspaperListDisplayMode.TextList;
+        private FontSizeLevel _currentFontSizeLevel = FontSizeLevel.Normal;
+        public FontSizeLevel CurrentFontSizeLevel
+        {
+            get => _currentFontSizeLevel;
+            set
+            {
+                _currentFontSizeLevel = value;
+                OnPropertyChanged();
+            }
+        }
 
         public void LoadAppSettings()
         {
@@ -399,7 +410,9 @@ namespace NewsPaperReader
             NewspaperListMode = settings.NewspaperListDisplayMode;
             IsSidebarPinned = settings.IsSidebarPinned;
             SidebarWidth = settings.LeftSidebarWidth;
+            CurrentFontSizeLevel = settings.FontSizeLevel;
             ApplySettings?.Invoke(settings.UIElementDisplayStrategy, settings.NewspaperListDisplayMode);
+            FontSizeChanged?.Invoke(settings.FontSizeLevel);
         }
 
         private async Task LoadNewspaperEditionsAsync(Newspaper newspaper)

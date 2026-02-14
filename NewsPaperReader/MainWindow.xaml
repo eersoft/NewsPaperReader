@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NewsPaperReader"
+        xmlns:converters="clr-namespace:NewsPaperReader.Converters"
         xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
@@ -21,6 +22,7 @@
         <local:DownloadStatusToVisibilityConverter x:Key="DownloadStatusToVisibilityConverter"/>
         <local:BoolToStringConverter x:Key="BoolToStringConverter"/>
         <local:BoolToPinIconConverter x:Key="BoolToPinIconConverter"/>
+        <converters:FontSizeLevelToFontSizeConverter x:Key="FontSizeLevelToFontSizeConverter"/>
         
         <!-- 滚动条按钮样式 -->
         <Style x:Key="ScrollBarButtonStyle" TargetType="RepeatButton">
@@ -58,7 +60,7 @@
                                                Width="20" Height="20"
                                                VerticalAlignment="Center"/>
                         <TextBlock Text="EERSOFT-心仪读报 v0.5.0" 
-                                  FontSize="14" FontWeight="Medium"
+                                  FontSize="{Binding Path=DataContext.CurrentFontSizeLevel, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource FontSizeLevelToFontSizeConverter}}" FontWeight="Medium"
                                   Margin="8,0,0,0"
                                   VerticalAlignment="Center"/>
                     </StackPanel>
@@ -107,16 +109,16 @@
                         <Border Grid.Row="0" Background="{DynamicResource MaterialDesignPaper}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource MaterialDesignDivider}">
                             <StackPanel Orientation="Horizontal">
                                 <Button Command="{Binding AddNewspaperCommand}" Margin="2" Style="{StaticResource ToolbarButtonStyle}" ToolTip="添加报纸">
-                                    <materialDesign:PackIcon Kind="Plus"/>
+                                    <materialDesign:PackIcon Kind="Plus" Width="{Binding Path=DataContext.CurrentFontSizeLevel, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource FontSizeLevelToFontSizeConverter}}" Height="{Binding Path=DataContext.CurrentFontSizeLevel, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
                                 </Button>
                                 <Button Command="{Binding RefreshCommand}" Margin="2" Style="{StaticResource ToolbarButtonStyle}" ToolTip="刷新">
-                                    <materialDesign:PackIcon Kind="Refresh"/>
+                                    <materialDesign:PackIcon Kind="Refresh" Width="{Binding Path=DataContext.CurrentFontSizeLevel, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource FontSizeLevelToFontSizeConverter}}" Height="{Binding Path=DataContext.CurrentFontSizeLevel, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
                                 </Button>
                                 <Button Command="{Binding SettingsCommand}" Margin="2" Style="{StaticResource ToolbarButtonStyle}" ToolTip="设置">
-                                    <materialDesign:PackIcon Kind="Cog"/>
+                                    <materialDesign:PackIcon Kind="Cog" Width="{Binding Path=DataContext.CurrentFontSizeLevel, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource FontSizeLevelToFontSizeConverter}}" Height="{Binding Path=DataContext.CurrentFontSizeLevel, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
                                 </Button>
                                 <Button Command="{Binding ToggleSidebarPinCommand}" Margin="2" Style="{StaticResource ToolbarButtonStyle}" ToolTip="{Binding IsSidebarPinned, Converter={StaticResource BoolToStringConverter}}">
-                                    <materialDesign:PackIcon Kind="{Binding IsSidebarPinned, Converter={StaticResource BoolToPinIconConverter}}"/>
+                                    <materialDesign:PackIcon Kind="{Binding IsSidebarPinned, Converter={StaticResource BoolToPinIconConverter}}" Width="{Binding Path=DataContext.CurrentFontSizeLevel, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource FontSizeLevelToFontSizeConverter}}" Height="{Binding Path=DataContext.CurrentFontSizeLevel, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"/>
                                 </Button>
                             </StackPanel>
                         </Border>
@@ -135,7 +137,7 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Text="报纸列表" 
-                                              FontSize="14" FontWeight="Bold"
+                                              FontSize="{Binding Path=DataContext.CurrentFontSizeLevel, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource FontSizeLevelToFontSizeConverter}}" FontWeight="Bold"
                                               Margin="12,8"
                                               Foreground="{DynamicResource MaterialDesignBody}" Opacity="0.6"/>
                                     <Grid Grid.Column="1" Margin="0,8,12,8">
@@ -200,7 +202,7 @@
                                     <DataTemplate x:Key="TextListTemplate">
                                         <Grid Margin="0,4">
                                             <TextBlock Text="{Binding Name}"
-                                                      FontSize="14" FontWeight="Medium"
+                                                      FontSize="{Binding Path=DataContext.CurrentFontSizeLevel, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource FontSizeLevelToFontSizeConverter}}" FontWeight="Medium"
                                                       TextTrimming="CharacterEllipsis"/>
                                         </Grid>
                                     </DataTemplate>
@@ -219,6 +221,7 @@
                                                       Stretch="Uniform"
                                                       Visibility="{Binding TitleImagePath, Converter={StaticResource NullToVisibilityConverter}}"/>
                                                 <TextBlock Text="{Binding Name}"
+                                                           FontSize="{Binding Path=DataContext.CurrentFontSizeLevel, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"
                                                            TextWrapping="Wrap"
                                                            TextAlignment="Center"
                                                            VerticalAlignment="Center"
@@ -247,7 +250,7 @@
                         <!-- 版面列表标题 -->
                         <Border Grid.Row="2" Background="{DynamicResource MaterialDesignCardBackground}" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource MaterialDesignDivider}">
                             <TextBlock Text="版面列表" 
-                                      FontSize="14" FontWeight="Bold"
+                                      FontSize="{Binding Path=DataContext.CurrentFontSizeLevel, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource FontSizeLevelToFontSizeConverter}}" FontWeight="Bold"
                                       Margin="12,8"
                                       Foreground="{DynamicResource MaterialDesignBody}" Opacity="0.6"/>
                         </Border>
@@ -319,6 +322,7 @@
                                         
                                         <TextBlock Grid.Column="1"
                                                   Text="{Binding Title}"
+                                                  FontSize="{Binding Path=DataContext.CurrentFontSizeLevel, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"
                                                   VerticalAlignment="Center"/>
                                         
                                         <Button Grid.Column="2"
@@ -356,7 +360,7 @@
 
                     <TextBlock Grid.Column="0"
                               Text="{Binding StatusText}"
-                              FontSize="12"
+                              FontSize="{Binding Path=DataContext.CurrentFontSizeLevel, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource FontSizeLevelToFontSizeConverter}}"
                               VerticalAlignment="Center"
                               Margin="12,0"/>
 

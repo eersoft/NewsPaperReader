@@ -40,6 +40,8 @@ namespace NewsPaperReader
             _viewModel.NavigateToUrl += ViewModel_NavigateToUrl;
             // 订阅ApplySettings事件
             _viewModel.ApplySettings += ViewModel_ApplySettings;
+            // 订阅FontSizeChanged事件
+            _viewModel.FontSizeChanged += ViewModel_FontSizeChanged;
             
             // 初始化鼠标监测定时器
             _mouseMonitorTimer = new System.Windows.Threading.DispatcherTimer();
@@ -151,6 +153,64 @@ namespace NewsPaperReader
             if (_viewModel != null)
             {
                 _viewModel.CurrentContent = url;
+            }
+        }
+
+        private void ViewModel_FontSizeChanged(FontSizeLevel fontSizeLevel)
+        {
+            // 应用字体大小设置
+            ApplyFontSizeSetting(fontSizeLevel);
+        }
+
+        private void ApplyFontSizeSetting(FontSizeLevel fontSizeLevel)
+        {
+            // 根据字体大小级别设置不同的字体大小
+            double baseFontSize = 14; // 基础字体大小
+            double currentFontSize = baseFontSize;
+
+            switch (fontSizeLevel)
+            {
+                case FontSizeLevel.Normal:
+                    currentFontSize = baseFontSize;
+                    break;
+                case FontSizeLevel.Larger:
+                    currentFontSize = baseFontSize * 1.2;
+                    break;
+                case FontSizeLevel.Large:
+                    currentFontSize = baseFontSize * 1.4;
+                    break;
+                case FontSizeLevel.ExtraLarge:
+                    currentFontSize = baseFontSize * 1.6;
+                    break;
+            }
+
+            // 更新界面元素的字体大小
+            // 这里可以根据需要更新各种UI元素的字体大小
+            // 例如：标题栏文本、菜单文本、列表项文本等
+            
+            // 同时，也可以通过JavaScript调整WebView2中内容的字体大小
+            if (WebView2PdfViewer != null && WebView2PdfViewer.CoreWebView2 != null)
+            {
+                // 对于WebView2中的内容，使用JavaScript调整字体大小
+                double zoomFactor = 1.0;
+                switch (fontSizeLevel)
+                {
+                    case FontSizeLevel.Normal:
+                        zoomFactor = 1.0;
+                        break;
+                    case FontSizeLevel.Larger:
+                        zoomFactor = 1.1;
+                        break;
+                    case FontSizeLevel.Large:
+                        zoomFactor = 1.2;
+                        break;
+                    case FontSizeLevel.ExtraLarge:
+                        zoomFactor = 1.3;
+                        break;
+                }
+                
+                // 设置WebView2的缩放比例
+                WebView2PdfViewer.ZoomFactor = zoomFactor;
             }
         }
 
