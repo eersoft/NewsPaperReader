@@ -123,6 +123,8 @@
                             <Button Content="添加" Command="{Binding AddNewspaperInfoCommand}" Margin="0,0,10,0" Style="{StaticResource MaterialDesignRaisedButton}"/>
                             <Button Content="编辑" Command="{Binding EditNewspaperInfoCommand}" Margin="0,0,10,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
                             <Button Content="删除" Command="{Binding DeleteNewspaperInfoCommand}" Margin="0,0,10,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                            <Button Content="导入" Command="{Binding ImportNewspaperLibraryCommand}" Margin="0,0,10,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                            <Button Content="导出" Command="{Binding ExportNewspaperLibraryCommand}" Margin="0,0,10,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
                         </StackPanel>
                     </Grid>
                 </TabItem>

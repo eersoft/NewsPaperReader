@@ -57,7 +57,7 @@
                         <materialDesign:PackIcon Kind="NewspaperVariant" 
                                                Width="20" Height="20"
                                                VerticalAlignment="Center"/>
-                        <TextBlock Text="EERSOFT-心仪读报" 
+                        <TextBlock Text="EERSOFT-心仪读报 v0.5.0" 
                                   FontSize="14" FontWeight="Medium"
                                   Margin="8,0,0,0"
                                   VerticalAlignment="Center"/>
