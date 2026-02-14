@@ -9,6 +9,9 @@
         mc:Ignorable="d"
         Title="设置" Height="600" Width="800"
         WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <local:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -24,11 +27,15 @@
                         <!-- 报纸列表显示模式 -->
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,15">
                             <TextBlock Width="200" Margin="0,0,10,0" VerticalAlignment="Center">报纸列表显示模式:</TextBlock>
-                            <ComboBox SelectedValue="{Binding Settings.NewspaperListDisplayMode}" SelectedValuePath="Tag" Style="{StaticResource MaterialDesignOutlinedComboBox}">
-                                <ComboBoxItem Content="文本式列表" Tag="{x:Static models:NewspaperListDisplayMode.TextList}"/>
-                                <ComboBoxItem Content="图片式列表" Tag="{x:Static models:NewspaperListDisplayMode.ImageList}"/>
-                                <ComboBoxItem Content="图片平铺" Tag="{x:Static models:NewspaperListDisplayMode.ImageTile}"/>
-                            </ComboBox>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <RadioButton Content="文本式列表" 
+                                            IsChecked="{Binding Settings.NewspaperListDisplayMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:NewspaperListDisplayMode.TextList}}" 
+                                            Style="{StaticResource MaterialDesignRadioButton}" 
+                                            Margin="0,0,20,0"/>
+                                <RadioButton Content="图片平铺" 
+                                            IsChecked="{Binding Settings.NewspaperListDisplayMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:NewspaperListDisplayMode.ImageTile}}" 
+                                            Style="{StaticResource MaterialDesignRadioButton}"/>
+                            </StackPanel>
                         </StackPanel>
                         
                         <!-- 显示PDF默认工具栏 -->
@@ -63,15 +70,7 @@
                             </StackPanel>
                         </StackPanel>
                         
-                        <!-- 图片列表高度 -->
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,15">
-                            <TextBlock Width="200" Margin="0,0,10,0" VerticalAlignment="Center">图片列表高度:</TextBlock>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Slider Minimum="20" Maximum="100" Value="{Binding Settings.ImageListHeight}" Width="200" Margin="0,0,10,0" Style="{StaticResource MaterialDesignSlider}"/>
-                                <TextBlock Text="{Binding Settings.ImageListHeight}" Width="50" TextAlignment="Right"/>
-                                <TextBlock Text="px" Margin="5,0,0,0"/>
-                            </StackPanel>
-                        </StackPanel>
+
                     </StackPanel>
                 </TabItem>
                 

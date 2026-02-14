@@ -166,7 +166,7 @@ namespace NewsPaperReader.Models
         }
 
         // 报纸列表显示模式
-        private NewspaperListDisplayMode _newspaperListDisplayMode = NewspaperListDisplayMode.TextList;
+        private NewspaperListDisplayMode _newspaperListDisplayMode = NewspaperListDisplayMode.ImageTile;
         public NewspaperListDisplayMode NewspaperListDisplayMode
         {
             get => _newspaperListDisplayMode;
