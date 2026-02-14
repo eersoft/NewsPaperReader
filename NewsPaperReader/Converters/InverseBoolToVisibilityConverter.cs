@@ -13,7 +13,11 @@ namespace NewsPaperReader
             {
                 return boolValue ? Visibility.Collapsed : Visibility.Visible;
             }
-            return Visibility.Visible;
+            else if (value is string stringValue)
+            {
+                return !string.IsNullOrEmpty(stringValue) ? Visibility.Collapsed : Visibility.Visible;
+            }
+            return value != null ? Visibility.Collapsed : Visibility.Visible;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

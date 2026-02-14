@@ -202,7 +202,7 @@ namespace NewsPaperReader.Models
         }
 
         // 左侧面板宽度
-        private int _leftSidebarWidth = 150;
+        private int _leftSidebarWidth = 240;
         public int LeftSidebarWidth
         {
             get => _leftSidebarWidth;
@@ -214,7 +214,7 @@ namespace NewsPaperReader.Models
         }
 
         // 侧边栏触发距离
-        private int _sidebarTriggerDistance = 20;
+        private int _sidebarTriggerDistance = 50;
         public int SidebarTriggerDistance
         {
             get => _sidebarTriggerDistance;
@@ -225,17 +225,7 @@ namespace NewsPaperReader.Models
             }
         }
         
-        // 图片列表高度
-        private int _imageListHeight = 40;
-        public int ImageListHeight
-        {
-            get => _imageListHeight;
-            set
-            {
-                _imageListHeight = value;
-                OnPropertyChanged();
-            }
-        }
+
 
         // 是否固定侧边栏
         private bool _isSidebarPinned = true;
@@ -271,17 +261,7 @@ namespace NewsPaperReader.Models
             _newspaperLibrary = new List<NewspaperInfo>
             {
                 new NewspaperInfo("人民日报", "https://paper.people.com.cn/rmrb/paperindex.htm"),
-                new NewspaperInfo("讽刺与幽默", "https://paper.people.com.cn/fcyym/paperindex.htm"),
-                new NewspaperInfo("松江报", "https://www.songjiangbao.com.cn/"),
-                new NewspaperInfo("华西都市报", "https://www.wccdaily.com.cn/"),
-                new NewspaperInfo("中国教师报", "https://www.chinateacher.com.cn/"),
-                new NewspaperInfo("证券日报", "https://www.zqrb.cn/"),
-                new NewspaperInfo("学习时报", "https://www.studytimes.cn/"),
-                new NewspaperInfo("经济日报", "https://www.ce.cn/"),
-                new NewspaperInfo("三峡都市报", "https://www.sxdsb.com.cn/"),
-                new NewspaperInfo("重庆日报", "https://www.cqrb.cn/"),
-                new NewspaperInfo("中国国防报", "https://www.81.cn/"),
-                new NewspaperInfo("科技日报", "https://www.stdaily.com/")
+                new NewspaperInfo("华西都市报", "https://www.wccdaily.com.cn/")
             };
         }
 

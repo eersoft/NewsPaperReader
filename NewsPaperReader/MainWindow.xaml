@@ -205,18 +205,7 @@
                                         </Grid>
                                     </DataTemplate>
 
-                                    <!-- 图片列表模板 -->
-                                    <DataTemplate x:Key="ImageListTemplate">
-                                        <Grid HorizontalAlignment="Stretch" Margin="0,4" Height="{Binding DataContext.ImageListHeight, RelativeSource={RelativeSource AncestorType=ListBox}}">
-                                            <Border Width="200" 
-                                                   CornerRadius="4">
-                                                <Image Source="{Binding TitleImagePath}"
-                                                      Stretch="Uniform"
-                                                      HorizontalAlignment="Center"
-                                                      VerticalAlignment="Center"/>
-                                            </Border>
-                                        </Grid>
-                                    </DataTemplate>
+
 
                                     <!-- 图片平铺模板 -->
                                     <DataTemplate x:Key="ImageTileTemplate">
@@ -225,10 +214,18 @@
                                                Background="{DynamicResource MaterialDesignPaper}"
                                                Margin="2"
                                                Cursor="Hand">
-                                            <Border CornerRadius="6">
+                                            <Grid Height="40">
                                                 <Image Source="{Binding TitleImagePath}"
-                                                      Stretch="Uniform"/>
-                                            </Border>
+                                                      Stretch="Uniform"
+                                                      Visibility="{Binding TitleImagePath, Converter={StaticResource NullToVisibilityConverter}}"/>
+                                                <TextBlock Text="{Binding Name}"
+                                                           TextWrapping="Wrap"
+                                                           TextAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           HorizontalAlignment="Center"
+                                                           Padding="4"
+                                                           Visibility="{Binding TitleImagePath, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
+                                            </Grid>
                                         </Border>
                                     </DataTemplate>
                                 </ListBox.Resources>
