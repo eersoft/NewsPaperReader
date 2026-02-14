@@ -88,29 +88,29 @@
                                 <DataTemplate>
                                     <Grid HorizontalAlignment="Stretch" Margin="10">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="50"/>
+                                            <ColumnDefinition Width="200"/>
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <Image Grid.Column="0" Source="{Binding TitleImagePath}" Width="50" Height="50" Stretch="Uniform" Margin="0,0,10,0"/>
+                                        <Image Grid.Column="0" Source="{Binding TitleImagePath}" Width="200" Height="40" Stretch="Uniform" Margin="0,0,2,0"/>
                                         <StackPanel Grid.Column="1">
                                             <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
                                             <TextBlock Text="{Binding Url}" FontSize="12" Foreground="Gray" TextWrapping="Wrap"/>
                                         </StackPanel>
                                         <StackPanel Grid.Column="2" Orientation="Horizontal">
                                             <Button Style="{StaticResource ToolbarButtonStyle}"
-                                                   Width="28" Height="28"
+                                                   Width="32" Height="32"
                                                    Command="{Binding DataContext.EditNewspaperInfoCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
                                                    CommandParameter="{Binding}"
                                                    ToolTip="编辑">
-                                                <materialDesign:PackIcon Kind="Pencil" Width="14" Height="14"/>
+                                                <materialDesign:PackIcon Kind="Pencil" Width="16" Height="16"/>
                                             </Button>
                                             <Button Style="{StaticResource ToolbarButtonStyle}"
-                                                   Width="28" Height="28"
+                                                   Width="32" Height="32"
                                                    Command="{Binding DataContext.DeleteNewspaperInfoCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
                                                    CommandParameter="{Binding}"
                                                    ToolTip="删除">
-                                                <materialDesign:PackIcon Kind="Delete" Width="14" Height="14"/>
+                                                <materialDesign:PackIcon Kind="Delete" Width="16" Height="16"/>
                                             </Button>
                                         </StackPanel>
                                     </Grid>
