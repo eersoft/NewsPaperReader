@@ -305,7 +305,7 @@ namespace NewsPaperReader
                         return;
                     }
                     
-                    // 复制标题图片
+                    // 准备路径信息
                     string importImagesFolder = Path.Combine(folderDialog.SelectedPath, "title_image");
                     string settingsDirectory = Path.Combine(
                         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -318,40 +318,6 @@ namespace NewsPaperReader
                         Directory.CreateDirectory(targetImagesFolder);
                     }
                     
-                    if (Directory.Exists(importImagesFolder))
-                    {
-                        foreach (var file in Directory.GetFiles(importImagesFolder))
-                        {
-                            string fileName = Path.GetFileName(file);
-                            string targetPath = Path.Combine(targetImagesFolder, fileName);
-                            
-                            // 处理同名文件
-                            if (File.Exists(targetPath))
-                            {
-                                var result = System.Windows.MessageBox.Show(
-                                    $"文件 {fileName} 已存在，是否覆盖？\n\n原文件将自动备份为 {fileName}_备份",
-                                    "文件冲突",
-                                    System.Windows.MessageBoxButton.YesNo,
-                                    System.Windows.MessageBoxImage.Question
-                                );
-                                
-                                if (result == System.Windows.MessageBoxResult.Yes)
-                                {
-                                    // 备份原文件
-                                    string backupPath = Path.Combine(targetImagesFolder, $"{Path.GetFileNameWithoutExtension(fileName)}_备份{Path.GetExtension(fileName)}");
-                                    File.Copy(targetPath, backupPath, true);
-                                    // 复制新文件
-                                    File.Copy(file, targetPath, true);
-                                }
-                            }
-                            else
-                            {
-                                // 直接复制
-                                File.Copy(file, targetPath, true);
-                            }
-                        }
-                    }
-                    
                     // 添加报纸信息到当前报纸库
                     foreach (var newspaper in importedNewspapers)
                     {
@@ -359,15 +325,148 @@ namespace NewsPaperReader
                         var existing = Settings.NewspaperLibrary.FirstOrDefault(n => n.Name == newspaper.Name);
                         if (existing == null)
                         {
+                            // 不存在同名报纸，直接添加
                             Settings.NewspaperLibrary.Add(newspaper);
+                            
+                            // 复制对应的标题图片
+                            if (!string.IsNullOrEmpty(newspaper.TitleImagePath) && Directory.Exists(importImagesFolder))
+                            {
+                                string fileName = Path.GetFileName(newspaper.TitleImagePath);
+                                string sourcePath = Path.Combine(importImagesFolder, fileName);
+                                string targetPath = Path.Combine(targetImagesFolder, fileName);
+                                
+                                if (File.Exists(sourcePath))
+                                {
+                                    // 尝试复制文件，如果文件正在被使用，使用重试机制
+                                bool copied = false;
+                                int retryCount = 0;
+                                int maxRetries = 3;
+                                
+                                while (!copied && retryCount < maxRetries)
+                                {
+                                    try
+                                    {
+                                        // 先尝试删除目标文件（如果存在）
+                                        if (File.Exists(targetPath))
+                                        {
+                                            File.Delete(targetPath);
+                                        }
+                                        // 然后复制新文件
+                                        File.Copy(sourcePath, targetPath, true);
+                                        copied = true;
+                                    }
+                                    catch (IOException)
+                                    {
+                                        // 文件正在被使用，等待一段时间后重试
+                                        retryCount++;
+                                        System.Threading.Thread.Sleep(100);
+                                    }
+                                }
+                                
+                                if (!copied)
+                                {
+                                    // 如果重试后仍然失败，尝试使用另一种方法：先复制到临时文件，然后替换
+                                    string tempPath = targetPath + ".tmp";
+                                    try
+                                    {
+                                        File.Copy(sourcePath, tempPath, true);
+                                        if (File.Exists(targetPath))
+                                        {
+                                            File.Delete(targetPath);
+                                        }
+                                        File.Move(tempPath, targetPath);
+                                    }
+                                    catch (Exception)
+                                    {
+                                        // 如果仍然失败，忽略此文件，继续处理其他文件
+                                        if (File.Exists(tempPath))
+                                        {
+                                            File.Delete(tempPath);
+                                        }
+                                    }
+                                }
+                                }
+                            }
                         }
                         else
                         {
-                            // 如果已存在，更新信息
-                            existing.Url = newspaper.Url;
-                            existing.TitleImagePath = newspaper.TitleImagePath;
-                            existing.ParsePdf = newspaper.ParsePdf;
-                            existing.ForceWebView = newspaper.ForceWebView;
+                            // 存在同名报纸，询问用户是否替换
+                            var result = System.Windows.MessageBox.Show(
+                                $"报纸 '{newspaper.Name}' 已存在，是否替换？",
+                                "报纸冲突",
+                                System.Windows.MessageBoxButton.YesNo,
+                                System.Windows.MessageBoxImage.Question
+                            );
+                            
+                            if (result == System.Windows.MessageBoxResult.Yes)
+                            {
+                                // 用户选择替换，更新信息
+                                existing.Url = newspaper.Url;
+                                existing.TitleImagePath = newspaper.TitleImagePath;
+                                existing.ParsePdf = newspaper.ParsePdf;
+                                existing.ForceWebView = newspaper.ForceWebView;
+                                
+                                // 复制对应的标题图片，不需要提示和询问
+                                if (!string.IsNullOrEmpty(newspaper.TitleImagePath) && Directory.Exists(importImagesFolder))
+                                {
+                                    string fileName = Path.GetFileName(newspaper.TitleImagePath);
+                                    string sourcePath = Path.Combine(importImagesFolder, fileName);
+                                    string targetPath = Path.Combine(targetImagesFolder, fileName);
+                                    
+                                    if (File.Exists(sourcePath))
+                                    {
+                                        // 尝试复制文件，如果文件正在被使用，使用重试机制
+                                        bool copied = false;
+                                        int retryCount = 0;
+                                        int maxRetries = 3;
+                                        
+                                        while (!copied && retryCount < maxRetries)
+                                        {
+                                            try
+                                            {
+                                                // 先尝试删除目标文件（如果存在）
+                                                if (File.Exists(targetPath))
+                                                {
+                                                    File.Delete(targetPath);
+                                                }
+                                                // 然后复制新文件
+                                                File.Copy(sourcePath, targetPath, true);
+                                                copied = true;
+                                            }
+                                            catch (IOException)
+                                            {
+                                                // 文件正在被使用，等待一段时间后重试
+                                                retryCount++;
+                                                System.Threading.Thread.Sleep(100);
+                                            }
+                                        }
+                                        
+                                        if (!copied)
+                                        {
+                                            // 如果重试后仍然失败，尝试使用另一种方法：先复制到临时文件，然后替换
+                                            string tempPath = targetPath + ".tmp";
+                                            try
+                                            {
+                                                File.Copy(sourcePath, tempPath, true);
+                                                if (File.Exists(targetPath))
+                                                {
+                                                    File.Delete(targetPath);
+                                                }
+                                                File.Move(tempPath, targetPath);
+                                            }
+                                            catch (Exception)
+                                            {
+                                                // 如果仍然失败，忽略此文件，继续处理其他文件
+                                                if (File.Exists(tempPath))
+                                                {
+                                                    File.Delete(tempPath);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            // 用户选择不替换，跳过该报纸，不复制标题图片
                         }
                     }
                     
